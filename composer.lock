@@ -1,0 +1,67 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "c028d696cd1f62de840834d3adc47de8",
+    "packages": [
+        {
+            "name": "callumacrae/plist",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/callumacrae/plist.git",
+                "reference": "905eef5700843f47f0d93d2c29125a1ca40d9436"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/callumacrae/plist/zipball/905eef5700843f47f0d93d2c29125a1ca40d9436",
+                "reference": "905eef5700843f47f0d93d2c29125a1ca40d9436",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "plist": "./"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "CC By-Sa 3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Callum Macrae",
+                    "email": "callum@lynxphp.com",
+                    "homepage": "http://lynxphp.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A plist parser for PHP",
+            "homepage": "https://github.com/callumacrae/plist",
+            "keywords": [
+                "parser",
+                "plist",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/callumacrae/plist/issues",
+                "source": "https://github.com/callumacrae/plist/tree/1.1.0"
+            },
+            "time": "2012-07-12T16:49:40+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
+}
