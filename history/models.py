@@ -1,4 +1,5 @@
 from django.db import models
+from jsonfield import JSONField
 
 class HistoryUser(models.Model):
     user = models.OneToOneField(
@@ -43,7 +44,7 @@ class LevelRecord(models.Model):
 		db_index=True,
 	)
 
-	unprocessed_data = models.TextField() #TODO: custom model field for this?
+	unprocessed_data = models.JSONField()
 
 	#also levelstring stored on the side
 	#and raw server response for download type records stored on the side
