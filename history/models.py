@@ -1,5 +1,4 @@
 from django.db import models
-from jsonfield import JSONField
 
 class HistoryUser(models.Model):
     user = models.OneToOneField(
