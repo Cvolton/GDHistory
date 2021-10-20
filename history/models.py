@@ -32,7 +32,7 @@ class GetGJLevelsResponse(models.Model):
 
 class Level(models.Model):
 	online_id = models.IntegerField(db_index=True)
-	is_public = models.BooleanField() #this is to prevent leaking unlisted levels publicly
+	is_public = models.BooleanField(blank=True, null=True,) #this is to prevent leaking unlisted levels publicly
 
 class LevelRecord(models.Model):
 
