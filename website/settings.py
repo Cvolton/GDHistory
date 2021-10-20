@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-osonvx0lbz(dmre6pfbr7to0^_lt3cik(swydkf-%#ip=(2s8*'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY','django-insecure-osonvx0lbz(dmre6pfbr7to0^_lt3cik(swydkf-%#ip=(2s8*')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -77,11 +81,11 @@ WSGI_APPLICATION = 'website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gdhistory',
-        'USER': 'gdhistory',
-        'PASSWORD': 'password',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': os.getenv('MYSQL_DATABASE','gdhistory'),
+        'USER': os.getenv('MYSQL_USER','gdhistory'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD','password'),
+        'HOST': os.getenv('MYSQL_HOST','127.0.0.1'),
+        'PORT': os.getenv('MYSQL_PORT','3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
         },
