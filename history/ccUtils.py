@@ -56,8 +56,20 @@ def load_game_manager_plist():
 	return plistlib.loads(gmb)
 
 def test():
+	data_path = os.getenv('DATA_PATH', 'data')
+
 	game_manager = load_game_manager_plist()
 	glm_03 = game_manager['GLM_03']
+
+	#stripping password
+	game_manager['GJA_002'] = ''
+
+	save_file = SaveFile(author=HistoryUser.objects.get(user__username='Cvolton'))
+	save_file.save()
+
+	f = open(f"{data_path}/SaveFile/{save_file.pk}", "wb")
+	plistlib.dump(game_manager, f)
+	f.close()
 
 	records = []
 	for level, data in glm_03.items():
@@ -66,21 +78,19 @@ def test():
 		except:
 			level_object = Level(online_id=level)
 			level_object.save()
-		record = LevelRecord(level=level_object, unprocessed_data=data)
-		records.append(record)
+
+		record = LevelRecord(level=level_object, save_file=save_file)
+
+		if 'k4' in data:
+			levelString = data['k4']
+			data.pop('k4')
+			record.unprocessed_data = data
+			record.save()
+			f = open(f"{data_path}/LevelRecord/{record.pk}", "w")
+			f.write(levelString)
+			f.close()
+		else:
+			record.unprocessed_data = data
+			records.append(record)
 
 	LevelRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
-
-		#print(f"{level} - {data['k2']}")
-		#print(data)
-
-	print(game_manager['GJA_002'])
-	game_manager['GJA_002'] = ''
-	print(game_manager['GJA_002'])
-
-	save_file = SaveFile(author=HistoryUser.objects.get(user__username='Cvolton'))
-	save_file.save()
-
-	f = open(os.path.expanduser('~/testdata/gdhistory/CCGameManager_decodetest2.dat'), "wb")
-	plistlib.dump(game_manager, f)
-	f.close()
