@@ -1,4 +1,8 @@
 from django.db import models
+from django.conf import settings
+from django.utils.translation import gettext as _
+
+from datetime import datetime
 
 class HistoryUser(models.Model):
     user = models.OneToOneField(
@@ -21,7 +25,7 @@ class SaveFile(models.Model):
 	is_processed = models.BooleanField(default=False)
 	#also raw save file with password stripped out stored on the side in a file
 
-class GetGJLevelsResponse(models.model):
+class GetGJLevelsResponse(models.Model):
 	saved = models.DateTimeField(default=datetime.now)
 	unprocessed_post_parameters = models.JSONField()
 
@@ -39,7 +43,7 @@ class LevelRecord(models.Model):
 
 	record_type = models.CharField(
 		max_length=8,
-		choices=Source.choices,
+		choices=RecordType.choices,
 	)
 
 	level = models.ForeignKey(
