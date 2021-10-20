@@ -45,17 +45,16 @@ def remove_invalid_characters(game_manager_bytes):
 	game_manager_bytes = game_manager_bytes.replace(b'#',b'@@hash@@')
 	return game_manager_bytes
 
-gmb = get_game_manager_bytes()
-gmb = xor_game_manager_if_needed(gmb)
-gmb = ungzip_if_needed(gmb)
-gmb = robtop_plist_to_plist(gmb)
-gmb = remove_invalid_characters(gmb)
+def load_game_manager_plist():
+	gmb = get_game_manager_bytes()
+	gmb = xor_game_manager_if_needed(gmb)
+	gmb = ungzip_if_needed(gmb)
+	gmb = robtop_plist_to_plist(gmb)
+	gmb = remove_invalid_characters(gmb)
+	return plistlib.loads(gmb)
 
-f = open(os.path.expanduser('~/testdata/gdhistory/CCGameManager_decodetest2.dat'), "wb")
-#f.write(gmb)
-#f.close()
 
-game_manager = plistlib.loads(gmb)
+game_manager = load_game_manager_plist()
 glm_03 = game_manager['GLM_03']
 
 for level, data in glm_03.items():
@@ -65,5 +64,7 @@ for level, data in glm_03.items():
 print(game_manager['GJA_002'])
 game_manager['GJA_002'] = ''
 print(game_manager['GJA_002'])
+
+f = open(os.path.expanduser('~/testdata/gdhistory/CCGameManager_decodetest2.dat'), "wb")
 plistlib.dump(game_manager, f)
 f.close()
