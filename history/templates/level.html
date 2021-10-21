@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+{% for record in level_records %}
+<p>level - {{ record.unprocessed_data }}</p>
+{% endfor %}
+{% endblock %}

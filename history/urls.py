@@ -5,4 +5,5 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('level/<online_id>', views.view_level, name='level'),
 ]
