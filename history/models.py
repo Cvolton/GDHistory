@@ -98,6 +98,8 @@ class LevelRecord(models.Model):
 	seconds_spent_editing = models.IntegerField(blank=True, null=True) #k80
 	seconds_spent_editing_copies = models.IntegerField(blank=True, null=True) #k81
 
+	level_string_available = models.BooleanField(default=False) #k4
+
 	unprocessed_data = models.JSONField() #this field should only be used for archival purposes, do not pull data from this directly in production
 
 	#also levelstring stored on the side
