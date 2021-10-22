@@ -1,6 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
+Showing data for level {{ online_id }}
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+<table>
+	<tr>
+		<th>Time saved</th>
+		<th>Source</th>
+		<th>Level name</th>
+		<th>Downloads</th>
+		<th>Likes</th>
+		<th>Dislikes</th>
+		<th>Level version</th>
+		<th>User ID</th>
+		<th>Username</th>
+		<th>Account ID</th>
+	</tr>
 {% for record in level_records %}
-<p>level - {{ record.unprocessed_data }}</p>
+	<tr>
+		<td>{{ record.save_file.created }}</td>
+		<td>{{ record.record_type }}</td>
+		<td>{{ record.level_name }}</td>
+		<td>{{ record.downloads }}</td>
+		<td>{{ record.likes }}</td>
+		<td>{{ record.dislikes }}</td>
+		<td>{{ record.level_version }}</td>
+		<td>{{ record.user_id }}</td>
+		<td>{{ record.username }}</td>
+		<td>{{ record.account_id }}</td>
+	</tr>
 {% endfor %}
+</table>
 {% endblock %}
