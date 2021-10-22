@@ -91,7 +91,7 @@ class LevelRecord(models.Model):
 	coins = models.IntegerField(blank=True, null=True) #k64
 	coins_verified = models.BooleanField(blank=True, null=True) #k65
 	requested_stars = models.IntegerField(blank=True, null=True) #k66
-	extra_string = models.IntegerField(blank=True, null=True) #k67 #also known as the capacity string
+	extra_string = models.TextField(blank=True, null=True) #k67 #also known as the capacity string
 	daily_id = models.IntegerField(blank=True, null=True) #k74
 	epic = models.BooleanField(blank=True, null=True) #k75
 	demon_type = models.IntegerField(blank=True, null=True) #k76

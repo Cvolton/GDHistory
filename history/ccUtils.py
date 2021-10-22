@@ -55,6 +55,48 @@ def load_game_manager_plist():
 	gmb = remove_invalid_characters(gmb)
 	return plistlib.loads(gmb)
 
+def assign_key(data, key):
+	if key not in data:
+		return None
+	value = data[key]
+	data.pop(key)
+	return value
+
+def create_level_record_from_data(data, level_object, save_file):
+	return LevelRecord(level=level_object, save_file=save_file,
+		level_name = assign_key(data, 'k2'),
+		description = assign_key(data, 'k3'),
+		username = assign_key(data, 'k5'),
+		user_id = assign_key(data, 'k6'),
+		official_song = assign_key(data, 'k8'),
+		rating = assign_key(data, 'k9'),
+		rating_sum = assign_key(data, 'k10'),
+		downloads = assign_key(data, 'k11'),
+		level_version = assign_key(data, 'k16'),
+		game_version = assign_key(data, 'k17'),
+		likes = assign_key(data, 'k22'),
+		length = assign_key(data, 'k23'),
+		dislikes = assign_key(data, 'k24'),
+		demon = assign_key(data, 'k25'),
+		stars = assign_key(data, 'k26'),
+		feature_score = assign_key(data, 'k27'),
+		auto = assign_key(data, 'k33'),
+		password = assign_key(data, 'k41'),
+		two_player = assign_key(data, 'k43'),
+		custom_song = assign_key(data, 'k41'),
+		objects_count = assign_key(data, 'k48'),
+		account_id = assign_key(data, 'k60'),
+		coins = assign_key(data, 'k64'),
+		coins_verified = assign_key(data, 'k65'),
+		requested_stars = assign_key(data, 'k66'),
+		extra_string = assign_key(data, 'k67'),
+		daily_id = assign_key(data, 'k74'),
+		epic = assign_key(data, 'k75'),
+		demon_type = assign_key(data, 'k76'),
+		seconds_spent_editing = assign_key(data, 'k80'),
+		seconds_spent_editing_copies = assign_key(data, 'k81'),
+	)
+
 def test():
 	data_path = os.getenv('DATA_PATH', 'data')
 
@@ -79,7 +121,8 @@ def test():
 			level_object = Level(online_id=level)
 			level_object.save()
 
-		record = LevelRecord(level=level_object, save_file=save_file)
+		record = create_level_record_from_data(data, level_object, save_file)
+
 
 		if 'k4' in data:
 			levelString = data['k4']
@@ -89,6 +132,8 @@ def test():
 			f = open(f"{data_path}/LevelRecord/{record.pk}", "w")
 			f.write(levelString)
 			f.close()
+
+
 		else:
 			record.unprocessed_data = data
 			records.append(record)
