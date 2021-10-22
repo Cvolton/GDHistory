@@ -128,6 +128,7 @@ def test():
 			levelString = data['k4']
 			data.pop('k4')
 			record.unprocessed_data = data
+			record.level_string_available = True
 			record.save()
 			f = open(f"{data_path}/LevelRecord/{record.pk}", "w")
 			f.write(levelString)
