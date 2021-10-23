@@ -1,4 +1,5 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser
+from .utils import assign_key, get_data_path
 
 import plistlib
 import os
@@ -55,13 +56,6 @@ def load_game_manager_plist():
 	gmb = remove_invalid_characters(gmb)
 	return plistlib.loads(gmb)
 
-def assign_key(data, key):
-	if key not in data:
-		return None
-	value = data[key]
-	data.pop(key)
-	return value
-
 def create_level_record_from_data(data, level_object, save_file):
 	return LevelRecord(level=level_object, save_file=save_file,
 		level_name = assign_key(data, 'k2'),
@@ -99,7 +93,7 @@ def create_level_record_from_data(data, level_object, save_file):
 	)
 
 def test():
-	data_path = os.getenv('DATA_PATH', 'data')
+	data_path = get_data_path()
 
 	game_manager = load_game_manager_plist()
 	glm_03 = game_manager['GLM_03']
