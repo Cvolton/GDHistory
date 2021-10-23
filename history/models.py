@@ -37,7 +37,9 @@ class Level(models.Model):
 class LevelRecord(models.Model):
 
 	class RecordType(models.TextChoices):
-		GLM = 'glm', _('GLM')
+		GLM_03 = 'glm_03', _('GLM_03')
+		GLM_10 = 'glm_10', _('GLM_10')
+		GLM_16 = 'glm_16', _('GLM_16')
 		DOWNLOAD = 'download', _('downloadGJLevel')
 		GET = 'get', _('getGJLevels')
 

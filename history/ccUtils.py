@@ -56,7 +56,7 @@ def load_game_manager_plist():
 	gmb = remove_invalid_characters(gmb)
 	return plistlib.loads(gmb)
 
-def create_level_record_from_data(data, level_object, save_file):
+def create_level_record_from_data(data, level_object, save_file, record_type):
 	return LevelRecord(level=level_object, save_file=save_file,
 		level_name = assign_key(data, 'k2'),
 		description = assign_key(data, 'k3'),
@@ -89,34 +89,21 @@ def create_level_record_from_data(data, level_object, save_file):
 		demon_type = assign_key(data, 'k76'),
 		seconds_spent_editing = assign_key(data, 'k80'),
 		seconds_spent_editing_copies = assign_key(data, 'k81'),
-		record_type = LevelRecord.RecordType.GLM
+		record_type = record_type
 	)
 
-def test():
+def process_levels_in_glm(glm, record_type, save_file):
 	data_path = get_data_path()
-
-	game_manager = load_game_manager_plist()
-	glm_03 = game_manager['GLM_03']
-
-	#stripping password
-	game_manager['GJA_002'] = ''
-
-	save_file = SaveFile(author=HistoryUser.objects.get(user__username='Cvolton'))
-	save_file.save()
-
-	f = open(f"{data_path}/SaveFile/{save_file.pk}", "wb")
-	plistlib.dump(game_manager, f)
-	f.close()
-
+	
 	records = []
-	for level, data in glm_03.items():
+	for level, data in glm.items():
 		try:
 			level_object = Level.objects.get(online_id=level)
 		except:
 			level_object = Level(online_id=level)
 			level_object.save()
 
-		record = create_level_record_from_data(data, level_object, save_file)
+		record = create_level_record_from_data(data, level_object, save_file, LevelRecord.RecordType.GLM_03)
 
 
 		if 'k4' in data:
@@ -135,3 +122,23 @@ def test():
 			records.append(record)
 
 	LevelRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
+
+def test():
+	data_path = get_data_path()
+
+	game_manager = load_game_manager_plist()
+
+	#stripping password
+	game_manager['GJA_002'] = ''
+
+	save_file = SaveFile(author=HistoryUser.objects.get(user__username='Cvolton'))
+	save_file.save()
+
+	f = open(f"{data_path}/SaveFile/{save_file.pk}", "wb")
+	plistlib.dump(game_manager, f)
+	f.close()
+
+	process_levels_in_glm(game_manager['GLM_03'], LevelRecord.RecordType.GLM_03, save_file)
+	process_levels_in_glm(game_manager['GLM_10'], LevelRecord.RecordType.GLM_10, save_file)
+	process_levels_in_glm(game_manager['GLM_16'], LevelRecord.RecordType.GLM_16, save_file)
+	
