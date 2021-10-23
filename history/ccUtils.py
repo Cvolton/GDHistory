@@ -95,6 +95,7 @@ def create_level_record_from_data(data, level_object, save_file):
 		demon_type = assign_key(data, 'k76'),
 		seconds_spent_editing = assign_key(data, 'k80'),
 		seconds_spent_editing_copies = assign_key(data, 'k81'),
+		record_type = LevelRecord.RecordType.GLM
 	)
 
 def test():
