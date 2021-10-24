@@ -34,9 +34,55 @@ class GetGJLevelsResponse(models.Model):
 	created = models.DateTimeField(default=datetime.now)
 	unprocessed_post_parameters = models.JSONField()
 
+class Song(models.Model):
+	online_id = models.IntegerField(unique=True)
+
+
+class SongRecord(models.Model):
+
+	class RecordType(models.TextChoices):
+		MDLM_001 = 'mdlm_001', _('MDLM_001')
+		SONG_INFO = 'songinfo', _('getGJSongInfo')
+		LEVEL_INFO = 'levelinfo', _('getGJLevels')
+
+	record_type = models.CharField(
+		max_length=9,
+		choices=RecordType.choices,
+	)
+
+	song = models.ForeignKey(
+		Song,
+		on_delete=models.CASCADE,
+		db_index=True,
+	)
+
+	save_file = models.ForeignKey(
+		SaveFile,
+		on_delete=models.CASCADE,
+		blank=True, null=True,
+		db_index=True,
+	)
+
+	get_gj_levels_response = models.ForeignKey(
+		GetGJLevelsResponse,
+		on_delete=models.CASCADE,
+		blank=True, null=True,
+		db_index=True,
+	)
+
+	song_name = models.TextField(blank=True, null=True)
+	artist_id = models.IntegerField(null=True)
+	artist_name = models.TextField(blank=True, null=True)
+	size = models.FloatField(null=True)
+	youtube_id = models.TextField(blank=True, null=True)
+	youtube_channel = models.TextField(blank=True, null=True)
+	is_verified = models.BooleanField(null=True)
+	link = models.TextField(blank=True, null=True)
+
+	unprocessed_data = models.JSONField() #this field should only be used for archival purposes, do not pull data from this directly in production
 
 class Level(models.Model):
-	online_id = models.IntegerField(db_index=True)
+	online_id = models.IntegerField(db_index=True, unique=True)
 	is_public = models.BooleanField(blank=True, null=True,) #this is to prevent leaking unlisted levels publicly
 
 class LevelRecord(models.Model):
