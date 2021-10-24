@@ -30,7 +30,7 @@ class SaveFile(models.Model):
 	binary_version = models.IntegerField(blank=True, null=True)
 	#also raw save file with password stripped out stored on the side in a file
 
-class GetGJLevelsResponse(models.Model):
+class ServerResponse(models.Model):
 	created = models.DateTimeField(default=datetime.now)
 	unprocessed_post_parameters = models.JSONField()
 
@@ -63,8 +63,8 @@ class SongRecord(models.Model):
 		db_index=True,
 	)
 
-	get_gj_levels_response = models.ForeignKey(
-		GetGJLevelsResponse,
+	server_response = models.ForeignKey(
+		ServerResponse,
 		on_delete=models.CASCADE,
 		blank=True, null=True,
 		db_index=True,
@@ -112,8 +112,8 @@ class LevelRecord(models.Model):
 		db_index=True,
 	)
 
-	get_gj_levels_response = models.ForeignKey(
-		GetGJLevelsResponse,
+	server_response = models.ForeignKey(
+		ServerResponse,
 		on_delete=models.CASCADE,
 		blank=True, null=True,
 		db_index=True,
