@@ -23,6 +23,11 @@ class SaveFile(models.Model):
 	created = models.DateTimeField(default=datetime.now)
 	comment = models.CharField(max_length=255)
 	is_processed = models.BooleanField(default=False)
+
+	player_name = models.TextField(blank=True, null=True)
+	player_user_id = models.IntegerField(blank=True, null=True)
+	player_account_id = models.IntegerField(blank=True, null=True)
+	binary_version = models.IntegerField(blank=True, null=True)
 	#also raw save file with password stripped out stored on the side in a file
 
 class GetGJLevelsResponse(models.Model):

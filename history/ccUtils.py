@@ -1,5 +1,5 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser
-from .utils import assign_key, get_data_path
+from .utils import assign_key, get_data_path, assign_key_no_pop
 
 import plistlib
 import os
@@ -94,7 +94,7 @@ def create_level_record_from_data(data, level_object, save_file, record_type):
 
 def process_levels_in_glm(glm, record_type, save_file):
 	data_path = get_data_path()
-	
+
 	records = []
 	for level, data in glm.items():
 		try:
@@ -128,10 +128,17 @@ def test():
 
 	game_manager = load_game_manager_plist()
 
-	#stripping password
-	game_manager['GJA_002'] = ''
+	#stripping sensitive data
+	game_manager['GJA_002'] = '' #password
+	game_manager['GJA_004'] = '' #sessionID (2.2)
 
-	save_file = SaveFile(author=HistoryUser.objects.get(user__username='Cvolton'))
+	save_file = SaveFile(
+		author=HistoryUser.objects.get(user__username='Cvolton'),
+		player_name=assign_key_no_pop(game_manager, 'playerName'),
+		player_user_id=assign_key_no_pop(game_manager, 'playerUserID'),
+		player_account_id=assign_key_no_pop(game_manager, 'GJA_003'),
+		binary_version=assign_key_no_pop(game_manager, 'binaryVersion'),
+	)
 	save_file.save()
 
 	f = open(f"{data_path}/SaveFile/{save_file.pk}", "wb")
