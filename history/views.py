@@ -5,6 +5,7 @@ from .models import Level, LevelRecord
 from . import ccUtils, serverUtils
 
 def index(request):
+	ccUtils.test()
 	return render(request, 'index.html')
 
 def view_level(request, online_id=None):

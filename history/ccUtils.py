@@ -97,13 +97,14 @@ def process_levels_in_glm(glm, record_type, save_file):
 
 	records = []
 	for level, data in glm.items():
+		level_id = data['k1'] if 'k1' in data else 0
 		try:
-			level_object = Level.objects.get(online_id=level)
+			level_object = Level.objects.get(online_id=level_id)
 		except:
-			level_object = Level(online_id=level)
+			level_object = Level(online_id=level_id)
 			level_object.save()
 
-		record = create_level_record_from_data(data, level_object, save_file, LevelRecord.RecordType.GLM_03)
+		record = create_level_record_from_data(data, level_object, save_file, record_type)
 
 
 		if 'k4' in data:
