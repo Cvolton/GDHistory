@@ -1,6 +1,12 @@
 {% extends "base.html" %}
+{% load mathfilters %}
 {% block content %}
 <p class="lead">Showing data for level {{ online_id }}</p>
+{% if level.comment %}
+  <div class="alert alert-info" role="alert">
+    {{ level.comment }}
+  </div>
+{% endif %}
 <table class="table table-striped">
 	<thead>
 		<tr>
@@ -9,7 +15,8 @@
 			<th>Level name</th>
 			<th>Downloads</th>
 			<th>Likes</th>
-			<th>Dislikes</th>
+			<th>Difficulty</th>
+			<th>Stars</th>
 			<th>Level version</th>
 			<th>User ID</th>
 			<th>Username</th>
@@ -23,8 +30,11 @@
 			<td>{{ record.record_type }}</td>
 			<td>{{ record.level_name }}</td>
 			<td>{{ record.downloads }}</td>
-			<td>{{ record.likes }}</td>
-			<td>{{ record.dislikes }}</td>
+			{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
+Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
+			<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
+Rating denominator: {{ record.rating }}">{{ record.rating_sum|div:record.rating }}</a></td>
+			<td>{{ record.stars }}</td>
 			<td>{{ record.level_version }}</td>
 			<td>{{ record.user_id }}</td>
 			<td>{{ record.username }}</td>
@@ -33,4 +43,5 @@
 	{% endfor %}
 	</tbody>
 </table>
+<!-- {{ level.pk }} -->
 {% endblock %}

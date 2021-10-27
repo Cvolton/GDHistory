@@ -83,7 +83,8 @@ class SongRecord(models.Model):
 
 class Level(models.Model):
 	online_id = models.IntegerField(db_index=True, unique=True)
-	is_public = models.BooleanField(blank=True, null=True,) #this is to prevent leaking unlisted levels publicly
+	comment = models.TextField(blank=True, null=True)
+	is_public = models.BooleanField(blank=True, null=True) #this is to prevent leaking unlisted levels publicly
 
 class LevelRecord(models.Model):
 
