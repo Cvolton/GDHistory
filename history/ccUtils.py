@@ -7,7 +7,7 @@ import base64
 import gzip
 
 def get_game_manager_bytes():
-	game_manager_file = open(os.path.expanduser('~/testdata/gdhistory/CCGameManager_decodetest.dat'), "rb")
+	game_manager_file = open(os.path.expanduser('~/testdata/gdhistory/CCGameManager_21.dat'), "rb")
 	game_manager_bytes = game_manager_file.read()
 	game_manager_file.close()
 	return bytearray(game_manager_bytes)
@@ -57,45 +57,89 @@ def load_game_manager_plist():
 	return plistlib.loads(gmb)
 
 def create_level_record_from_data(data, level_object, record_type):
-	return LevelRecord(level=level_object,
-		level_name = assign_key(data, 'k2'),
-		description = assign_key(data, 'k3'),
-		username = assign_key(data, 'k5'),
-		user_id = assign_key(data, 'k6'),
-		official_song = assign_key(data, 'k8'),
-		rating = assign_key(data, 'k9'),
-		rating_sum = assign_key(data, 'k10'),
-		downloads = assign_key(data, 'k11'),
-		level_version = assign_key(data, 'k16'),
-		game_version = assign_key(data, 'k17'),
-		likes = assign_key(data, 'k22'),
-		length = assign_key(data, 'k23'),
-		dislikes = assign_key(data, 'k24'),
-		demon = assign_key(data, 'k25'),
-		stars = assign_key(data, 'k26'),
-		feature_score = assign_key(data, 'k27'),
-		auto = assign_key(data, 'k33'),
-		password = assign_key(data, 'k41'),
-		two_player = assign_key(data, 'k43'),
-		custom_song = assign_key(data, 'k41'),
-		objects_count = assign_key(data, 'k48'),
-		account_id = assign_key(data, 'k60'),
-		coins = assign_key(data, 'k64'),
-		coins_verified = assign_key(data, 'k65'),
-		requested_stars = assign_key(data, 'k66'),
-		extra_string = assign_key(data, 'k67'),
-		daily_id = assign_key(data, 'k74'),
-		epic = assign_key(data, 'k75'),
-		demon_type = assign_key(data, 'k76'),
-		seconds_spent_editing = assign_key(data, 'k80'),
-		seconds_spent_editing_copies = assign_key(data, 'k81'),
-		record_type = record_type
+	try:
+		return LevelRecord.objects.get(level=level_object,
+			level_name = assign_key_no_pop(data, 'k2'),
+			#test1
+			description = assign_key_no_pop(data, 'k3'),
+			username = assign_key_no_pop(data, 'k5'),
+			user_id = assign_key_no_pop(data, 'k6'),
+			official_song = assign_key_no_pop(data, 'k8'),
+			rating = assign_key_no_pop(data, 'k9'),
+			rating_sum = assign_key_no_pop(data, 'k10'),
+			#test2
+			downloads = assign_key_no_pop(data, 'k11'),
+			level_version = assign_key_no_pop(data, 'k16'),
+			game_version = assign_key_no_pop(data, 'k17'),
+			likes = assign_key_no_pop(data, 'k22'),
+			length = assign_key_no_pop(data, 'k23'),
+			dislikes = assign_key_no_pop(data, 'k24'),
+			demon = assign_key_no_pop(data, 'k25'),
+			stars = assign_key_no_pop(data, 'k26'),
+			#test3
+			feature_score = assign_key_no_pop(data, 'k27'),
+			auto = assign_key_no_pop(data, 'k33'),
+			password = assign_key_no_pop(data, 'k41'),
+			two_player = assign_key_no_pop(data, 'k43'),
+			#test3.5
+			custom_song = assign_key_no_pop(data, 'k45'),
+			objects_count = assign_key_no_pop(data, 'k48'),
+			#test3.7
+			account_id = assign_key_no_pop(data, 'k60'),
+			coins = assign_key_no_pop(data, 'k64'),
+			#test4
+			coins_verified = assign_key_no_pop(data, 'k65'),
+			requested_stars = assign_key_no_pop(data, 'k66'),
+			extra_string = assign_key_no_pop(data, 'k67'),
+			daily_id = assign_key_no_pop(data, 'k74'),
+			epic = assign_key_no_pop(data, 'k75'),
+			demon_type = assign_key_no_pop(data, 'k76'),
+			seconds_spent_editing = assign_key_no_pop(data, 'k80'),
+			seconds_spent_editing_copies = assign_key_no_pop(data, 'k81'),
+			record_type = record_type
+		)
+	except Exception as e:
+		if level_object.online_id == 8887031:
+			print(e)
+		return LevelRecord(level=level_object,
+			level_name = assign_key(data, 'k2'),
+			description = assign_key(data, 'k3'),
+			username = assign_key(data, 'k5'),
+			user_id = assign_key(data, 'k6'),
+			official_song = assign_key(data, 'k8'),
+			rating = assign_key(data, 'k9'),
+			rating_sum = assign_key(data, 'k10'),
+			downloads = assign_key(data, 'k11'),
+			level_version = assign_key(data, 'k16'),
+			game_version = assign_key(data, 'k17'),
+			likes = assign_key(data, 'k22'),
+			length = assign_key(data, 'k23'),
+			dislikes = assign_key(data, 'k24'),
+			demon = assign_key(data, 'k25'),
+			stars = assign_key(data, 'k26'),
+			feature_score = assign_key(data, 'k27'),
+			auto = assign_key(data, 'k33'),
+			password = assign_key(data, 'k41'),
+			two_player = assign_key(data, 'k43'),
+			custom_song = assign_key(data, 'k45'),
+			objects_count = assign_key(data, 'k48'),
+			account_id = assign_key(data, 'k60'),
+			coins = assign_key(data, 'k64'),
+			coins_verified = assign_key(data, 'k65'),
+			requested_stars = assign_key(data, 'k66'),
+			extra_string = assign_key(data, 'k67'),
+			daily_id = assign_key(data, 'k74'),
+			epic = assign_key(data, 'k75'),
+			demon_type = assign_key(data, 'k76'),
+			seconds_spent_editing = assign_key(data, 'k80'),
+			seconds_spent_editing_copies = assign_key(data, 'k81'),
+			record_type = record_type
 	)
 
 def process_levels_in_glm(glm, record_type, save_file):
 	data_path = get_data_path()
 
-	records = []
+	#records = []
 	for level, data in glm.items():
 		level_id = data['k1'] if 'k1' in data else 0
 		try:
@@ -119,12 +163,7 @@ def process_levels_in_glm(glm, record_type, save_file):
 			f.write(levelString)
 			f.close()
 
-
-		else:
-			record.unprocessed_data = data
-			records.append(record)
-
-	LevelRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
+	#LevelRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
 
 def create_song_record_from_data(data, song_object, save_file):
 	return SongRecord(song=song_object, save_file=save_file,
@@ -175,7 +214,11 @@ def test():
 	plistlib.dump(game_manager, f)
 	f.close()
 
-	process_levels_in_glm(game_manager['GLM_03'], LevelRecord.RecordType.GLM_03, save_file)
-	process_levels_in_glm(game_manager['GLM_10'], LevelRecord.RecordType.GLM_10, save_file)
-	process_levels_in_glm(game_manager['GLM_16'], LevelRecord.RecordType.GLM_16, save_file)
-	process_songs_in_mdlm(game_manager['MDLM_001'], save_file)
+	if 'GLM_03' in game_manager:
+		process_levels_in_glm(game_manager['GLM_03'], LevelRecord.RecordType.GLM_03, save_file)
+	if 'GLM_10' in game_manager:
+		process_levels_in_glm(game_manager['GLM_10'], LevelRecord.RecordType.GLM_10, save_file)
+	if 'GLM_16' in game_manager:
+		process_levels_in_glm(game_manager['GLM_16'], LevelRecord.RecordType.GLM_16, save_file)
+	if 'MDLM_001' in game_manager:
+		process_songs_in_mdlm(game_manager['MDLM_001'], save_file)
