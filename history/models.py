@@ -106,11 +106,8 @@ class LevelRecord(models.Model):
 		db_index=True,
 	)
 
-	save_file = models.ForeignKey(
-		SaveFile,
-		on_delete=models.CASCADE,
-		blank=True, null=True,
-		db_index=True,
+	save_file = models.ManyToManyField(
+		SaveFile
 	)
 
 	server_response = models.ForeignKey(

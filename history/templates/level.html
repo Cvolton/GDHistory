@@ -26,7 +26,7 @@
 	<tbody>
 	{% for record in level_records %}
 		<tr>
-			<td>{{ record.save_file.created }}</td>
+			<td>{{ record.oldest_created }}</td>
 			<td>{{ record.record_type }}</td>
 			<td>{{ record.level_name }}</td>
 			<td>{{ record.downloads }}</td>

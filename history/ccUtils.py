@@ -56,8 +56,8 @@ def load_game_manager_plist():
 	gmb = remove_invalid_characters(gmb)
 	return plistlib.loads(gmb)
 
-def create_level_record_from_data(data, level_object, save_file, record_type):
-	return LevelRecord(level=level_object, save_file=save_file,
+def create_level_record_from_data(data, level_object, record_type):
+	return LevelRecord(level=level_object,
 		level_name = assign_key(data, 'k2'),
 		description = assign_key(data, 'k3'),
 		username = assign_key(data, 'k5'),
@@ -104,12 +104,14 @@ def process_levels_in_glm(glm, record_type, save_file):
 			level_object = Level(online_id=level_id)
 			level_object.save()
 
-		record = create_level_record_from_data(data, level_object, save_file, record_type)
+		record = create_level_record_from_data(data, level_object, record_type)
+		record.unprocessed_data = data
+		record.save()
 
+		record.save_file.add(save_file)
 
 		if 'k4' in data:
-			levelString = data['k4']
-			data.pop('k4')
+			levelString = assign_key(data, 'k4')
 			record.unprocessed_data = data
 			record.level_string_available = True
 			record.save()
