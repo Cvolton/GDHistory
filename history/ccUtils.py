@@ -60,14 +60,12 @@ def create_level_record_from_data(data, level_object, record_type):
 	try:
 		return LevelRecord.objects.get(level=level_object,
 			level_name = assign_key_no_pop(data, 'k2'),
-			#test1
 			description = assign_key_no_pop(data, 'k3'),
 			username = assign_key_no_pop(data, 'k5'),
 			user_id = assign_key_no_pop(data, 'k6'),
 			official_song = assign_key_no_pop(data, 'k8'),
 			rating = assign_key_no_pop(data, 'k9'),
 			rating_sum = assign_key_no_pop(data, 'k10'),
-			#test2
 			downloads = assign_key_no_pop(data, 'k11'),
 			level_version = assign_key_no_pop(data, 'k16'),
 			game_version = assign_key_no_pop(data, 'k17'),
@@ -76,18 +74,14 @@ def create_level_record_from_data(data, level_object, record_type):
 			dislikes = assign_key_no_pop(data, 'k24'),
 			demon = assign_key_no_pop(data, 'k25'),
 			stars = assign_key_no_pop(data, 'k26'),
-			#test3
 			feature_score = assign_key_no_pop(data, 'k27'),
 			auto = assign_key_no_pop(data, 'k33'),
 			password = assign_key_no_pop(data, 'k41'),
 			two_player = assign_key_no_pop(data, 'k43'),
-			#test3.5
 			custom_song = assign_key_no_pop(data, 'k45'),
 			objects_count = assign_key_no_pop(data, 'k48'),
-			#test3.7
 			account_id = assign_key_no_pop(data, 'k60'),
 			coins = assign_key_no_pop(data, 'k64'),
-			#test4
 			coins_verified = assign_key_no_pop(data, 'k65'),
 			requested_stars = assign_key_no_pop(data, 'k66'),
 			extra_string = assign_key_no_pop(data, 'k67'),
@@ -98,10 +92,8 @@ def create_level_record_from_data(data, level_object, record_type):
 			seconds_spent_editing_copies = assign_key_no_pop(data, 'k81'),
 			record_type = record_type
 		)
-	except Exception as e:
-		if level_object.online_id == 8887031:
-			print(e)
-		return LevelRecord(level=level_object,
+	except:
+		record = LevelRecord(level=level_object,
 			level_name = assign_key(data, 'k2'),
 			description = assign_key(data, 'k3'),
 			username = assign_key(data, 'k5'),
@@ -133,8 +125,11 @@ def create_level_record_from_data(data, level_object, record_type):
 			demon_type = assign_key(data, 'k76'),
 			seconds_spent_editing = assign_key(data, 'k80'),
 			seconds_spent_editing_copies = assign_key(data, 'k81'),
-			record_type = record_type
-	)
+			record_type = record_type,
+			unprocessed_data = data
+		)
+		record.save()
+		return record
 
 def process_levels_in_glm(glm, record_type, save_file):
 	data_path = get_data_path()
@@ -149,8 +144,6 @@ def process_levels_in_glm(glm, record_type, save_file):
 			level_object.save()
 
 		record = create_level_record_from_data(data, level_object, record_type)
-		record.unprocessed_data = data
-		record.save()
 
 		record.save_file.add(save_file)
 
@@ -166,20 +159,35 @@ def process_levels_in_glm(glm, record_type, save_file):
 	#LevelRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
 
 def create_song_record_from_data(data, song_object, save_file):
-	return SongRecord(song=song_object, save_file=save_file,
-		song_name = assign_key(data, '2'),
-		artist_id = assign_key(data, '3'),
-		artist_name = assign_key(data, '4'),
-		size = assign_key(data, '5'),
-		youtube_id = assign_key(data, '6'),
-		youtube_channel = assign_key(data, '7'),
-		is_verified = assign_key(data, '8'),
-		link = assign_key(data, '10'),
-		record_type = SongRecord.RecordType.MDLM_001
-	)
+	try:
+		return SongRecord.objects.get(song=song_object,
+			song_name = assign_key_no_pop(data, '2'),
+			artist_id = assign_key_no_pop(data, '3'),
+			artist_name = assign_key_no_pop(data, '4'),
+			size = assign_key_no_pop(data, '5'),
+			youtube_id = assign_key_no_pop(data, '6'),
+			youtube_channel = assign_key_no_pop(data, '7'),
+			is_verified = assign_key_no_pop(data, '8'),
+			link = assign_key_no_pop(data, '10'),
+			record_type = SongRecord.RecordType.MDLM_001
+		)
+	except:
+		record = SongRecord(song=song_object,
+			song_name = assign_key(data, '2'),
+			artist_id = assign_key(data, '3'),
+			artist_name = assign_key(data, '4'),
+			size = assign_key(data, '5'),
+			youtube_id = assign_key(data, '6'),
+			youtube_channel = assign_key(data, '7'),
+			is_verified = assign_key(data, '8'),
+			link = assign_key(data, '10'),
+			record_type = SongRecord.RecordType.MDLM_001,
+			unprocessed_data = data
+		)
+		record.save()
+		return record
 
 def process_songs_in_mdlm(mdlm, save_file):
-	records = []
 	for song, data in mdlm.items():
 		try:
 			song_object = Song.objects.get(online_id=song)
@@ -188,9 +196,7 @@ def process_songs_in_mdlm(mdlm, save_file):
 			song_object.save()
 
 		record = create_song_record_from_data(data, song_object, save_file)
-		record.unprocessed_data = data
-		records.append(record)
-	SongRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
+		record.save_file.add(save_file)
 
 def test():
 	data_path = get_data_path()
