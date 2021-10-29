@@ -6,14 +6,13 @@ import os
 import base64
 import gzip
 
-def get_game_manager_bytes():
-	game_manager_file = open(os.path.expanduser('~/testdata/gdhistory/CCGameManager_21.dat'), "rb")
+def get_game_manager_bytes(game_manager_file):
+	#game_manager_file = open(os.path.expanduser('~/testdata/gdhistory/CCGameManager_21.dat'), "rb")
 	game_manager_bytes = game_manager_file.read()
 	game_manager_file.close()
 	return bytearray(game_manager_bytes)
 
 def xor_game_manager_if_needed(game_manager_bytes):
-	game_manager_bytes = get_game_manager_bytes()
 	if game_manager_bytes[:5] == b'C?xBJ':
 		i = 0
 		for byte in game_manager_bytes:
@@ -48,8 +47,8 @@ def remove_invalid_characters(game_manager_bytes):
 	game_manager_bytes = game_manager_bytes.replace(b'#',b'@@hash@@')
 	return game_manager_bytes
 
-def load_game_manager_plist():
-	gmb = get_game_manager_bytes()
+def load_game_manager_plist(file):
+	gmb = get_game_manager_bytes(file)
 	gmb = xor_game_manager_if_needed(gmb)
 	gmb = ungzip_if_needed(gmb)
 	gmb = robtop_plist_to_plist(gmb)
@@ -198,10 +197,10 @@ def process_songs_in_mdlm(mdlm, save_file):
 		record = create_song_record_from_data(data, song_object, save_file)
 		record.save_file.add(save_file)
 
-def test():
+def process_save_file(file):
 	data_path = get_data_path()
 
-	game_manager = load_game_manager_plist()
+	game_manager = load_game_manager_plist(file)
 
 	#stripping sensitive data
 	game_manager['GJA_002'] = '' #password

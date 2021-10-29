@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.db.models import Min
 
 from .models import Level, LevelRecord
+from .forms import UploadFileForm
 from . import ccUtils, serverUtils
 
 def index(request):
@@ -20,3 +21,11 @@ def view_level(request, online_id=None):
 	serverUtils.download_level(online_id)
 
 	return render(request, 'level.html', context)
+
+def upload(request):
+	form = UploadFileForm(request.POST or None, request.FILES or None)
+	if request.method == 'POST':
+		ccUtils.process_save_file(request.FILES['file'])
+		return HttpResponse("good")
+	else:
+		return render(request, 'upload.html')

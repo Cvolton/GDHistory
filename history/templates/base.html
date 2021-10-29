@@ -21,7 +21,7 @@
                   <a class="nav-link {% ifequal request.path '/' %} active {% endifequal %} " aria-current="page" href="{% url 'index' %}">Home</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link {% ifequal request.path '/upload' %} active {% endifequal %}" href="#">Submit</a>
+                  <a class="nav-link {% ifequal request.path '/upload' %} active {% endifequal %}" href="{% url 'upload' %}">Submit</a>
                 </li>
               </ul>
               	<form class="d-flex">
