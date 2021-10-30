@@ -26,14 +26,14 @@
 	<tbody>
 	{% for record in level_records %}
 		<tr>
-			<td>{{ record.oldest_created }}</td>
+			<td>{{ record.oldest_created|date:"N n, Y" }}</td>
 			<td>{{ record.record_type }}</td>
 			<td>{{ record.level_name }}</td>
 			<td>{{ record.downloads }}</td>
 			{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
 			<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
-Rating denominator: {{ record.rating }}">{{ record.rating_sum|div:record.rating }}</a></td>
+Rating denominator: {{ record.rating }}">{{ record.rating_sum|div:record.rating|floatformat }}</a></td>
 			<td>{{ record.stars }}</td>
 			<td>{{ record.level_version }}</td>
 			<td>{{ record.user_id }}</td>
