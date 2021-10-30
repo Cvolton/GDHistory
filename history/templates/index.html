@@ -1,4 +1,75 @@
 {% extends "base.html" %}
 {% block content %}
-<p class="lead">Welcome</p>
+<div class="row">
+	<p class="lead">Welcome</p>
+</div>
+<div class="row">
+	<div class="col">
+		<div class="card">
+			<div class="card-header lead">
+				Statistics
+			</div>
+			<div class="card-body">
+				<table class="table">
+					<tbody>
+						<tr>
+							<td>Levels in our database:</td>
+							<td>{{ level_count }}</td>
+						</tr>
+						<tr>
+							<td>Songs in our database:</td>
+							<td>{{ song_count }}</td>
+						</tr>
+						<tr>
+							<td>Submitted save files:</td>
+							<td>{{ save_count }}</td>
+						</tr>
+						<tr>
+							<td>Processed server requests:</td>
+							<td>{{ request_count }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card">
+			<div class="card-header lead">
+				Recently added levels
+			</div>
+			<div class="card-body">
+				<table class="table">
+					<tbody>
+						{% for record in recently_added %}
+						<tr>
+							<td>{{ record.level_name }}</td>
+							<td>{{ record.level.online_id }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="card">
+			<div class="card-header lead">
+				Recently updated levels
+			</div>
+			<div class="card-body">
+				<table class="table">
+					<tbody>
+						{% for record in recently_updated %}
+						<tr>
+							<td>{{ record.level_name }}</td>
+							<td>{{ record.level.online_id }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

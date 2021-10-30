@@ -2,12 +2,24 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Min
 
-from .models import Level, LevelRecord
+from .models import Level, LevelRecord, Song, SaveFile, ServerResponse
 from .forms import UploadFileForm
 from . import ccUtils, serverUtils
 
 def index(request):
-	return render(request, 'index.html')
+	recently_added = LevelRecord.objects.all().prefetch_related('level').order_by('-level__pk')[:4]
+	recently_updated = LevelRecord.objects.all().prefetch_related('level').order_by('-pk')[:4]
+
+	context = {
+		'recently_added': recently_added,
+		'recently_updated': recently_updated,
+		'level_count': Level.objects.count(),
+		'song_count': Song.objects.count(),
+		'save_count': SaveFile.objects.count(),
+		'request_count': ServerResponse.objects.count(),
+	}
+
+	return render(request, 'index.html', context)
 
 def view_level(request, online_id=None):
 	level_records = LevelRecord.objects.filter(level__online_id=online_id).prefetch_related('level').annotate(oldest_created=Min('save_file__created'))
