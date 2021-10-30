@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Min
@@ -33,10 +34,11 @@ def view_level(request, online_id=None):
 
 	return render(request, 'level.html', context)
 
+@login_required
 def upload(request):
 	form = UploadFileForm(request.POST or None, request.FILES or None)
-	if request.method == 'POST':
-		ccUtils.process_save_file(request.FILES['file'])
+	if request.method == 'POST' and form.is_valid():
+		ccUtils.process_save_file(request.FILES['file'], form.cleaned_data['time'])
 		return HttpResponse("good")
 	else:
 		return render(request, 'upload.html')

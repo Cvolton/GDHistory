@@ -5,6 +5,7 @@ import plistlib
 import os
 import base64
 import gzip
+from datetime import datetime
 
 def get_game_manager_bytes(game_manager_file):
 	#game_manager_file = open(os.path.expanduser('~/testdata/gdhistory/CCGameManager_21.dat'), "rb")
@@ -197,7 +198,7 @@ def process_songs_in_mdlm(mdlm, save_file):
 		record = create_song_record_from_data(data, song_object, save_file)
 		record.save_file.add(save_file)
 
-def process_save_file(file):
+def process_save_file(file, date):
 	data_path = get_data_path()
 
 	game_manager = load_game_manager_plist(file)
@@ -212,6 +213,7 @@ def process_save_file(file):
 		player_user_id=assign_key_no_pop(game_manager, 'playerUserID'),
 		player_account_id=assign_key_no_pop(game_manager, 'GJA_003'),
 		binary_version=assign_key_no_pop(game_manager, 'binaryVersion'),
+		created=datetime.strptime(date, '%Y-%m-%d')
 	)
 	save_file.save()
 
