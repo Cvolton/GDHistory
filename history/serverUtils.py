@@ -4,8 +4,6 @@ import requests
 
 def send_request(endpoint, data):
 
-	# With this code we are getting the level info of Test by DevExit
-
 	mandatory_data = {
 		"gameVersion": "21",
 		"binaryVersion": "35",
