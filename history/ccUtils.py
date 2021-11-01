@@ -1,10 +1,11 @@
-from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord
+from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString
 from .utils import assign_key, get_data_path, assign_key_no_pop
 
 import plistlib
 import os
 import base64
 import gzip
+import hashlib
 from datetime import datetime
 
 def get_game_manager_bytes(game_manager_file):
@@ -131,9 +132,20 @@ def create_level_record_from_data(data, level_object, record_type):
 		record.save()
 		return record
 
-def process_levels_in_glm(glm, record_type, save_file):
-	data_path = get_data_path()
+def create_level_string(level_string):
+	sha256 = hashlib.sha256(level_string.encode('utf-8')).hexdigest()
+	try:
+		return LevelString.objects.get(sha256=sha256)
+	except:
+		data_path = get_data_path()
+		record = LevelString(sha256=sha256)
+		record.save()
+		f = open(f"{data_path}/LevelString/{record.pk}", "w")
+		f.write(level_string)
+		f.close()
+		return record
 
+def process_levels_in_glm(glm, record_type, save_file):
 	#records = []
 	for level, data in glm.items():
 		level_id = data['k1'] if 'k1' in data else 0
@@ -148,13 +160,10 @@ def process_levels_in_glm(glm, record_type, save_file):
 		record.save_file.add(save_file)
 
 		if 'k4' in data:
-			levelString = assign_key(data, 'k4')
+			level_string = assign_key(data, 'k4')
+			record.level_string = create_level_string(level_string)
 			record.unprocessed_data = data
-			record.level_string_available = True
 			record.save()
-			f = open(f"{data_path}/LevelRecord/{record.pk}", "w")
-			f.write(levelString)
-			f.close()
 
 	#LevelRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
 

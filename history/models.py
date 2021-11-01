@@ -83,6 +83,9 @@ class Level(models.Model):
 	comment = models.TextField(blank=True, null=True)
 	is_public = models.BooleanField(blank=True, null=True) #this is to prevent leaking unlisted levels publicly
 
+class LevelString(models.Model):
+	sha256 = models.CharField(max_length=64, db_index=True)
+
 class LevelRecord(models.Model):
 
 	class RecordType(models.TextChoices):
@@ -109,6 +112,13 @@ class LevelRecord(models.Model):
 
 	server_response = models.ForeignKey(
 		ServerResponse,
+		on_delete=models.CASCADE,
+		blank=True, null=True,
+		db_index=True,
+	)
+
+	level_string = models.ForeignKey(
+		LevelString,
 		on_delete=models.CASCADE,
 		blank=True, null=True,
 		db_index=True,
@@ -145,8 +155,6 @@ class LevelRecord(models.Model):
 	demon_type = models.IntegerField(blank=True, null=True) #k76
 	seconds_spent_editing = models.IntegerField(blank=True, null=True) #k80
 	seconds_spent_editing_copies = models.IntegerField(blank=True, null=True) #k81
-
-	level_string_available = models.BooleanField(default=False) #k4
 
 	unprocessed_data = models.JSONField() #this field should only be used for archival purposes, do not pull data from this directly in production
 
