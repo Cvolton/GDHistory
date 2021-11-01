@@ -3,13 +3,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Min
 
-from .models import Level, LevelRecord, Song, SaveFile, ServerResponse
+from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString
 from .forms import UploadFileForm
 from . import ccUtils, serverUtils
 
 def index(request):
-	recently_added = LevelRecord.objects.all().prefetch_related('level').order_by('-level__pk')[:4]
-	recently_updated = LevelRecord.objects.all().prefetch_related('level').order_by('-pk')[:4]
+	recently_added = LevelRecord.objects.all().prefetch_related('level').order_by('-level__pk')[:5]
+	recently_updated = LevelRecord.objects.all().prefetch_related('level').order_by('-pk')[:5]
 
 	context = {
 		'recently_added': recently_added,
@@ -18,6 +18,7 @@ def index(request):
 		'song_count': Song.objects.count(),
 		'save_count': SaveFile.objects.count(),
 		'request_count': ServerResponse.objects.count(),
+		'level_string_count': LevelString.objects.count(),
 	}
 
 	return render(request, 'index.html', context)
