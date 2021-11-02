@@ -21,6 +21,7 @@
 			<th>User ID</th>
 			<th>Username</th>
 			<th>Account ID</th>
+			<th>Level String Available</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -39,6 +40,7 @@ Rating denominator: {{ record.rating }}">{{ record.rating_sum|div:record.rating|
 			<td>{{ record.user_id }}</td>
 			<td>{{ record.username }}</td>
 			<td>{{ record.account_id }}</td>
+			<td>{% if record.level_string %}✅{% else %}❌{% endif %}</td>
 		</tr>
 	{% endfor %}
 	</tbody>
