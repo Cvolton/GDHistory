@@ -63,9 +63,13 @@ def search(request):
 			).order_by('-oldest_created').order_by('-downloads').distinct().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
 		#level_records = LevelRecord.objects.filter(level__online_id=query).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created')).order_by('-oldest_created')
 
-		print(levels[0].levelrecord_set)
+		if len(levels) < 1:
+			return render(request, 'error.html', {'error': 'No results found'})
+
 		context = {
 			'query': query,
 			'level_records': levels,
 		}
 		return render(request, 'search.html', context)
+	else:
+		return render(request, 'error.html', {'error': 'Invalid search query'})
