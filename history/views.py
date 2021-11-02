@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.db.models import Min
+from django.db.models import Min, Max, Q
 
 from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString
-from .forms import UploadFileForm
+from .forms import UploadFileForm, SearchForm
 from . import ccUtils, serverUtils
 
 def index(request):
@@ -43,3 +43,29 @@ def upload(request):
 		return HttpResponse("good")
 	else:
 		return render(request, 'upload.html')
+
+def search(request):
+	form = SearchForm(request.GET or None)
+
+	if request.method == 'GET' and form.is_valid():
+		query = form.cleaned_data['q']
+
+		query_filter = Q(levelrecord__level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(levelrecord__level_name__icontains=query)
+
+		levels = Level.objects.filter(query_filter).annotate(
+			oldest_created=Max('levelrecord__save_file__created'),
+			downloads=Max('levelrecord__downloads'),
+			likes=Max('levelrecord__likes'),
+			rating_sum=Max('levelrecord__rating_sum'),
+			rating=Max('levelrecord__rating'),
+			stars=Max('levelrecord__stars'),
+			level_string=Max('levelrecord__level_string__pk'),
+			).order_by('-oldest_created').order_by('-downloads').distinct().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
+		#level_records = LevelRecord.objects.filter(level__online_id=query).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created')).order_by('-oldest_created')
+
+		print(levels[0].levelrecord_set)
+		context = {
+			'query': query,
+			'level_records': levels,
+		}
+		return render(request, 'search.html', context)
