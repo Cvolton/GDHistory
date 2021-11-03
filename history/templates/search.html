@@ -25,7 +25,7 @@
 			<tr onclick="window.location='{% url 'level' level.online_id %}';">
 				<td>{{ level.online_id }}</td>
 				<td>{{ record.level_name }}</td>
-				<td>{{ level.oldest_created|date:"N n, Y" }}</td>
+				<td>{{ level.oldest_created|date:"N j, Y" }}</td>
 				<td>{{ level.downloads }}</td>
 				<td>{{ level.likes }}</td>
 				<td>{{ level.rating_sum|div:level.rating|floatformat }}</td>
