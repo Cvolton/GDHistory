@@ -15,49 +15,51 @@
 	{% endif %}
 </div>
 <div class="row">
-	<div class="col">
+	<div class="col table-dark" style="background-color: #2c3034; border-radius: 25px">
 		{% with level_records|first as record %}
-		<table class="table table-dark table-striped">
-			<tr>
-				<th>Level Name</th>
-				<td class="align-right">{{ record.level_name }}</td>
-			</tr>
-			<tr>
-				<th>Author</th>
-				<td class="align-right">{{ record.username }}</td>
-			</tr>
-			<tr>
-				<th>Downloads</th>
-				<td class="align-right">{{ record.downloads }}</td>
-			</tr>
-			<tr>
-				<th>Likes</th>
-				<td class="align-right">{{ record.likes }}</td>
-			</tr>
-			<tr>
-				<th>Difficulty</th>
-				<td class="align-right">{{ record.rating_sum|div:record.rating|floatformat }}</td>
-			</tr>
-			<tr>
-				<th>Stars</th>
-				<td class="align-right">{{ record.stars }}</td>
-			</tr>
-			<tr>
-				<th>Stored level records</th>
-				<td class="align-right">{{ level_records.count }}</td>
-			</tr>
-			<tr>
-				<th>Stored level strings</th>
-				<td class="align-right">0</td><!--TODO-->
-			</tr>
-		</table>
+		<div class="py-2">
+			<table class="table table-dark table-striped">
+				<tr>
+					<th>Level Name</th>
+					<td class="align-right">{{ record.level_name }}</td>
+				</tr>
+				<tr>
+					<th>Author</th>
+					<td class="align-right">{{ record.username }}</td>
+				</tr>
+				<tr>
+					<th>Downloads</th>
+					<td class="align-right">{{ record.downloads }}</td>
+				</tr>
+				<tr>
+					<th>Likes</th>
+					<td class="align-right">{{ record.likes }}</td>
+				</tr>
+				<tr>
+					<th>Difficulty</th>
+					<td class="align-right">{{ record.rating_sum|div:record.rating|floatformat }}</td>
+				</tr>
+				<tr>
+					<th>Stars</th>
+					<td class="align-right">{{ record.stars }}</td>
+				</tr>
+				<tr>
+					<th>Stored level records</th>
+					<td class="align-right">{{ level_records.count }}</td>
+				</tr>
+				<tr>
+					<th>Stored level strings</th>
+					<td class="align-right">0</td><!--TODO-->
+				</tr>
+			</table>
+		</div>
 		{% endwith %}
 	</div>
 	<div class="col-8">
 		<img style="max-width:100%;max-height:100%;border-radius: 25px;" src="https://i.imgur.com/l2UYQgz.png">
 	</div>
 </div>
-<div class="row">
+<div class="row pt-2">
 	<ul class="nav nav-tabs">
 		<li class="nav-item">
 			<a class="nav-link active" aria-current="page" href="#">2015</a>
