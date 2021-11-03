@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load mathfilters %}
+{% load tags %}
 {% block content %}
 <style>
 	.align-right {
@@ -40,7 +41,7 @@
 				</tr>
 				<tr>
 					<th>Difficulty</th>
-					<td class="align-right">{{ record.rating_sum|div:record.rating|floatformat }}</td>
+					<td class="align-right">{% difficulty record.rating_sum record.rating record.demon record.auto %}</td>
 				</tr>
 				<tr>
 					<th>Stars</th>
@@ -119,7 +120,7 @@
 				{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
 				<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
-Rating denominator: {{ record.rating }}">{{ record.rating_sum|div:record.rating|floatformat }}</a></td>
+Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto %}</a></td>
 				<td>{{ record.stars }}</td>
 				<td>{{ record.level_version }}</td>
 				<td>{{ record.user_id }}</td>
