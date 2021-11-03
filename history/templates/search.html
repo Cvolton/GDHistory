@@ -1,6 +1,25 @@
 {% extends "base.html" %}
 {% load mathfilters %}
 {% block content %}
+<style>
+td > a:first-child {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	z-index: 0;
+	padding: .5rem !important;
+}
+td > a:first-child:focus {
+	outline: 0;
+}
+td {
+	padding: 0px !important;
+}
+tr:hover, tr:focus-within {
+	background: #f2f3ff;
+	outline: none;
+}
+</style>
 <div class="row">
 	<p class="lead">Showing results for {{ query }}</p>
 </div>
@@ -22,16 +41,17 @@
 		<tbody>
 		{% for level in level_records %}
 			{% with level.levelrecord_set.all|first as record %}
-			<tr onclick="window.location='{% url 'level' level.online_id %}';">
-				<td>{{ level.online_id }}</td>
-				<td>{{ record.level_name }}</td>
-				<td>{{ level.oldest_created|date:"N j, Y" }}</td>
-				<td>{{ level.downloads }}</td>
-				<td>{{ level.likes }}</td>
-				<td>{{ level.rating_sum|div:level.rating|floatformat }}</td>
-				<td>{{ level.stars }}</td>
-				<td>{{ record.username }}</td>
-				<td>{% if level.level_string %}✅{% else %}❌{% endif %}</td>
+			<!-- onclick="window.location='{% url 'level' level.online_id %}';" -->
+			<tr>
+				<td><a href="{% url 'level' level.online_id %}">{{ level.online_id }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ record.level_name }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.oldest_created|date:"N j, Y" }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.downloads }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.likes }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.rating_sum|div:level.rating|floatformat }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.stars }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ record.username }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.level_string %}✅{% else %}❌{% endif %}</a></td>
 			</tr>
 			{% endwith %}
 		{% endfor %}
