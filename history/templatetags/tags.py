@@ -11,7 +11,7 @@ def difficulty(rating_sum, rating, demon, auto):
 	if demon:
 		return "Demon"
 
-	if rating == 0:
+	if rating == 0 or rating is None or rating_sum == 0 or rating_sum is None:
 		return "N/A"
 
 	diff = rating_sum / rating

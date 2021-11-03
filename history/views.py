@@ -59,6 +59,8 @@ def search(request):
 			rating_sum=Max('levelrecord__rating_sum'),
 			rating=Max('levelrecord__rating'),
 			stars=Max('levelrecord__stars'),
+			demon=Max('levelrecord__demon'),
+			auto=Max('levelrecord__auto'),
 			level_string=Max('levelrecord__level_string__pk'),
 			).order_by('-oldest_created').order_by('-downloads').distinct().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
 		#level_records = LevelRecord.objects.filter(level__online_id=query).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created')).order_by('-oldest_created')

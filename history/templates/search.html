@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load mathfilters %}
+{% load tags %}
 {% block content %}
 <style>
 td > a:first-child {
@@ -48,7 +49,7 @@ tr:hover, tr:focus-within {
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.oldest_created|date:"N j, Y" }}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.downloads }}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.likes }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.rating_sum|div:level.rating|floatformat }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% difficulty level.rating_sum level.rating level.demon level.auto %}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.stars }}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ record.username }}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.level_string %}✅{% else %}❌{% endif %}</a></td>
