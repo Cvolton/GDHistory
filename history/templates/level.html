@@ -1,49 +1,124 @@
 {% extends "base.html" %}
 {% load mathfilters %}
 {% block content %}
-<p class="lead">Showing data for level {{ online_id }}</p>
-{% if level.comment %}
-  <div class="alert alert-info" role="alert">
-    {{ level.comment }}
-  </div>
-{% endif %}
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th>Time saved</th>
-			<th>Source</th>
-			<th>Level name</th>
-			<th>Downloads</th>
-			<th>Likes</th>
-			<th>Difficulty</th>
-			<th>Stars</th>
-			<th>Level version</th>
-			<th>User ID</th>
-			<th>Username</th>
-			<th>Account ID</th>
-			<th>Level String Available</th>
-		</tr>
-	</thead>
-	<tbody>
-	{% for record in level_records %}
-		<tr>
-			<td>{{ record.oldest_created|date:"N n, Y" }}</td>
-			<td>{{ record.record_type }}</td>
-			<td>{{ record.level_name }}</td>
-			<td>{{ record.downloads }}</td>
-			{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
+<style>
+	.align-right {
+		text-align: right;
+	}
+</style>
+<div class="row">
+	<p class="lead">Showing data for level {{ online_id }}</p>
+	{% if level.comment %}
+	  <div class="alert alert-info" role="alert">
+	    {{ level.comment }}
+	  </div>
+	{% endif %}
+</div>
+<div class="row">
+	<div class="col">
+		{% with level_records|first as record %}
+		<table class="table table-dark table-striped">
+			<tr>
+				<th>Level Name</th>
+				<td class="align-right">{{ record.level_name }}</td>
+			</tr>
+			<tr>
+				<th>Author</th>
+				<td class="align-right">{{ record.username }}</td>
+			</tr>
+			<tr>
+				<th>Downloads</th>
+				<td class="align-right">{{ record.downloads }}</td>
+			</tr>
+			<tr>
+				<th>Likes</th>
+				<td class="align-right">{{ record.likes }}</td>
+			</tr>
+			<tr>
+				<th>Difficulty</th>
+				<td class="align-right">{{ record.rating_sum|div:record.rating|floatformat }}</td>
+			</tr>
+			<tr>
+				<th>Stars</th>
+				<td class="align-right">{{ record.stars }}</td>
+			</tr>
+			<tr>
+				<th>Stored level records</th>
+				<td class="align-right">{{ level_records.count }}</td>
+			</tr>
+			<tr>
+				<th>Stored level strings</th>
+				<td class="align-right">0</td><!--TODO-->
+			</tr>
+		</table>
+		{% endwith %}
+	</div>
+	<div class="col-8">
+		<img style="max-width:100%;max-height:100%;border-radius: 25px;" src="https://i.imgur.com/l2UYQgz.png">
+	</div>
+</div>
+<div class="row">
+	<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a class="nav-link active" aria-current="page" href="#">2015</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#">2016</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#">2017</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">2018</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#">2019</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#">2020</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#">2021</a>
+		</li>
+	</ul>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Time saved</th>
+				<th>Source</th>
+				<th>Level name</th>
+				<th>Downloads</th>
+				<th>Likes</th>
+				<th>Difficulty</th>
+				<th>Stars</th>
+				<th>Level version</th>
+				<th>User ID</th>
+				<th>Username</th>
+				<th>Account ID</th>
+				<th>Level String Available</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for record in level_records %}
+			<tr>
+				<td>{{ record.oldest_created|date:"N n, Y" }}</td>
+				<td>{{ record.record_type }}</td>
+				<td>{{ record.level_name }}</td>
+				<td>{{ record.downloads }}</td>
+				{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
-			<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
+				<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
 Rating denominator: {{ record.rating }}">{{ record.rating_sum|div:record.rating|floatformat }}</a></td>
-			<td>{{ record.stars }}</td>
-			<td>{{ record.level_version }}</td>
-			<td>{{ record.user_id }}</td>
-			<td>{{ record.username }}</td>
-			<td>{{ record.account_id }}</td>
-			<td>{% if record.level_string %}✅{% else %}❌{% endif %}</td>
-		</tr>
-	{% endfor %}
-	</tbody>
-</table>
+				<td>{{ record.stars }}</td>
+				<td>{{ record.level_version }}</td>
+				<td>{{ record.user_id }}</td>
+				<td>{{ record.username }}</td>
+				<td>{{ record.account_id }}</td>
+				<td>{% if record.level_string %}✅{% else %}❌{% endif %}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
 <!-- {{ level.pk }} -->
 {% endblock %}

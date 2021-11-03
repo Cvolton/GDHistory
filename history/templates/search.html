@@ -1,38 +1,42 @@
 {% extends "base.html" %}
 {% load mathfilters %}
 {% block content %}
-<p class="lead">Showing results for {{ query }}</p>
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th>Level ID</th>
-			<th>Level name</th>
-			<th>Last record update</th>
-			<th>Downloads</th>
-			<th>Likes</th>
-			<th>Difficulty</th>
-			<th>Stars</th>
-			<th>Username</th>
-			<th>Level String Available</th>
-		</tr>
-	</thead>
-	<tbody>
-	{% for level in level_records %}
-		{% with level.levelrecord_set.all|first as record %}
-		<tr onclick="window.location='{% url 'level' level.online_id %}';">
-			<td>{{ level.online_id }}</td>
-			<td>{{ record.level_name }}</td>
-			<td>{{ level.oldest_created }}</td>
-			<td>{{ level.downloads }}</td>
-			<td>{{ level.likes }}</td>
-			<td>{{ level.rating_sum|div:level.rating|floatformat }}</td>
-			<td>{{ level.stars }}</td>
-			<td>{{ record.username }}</td>
-			<td>{% if level.level_string %}✅{% else %}❌?{% endif %}</td>
-		</tr>
-		{% endwith %}
-	{% endfor %}
-	</tbody>
-</table>
+<div class="row">
+	<p class="lead">Showing results for {{ query }}</p>
+</div>
+<div class="row">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Level ID</th>
+				<th>Level name</th>
+				<th>Last record update</th>
+				<th>Downloads</th>
+				<th>Likes</th>
+				<th>Difficulty</th>
+				<th>Stars</th>
+				<th>Username</th>
+				<th>Level String Available</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for level in level_records %}
+			{% with level.levelrecord_set.all|first as record %}
+			<tr onclick="window.location='{% url 'level' level.online_id %}';">
+				<td>{{ level.online_id }}</td>
+				<td>{{ record.level_name }}</td>
+				<td>{{ level.oldest_created|date:"N n, Y" }}</td>
+				<td>{{ level.downloads }}</td>
+				<td>{{ level.likes }}</td>
+				<td>{{ level.rating_sum|div:level.rating|floatformat }}</td>
+				<td>{{ level.stars }}</td>
+				<td>{{ record.username }}</td>
+				<td>{% if level.level_string %}✅{% else %}❌{% endif %}</td>
+			</tr>
+			{% endwith %}
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
 <!-- {{ level.pk }} -->
 {% endblock %}
