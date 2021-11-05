@@ -41,7 +41,7 @@ def view_level(request, online_id=None):
 
 	print(records)
 
-	context = {'level_records': records, 'first_record': level_records[0], 'online_id': online_id, 'years': years}
+	context = {'level_records': records, 'first_record': level_records[0], 'online_id': online_id, 'years': years, 'records_count': level_records.count()}
 
 	#serverUtils.download_level(online_id)
 
