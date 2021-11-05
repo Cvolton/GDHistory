@@ -29,7 +29,7 @@ def view_level(request, online_id=None):
 	if len(level_records) == 0:
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
-	context = {'level_records': level_records, 'level': level_records[0].level, 'online_id': online_id}
+	context = {'level_records': level_records, 'level': level_records[0].level, 'online_id': online_id, 'years': [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]}
 
 	serverUtils.download_level(online_id)
 

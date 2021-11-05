@@ -64,73 +64,65 @@
 	</div>
 </div>
 <div class="row pt-2">
-	<ul class="nav nav-tabs">
-		<li class="nav-item">
-			<a class="nav-link" href="#">2013</a>
+
+	<ul class="nav nav-tabs" id="myTab" role="tablist">
+		<li class="nav-item" role="presentation">
+		<button class="nav-link active" id="y2013-tab" data-bs-toggle="tab" data-bs-target="#y2013" type="button" role="tab" aria-controls="y2013" aria-selected="true">2013</button>
 		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="#">2014</a>
+		{% for year in years %}
+		<li class="nav-item" role="presentation">
+		<button class="nav-link" id="y{{year}}-tab" data-bs-toggle="tab" data-bs-target="#y{{year}}" type="button" role="tab" aria-controls="y{{year}}" aria-selected="false">{{year}}</button>
 		</li>
-		<li class="nav-item">
-			<a class="nav-link active" aria-current="page" href="#">2015</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="#">2016</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="#">2017</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">2018</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="#">2019</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="#">2020</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link" href="#">2021</a>
-		</li>
-	</ul>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Time saved</th>
-				<th>Source</th>
-				<th>Level name</th>
-				<th>Downloads</th>
-				<th>Likes</th>
-				<th>Difficulty</th>
-				<th>Stars</th>
-				<th>Level version</th>
-				<th>User ID</th>
-				<th>Username</th>
-				<th>Account ID</th>
-				<th>Level String Available</th>
-			</tr>
-		</thead>
-		<tbody>
-		{% for record in level_records %}
-			<tr>
-				<td>{{ record.oldest_created|date:"N j, Y" }}</td>
-				<td>{{ record.record_type }}</td>
-				<td>{{ record.level_name }}</td>
-				<td>{{ record.downloads }}</td>
-				{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
-Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
-				<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
-Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto %}</a></td>
-				<td>{{ record.stars }}</td>
-				<td>{{ record.level_version }}</td>
-				<td>{{ record.user_id }}</td>
-				<td>{{ record.username }}</td>
-				<td>{{ record.account_id }}</td>
-				<td>{% if record.level_string %}✅{% else %}❌{% endif %}</td>
-			</tr>
 		{% endfor %}
-		</tbody>
-	</table>
+	</ul>
+	<div class="tab-content" id="myTabContent" style="padding-left: 0px; padding-right: 0px">
+		<div class="tab-pane fade show active" id="y2013" role="tabpanel" aria-labelledby="y2013-tab">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Time saved</th>
+						<th>Source</th>
+						<th>Level name</th>
+						<th>Downloads</th>
+						<th>Likes</th>
+						<th>Difficulty</th>
+						<th>Stars</th>
+						<th>Level version</th>
+						<th>User ID</th>
+						<th>Username</th>
+						<th>Account ID</th>
+						<th>Level String Available</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for record in level_records %}
+					<tr>
+						<td>{{ record.oldest_created|date:"N j, Y" }}</td>
+						<td>{{ record.record_type }}</td>
+						<td>{{ record.level_name }}</td>
+						<td>{{ record.downloads }}</td>
+						{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
+Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
+						<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
+Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto %}</a></td>
+						<td>{{ record.stars }}</td>
+						<td>{{ record.level_version }}</td>
+						<td>{{ record.user_id }}</td>
+						<td>{{ record.username }}</td>
+						<td>{{ record.account_id }}</td>
+						<td>{% if record.level_string %}✅{% else %}❌{% endif %}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		{% for year in years %}
+		<div class="tab-pane fade" id="y{{year}}" role="tabpanel" aria-labelledby="y{{year}}-tab">
+			...
+		</div>
+		{% endfor %}
+	</div>
+
 </div>
 <!-- {{ level.pk }} -->
 {% endblock %}
