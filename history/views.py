@@ -29,9 +29,21 @@ def view_level(request, online_id=None):
 	if len(level_records) == 0:
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
-	context = {'level_records': level_records, 'level': level_records[0].level, 'online_id': online_id, 'years': [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]}
+	records = {}
+	for record in level_records:
+		if record.oldest_created.year not in records:
+			records[record.oldest_created.year] = []
+		records[record.oldest_created.year].append(record)
 
-	serverUtils.download_level(online_id)
+	years = []
+	for i in range(min(records), max(records)+1):
+		years.append(i)
+
+	print(records)
+
+	context = {'level_records': records, 'first_record': level_records[0], 'online_id': online_id, 'years': years}
+
+	#serverUtils.download_level(online_id)
 
 	return render(request, 'level.html', context)
 

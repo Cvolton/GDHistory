@@ -33,3 +33,7 @@ def difficulty(rating_sum, rating, demon, auto):
 
 	if diff < 5.5:
 		return "Insane"
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
