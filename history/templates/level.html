@@ -93,7 +93,7 @@
 				<tbody>
 					{% for record in level_records|get_item:year %}
 					<tr>
-						<td>{{ record.oldest_created|date:"N j, Y" }}</td>
+						<td>{{ record.real_date|date:"N j, Y" }}</td>
 						<td>{{ record.record_type }}</td>
 						<td>{{ record.level_name }}</td>
 						<td>{{ record.downloads }}</td>

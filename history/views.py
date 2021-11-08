@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Min, Max, Q
+from django.db.models.functions import Coalesce
 
 from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString
 from .forms import UploadFileForm, SearchForm
@@ -24,19 +25,18 @@ def index(request):
 	return render(request, 'index.html', context)
 
 def view_level(request, online_id=None):
-	level_records = LevelRecord.objects.filter(level__online_id=online_id).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created')).order_by('-oldest_created')
+	level_records = LevelRecord.objects.filter(level__online_id=online_id).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
 
 	if len(level_records) == 0:
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
 	records = {}
 	for record in level_records:
-		date = record.server_response.created if record.server_response is not None else record.oldest_created
-		if date is None:
+		if record.real_date is None:
 			continue
-		if date.year not in records:
-			records[date.year] = []
-		records[date.year].append(record)
+		if record.real_date.year not in records:
+			records[record.real_date.year] = []
+		records[record.real_date.year].append(record)
 
 	years = []
 	for i in range(min(records), max(records)+1):
