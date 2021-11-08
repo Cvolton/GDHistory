@@ -208,7 +208,7 @@ def process_save_file(file, date):
 		player_user_id=assign_key_no_pop(game_manager, 'playerUserID'),
 		player_account_id=assign_key_no_pop(game_manager, 'GJA_003'),
 		binary_version=assign_key_no_pop(game_manager, 'binaryVersion'),
-		created=datetime.strptime(date, '%Y-%m-%d')
+		created=date
 	)
 	save_file.save()
 
