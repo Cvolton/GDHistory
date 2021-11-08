@@ -31,9 +31,12 @@ def view_level(request, online_id=None):
 
 	records = {}
 	for record in level_records:
-		if record.oldest_created.year not in records:
-			records[record.oldest_created.year] = []
-		records[record.oldest_created.year].append(record)
+		date = record.server_response.created if record.server_response is not None else record.oldest_created
+		if date is None:
+			continue
+		if date.year not in records:
+			records[date.year] = []
+		records[date.year].append(record)
 
 	years = []
 	for i in range(min(records), max(records)+1):

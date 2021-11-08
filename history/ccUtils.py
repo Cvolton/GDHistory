@@ -1,11 +1,10 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString
-from .utils import assign_key, get_data_path, assign_key_no_pop
+from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string
 
 import plistlib
 import os
 import base64
 import gzip
-import hashlib
 from datetime import datetime
 
 def get_game_manager_bytes(game_manager_file):
@@ -130,19 +129,6 @@ def create_level_record_from_data(data, level_object, record_type):
 			unprocessed_data = data
 		)
 		record.save()
-		return record
-
-def create_level_string(level_string):
-	sha256 = hashlib.sha256(level_string.encode('utf-8')).hexdigest()
-	try:
-		return LevelString.objects.get(sha256=sha256)
-	except:
-		data_path = get_data_path()
-		record = LevelString(sha256=sha256)
-		record.save()
-		f = open(f"{data_path}/LevelString/{record.pk}", "w")
-		f.write(level_string)
-		f.close()
 		return record
 
 def process_levels_in_glm(glm, record_type, save_file):

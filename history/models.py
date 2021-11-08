@@ -31,8 +31,10 @@ class SaveFile(models.Model):
 	#also raw save file with password stripped out stored on the side in a file
 
 class ServerResponse(models.Model):
+
 	created = models.DateTimeField(default=datetime.now)
 	unprocessed_post_parameters = models.JSONField()
+	endpoint = models.CharField(max_length=32)
 
 class Song(models.Model):
 	online_id = models.IntegerField(unique=True)
@@ -155,6 +157,8 @@ class LevelRecord(models.Model):
 	demon_type = models.IntegerField(blank=True, null=True) #k76
 	seconds_spent_editing = models.IntegerField(blank=True, null=True) #k80
 	seconds_spent_editing_copies = models.IntegerField(blank=True, null=True) #k81
+	relative_upload_date = models.TextField(blank=True, null=True) #28
+	relative_update_date = models.TextField(blank=True, null=True) #29
 
 	unprocessed_data = models.JSONField() #this field should only be used for archival purposes, do not pull data from this directly in production
 
