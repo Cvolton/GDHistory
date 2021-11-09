@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.db.models import Min, Max, Q
 from django.db.models.functions import Coalesce
 
+from datetime import datetime
+
 from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString
 from .forms import UploadFileForm, SearchForm
 from . import ccUtils, serverUtils
