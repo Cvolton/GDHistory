@@ -98,7 +98,6 @@
 						<td>{{ record.level_name }}</td>
 						<td>{{ record.downloads }}</td>
 						{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
-					}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
 						<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
 Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto %}</a></td>
