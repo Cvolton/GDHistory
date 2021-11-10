@@ -1,6 +1,7 @@
 import os
 import html
 import hashlib
+import base64
 from w3lib.html import replace_entities
 
 from .models import LevelString
@@ -37,3 +38,10 @@ def create_level_string(level_string):
 		f.write(level_string)
 		f.close()
 		return record
+
+def robtop_unxor(string, key):
+	key = str(key)
+	string = bytearray(base64.b64decode(string, altchars='-_'))
+	for i in range(0, len(string)):
+		string[i] ^= ord(key[i%len(key)])
+	return string.decode('utf-8')

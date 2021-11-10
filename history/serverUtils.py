@@ -1,5 +1,7 @@
-from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string
+from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor
 from .models import ServerResponse, Level, LevelRecord
+
+from .constants import Constants
 
 import requests
 
@@ -80,7 +82,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			relative_update_date = assign_key_no_pop(level_data, 29),
 			record_type = record_type,
 			#username = not included,
-			#password = assign_key_no_pop(level_data, 27),
+			password = robtop_unxor(assign_key_no_pop(level_data, 27), Constants.PASSWORD_KEY),
 			#account_id = not included,
 		)
 	except:
@@ -102,7 +104,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			stars = assign_key(level_data, 18),
 			feature_score = assign_key(level_data, 19),
 			auto = assign_key(level_data, 25),
-			#password = assign_key(level_data, 27),
+			password = robtop_unxor(assign_key(level_data, 27), Constants.PASSWORD_KEY),
 			two_player = assign_key(level_data, 31),
 			custom_song = assign_key(level_data, 35),
 			objects_count = assign_key(level_data, 45),
