@@ -90,3 +90,6 @@ def search(request):
 		return render(request, 'search.html', context)
 	else:
 		return render(request, 'error.html', {'error': 'Invalid search query'})
+
+def login_page_placeholder(request):
+		return render(request, 'error.html', {'error': 'This feature is not available yet.'})

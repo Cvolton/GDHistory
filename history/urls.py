@@ -8,4 +8,5 @@ urlpatterns = [
     path('upload', views.upload, name='upload'),
     path('search', views.search, name='search'),
     path('level/<online_id>', views.view_level, name='level'),
+    path('accounts/login/', views.login_page_placeholder, name='login'),
 ]
