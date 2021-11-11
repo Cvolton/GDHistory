@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load mathfilters %}
 {% load tags %}
+{% block title %}{{ first_record.level_name }}{% endblock title %}
 {% block content %}
 <style>
 	.align-right {
