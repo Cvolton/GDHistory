@@ -3,6 +3,7 @@ from .models import ServerResponse, Level, LevelRecord
 
 from .constants import Constants
 
+from datetime import datetime
 import requests
 
 class RequestResult:
@@ -128,6 +129,9 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 		return record
 
 def download_level(online_id):
+	if LevelRecord.objects.filter(level__online_id=online_id, server_response__created__gte=datetime.today().replace(day=1)).count() > 0:
+		return
+
 	post_parameters = {'levelID': online_id, 'extras': '1'}
 	request_result = send_request('downloadGJLevel22', post_parameters)
 	response = request_result.response_text
