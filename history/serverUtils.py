@@ -49,7 +49,13 @@ def response_to_dict(response):
 	return result
 
 def create_level_record_from_data(level_data, level_object, record_type, server_response):
-	try: #TODO: merge the 2 cases #TODO: store level passwords
+	level_password = assign_key(level_data, 27)
+	try:
+		level_password = int(level_password)
+	except:
+		level_password = robtop_unxor(assign_key(level_data, 27), Constants.PASSWORD_KEY)
+
+	try: #TODO: merge the 2 cases
 		return LevelRecord.objects.get(level=level_object,
 			level_name = assign_key_no_pop(level_data, 2),
 			description = assign_key_no_pop(level_data, 3),
@@ -83,7 +89,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			relative_update_date = assign_key_no_pop(level_data, 29),
 			record_type = record_type,
 			#username = not included,
-			password = robtop_unxor(assign_key_no_pop(level_data, 27), Constants.PASSWORD_KEY),
+			password = level_password,
 			#account_id = not included,
 		)
 	except:
@@ -105,7 +111,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			stars = assign_key(level_data, 18),
 			feature_score = assign_key(level_data, 19),
 			auto = assign_key(level_data, 25),
-			password = robtop_unxor(assign_key(level_data, 27), Constants.PASSWORD_KEY),
+			password = level_password,
 			two_player = assign_key(level_data, 31),
 			custom_song = assign_key(level_data, 35),
 			objects_count = assign_key(level_data, 45),
