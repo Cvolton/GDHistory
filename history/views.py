@@ -8,7 +8,7 @@ from datetime import datetime
 
 from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString
 from .forms import UploadFileForm, SearchForm
-from . import ccUtils, serverUtils
+from . import ccUtils, serverUtils, tasks
 
 def index(request):
 	recently_added = LevelRecord.objects.all().prefetch_related('level').order_by('-level__pk')[:5]
@@ -46,7 +46,7 @@ def view_level(request, online_id=None):
 
 	context = {'level_records': records, 'first_record': level_records[0], 'online_id': online_id, 'years': years, 'records_count': level_records.count()}
 
-	serverUtils.download_level(online_id)
+	tasks.download_level_task.delay(online_id)
 
 	return render(request, 'level.html', context)
 
