@@ -1,6 +1,8 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString
 from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string
 
+from celery import shared_task
+
 import plistlib
 import os
 import base64
@@ -193,7 +195,7 @@ def process_songs_in_mdlm(mdlm, save_file):
 		record = create_song_record_from_data(data, song_object, save_file)
 		record.save_file.add(save_file)
 
-def process_save_file(file, date):
+def upload_save_file(file, date):
 	data_path = get_data_path()
 
 	game_manager = load_game_manager_plist(file)
@@ -203,7 +205,7 @@ def process_save_file(file, date):
 	game_manager['GJA_004'] = '' #sessionID (2.2)
 
 	save_file = SaveFile(
-		author=HistoryUser.objects.get(user__username='Cvolton'),
+		author=HistoryUser.objects.get(user__username='Cvolton'), #TODO: do not hardcode Cvolton
 		player_name=assign_key_no_pop(game_manager, 'playerName'),
 		player_user_id=assign_key_no_pop(game_manager, 'playerUserID'),
 		player_account_id=assign_key_no_pop(game_manager, 'GJA_003'),
@@ -216,6 +218,18 @@ def process_save_file(file, date):
 	plistlib.dump(game_manager, f)
 	f.close()
 
+	process_save_file.delay(save_file.pk)
+
+@shared_task
+def process_save_file(save_id):
+	print(f"Processing save file {save_id}")
+
+	data_path = get_data_path()
+	save_file = SaveFile.objects.get(pk=save_id)
+
+	with open(f"{data_path}/SaveFile/{save_id}", "rb") as game_manager_file:
+		game_manager = plistlib.load(game_manager_file)
+
 	if 'GLM_03' in game_manager:
 		process_levels_in_glm(game_manager['GLM_03'], LevelRecord.RecordType.GLM_03, save_file)
 	if 'GLM_10' in game_manager:
@@ -224,3 +238,5 @@ def process_save_file(file, date):
 		process_levels_in_glm(game_manager['GLM_16'], LevelRecord.RecordType.GLM_16, save_file)
 	if 'MDLM_001' in game_manager:
 		process_songs_in_mdlm(game_manager['MDLM_001'], save_file)
+
+	print(f"Finished processing save file {save_id}")

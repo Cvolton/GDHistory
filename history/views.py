@@ -54,7 +54,7 @@ def view_level(request, online_id=None):
 def upload(request):
 	form = UploadFileForm(request.POST or None, request.FILES or None)
 	if request.method == 'POST' and form.is_valid():
-		ccUtils.process_save_file(request.FILES['file'], datetime.strptime(form.cleaned_data['time'], '%Y-%m-%d'))
+		ccUtils.upload_save_file(request.FILES['file'], datetime.strptime(form.cleaned_data['time'], '%Y-%m-%d'))
 		return HttpResponse("good")
 	else:
 		return render(request, 'upload.html')
