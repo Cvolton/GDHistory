@@ -29,6 +29,8 @@ def index(request):
 def view_level(request, online_id=None):
 	level_records = LevelRecord.objects.filter(level__online_id=online_id).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
 
+	tasks.download_level_task.delay(online_id)
+
 	if len(level_records) == 0:
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
@@ -45,8 +47,6 @@ def view_level(request, online_id=None):
 		years.append(i)
 
 	context = {'level_records': records, 'first_record': level_records[0], 'online_id': online_id, 'years': years, 'records_count': level_records.count()}
-
-	tasks.download_level_task.delay(online_id)
 
 	return render(request, 'level.html', context)
 
