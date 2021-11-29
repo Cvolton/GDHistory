@@ -208,6 +208,7 @@ def get_level_page(page_type, page):
 
 	for item in song_array:
 		create_song_record_from_data(item, get_song_object(item[1]))
+		#TODO: link song records to server responses
 
 def get_first_level_pages(page_type, amount):
 	for i in range(0, amount):
