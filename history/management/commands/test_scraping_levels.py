@@ -8,4 +8,4 @@ class Command(BaseCommand):
 	help = 'Adds save files from a pre-defined directory'
 
 	def handle(self, *args, **options):
-		history.serverUtils.get_level_page(11, 0)
+		history.serverUtils.get_first_level_pages(11, 10)

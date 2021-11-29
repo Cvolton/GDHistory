@@ -200,3 +200,8 @@ def get_level_page(page_type, page):
 		print(level_info)
 
 		create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.GET, response_object)
+
+def get_first_level_pages(page_type, amount):
+	for i in range(0, amount):
+		print(f"Page {i}")
+		get_level_page(page_type, i)
