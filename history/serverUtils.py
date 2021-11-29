@@ -36,11 +36,11 @@ def send_request(endpoint, data):
 
 	return RequestResult(response_object, response.text)
 
-def response_to_dict(response):
+def response_to_dict(response, separator):
 	result = {}
 	i = 0
 	last_key = 0
-	for item in response.split(':'):
+	for item in response.split(separator):
 		if i % 2 == 0:
 			last_key = int(item)
 		else:
@@ -48,12 +48,33 @@ def response_to_dict(response):
 		i += 1
 	return result
 
+def create_user_dict(response):
+	user_dict = {}
+	for item in response.split('|'):
+		user_info = item.split(':')
+		user_dict[user_info[0]] = user_info
+	return user_dict
+
+def create_song_array(response):
+	song_array = []
+	for item in response.split('~:~'):
+		song_array.append(response_to_dict(response, '~|~'))
+	return song_array
+
+def get_level_object(level_id):
+	try:
+		level_object = Level.objects.get(online_id=level_id)
+	except:
+		level_object = Level(online_id=level_id)
+		level_object.save()
+	return level_object
+
 def create_level_record_from_data(level_data, level_object, record_type, server_response):
 	level_password = assign_key(level_data, 27)
 	try:
 		level_password = int(level_password)
 	except:
-		level_password = robtop_unxor(level_password, Constants.PASSWORD_KEY)
+		level_password = None if level_password is None else robtop_unxor(level_password, Constants.PASSWORD_KEY)
 
 	try: #TODO: merge the 2 cases
 		return LevelRecord.objects.get(level=level_object,
@@ -146,14 +167,10 @@ def download_level(online_id):
 	if response[:2] == '-1': #level doesn't exist or other error
 		return
 
-	level_info = response_to_dict(response.split('#')[0])
+	level_info = response_to_dict(response.split('#')[0], ':')
 
 	level_id = level_info[1] if 1 in level_info else 0
-	try:
-		level_object = Level.objects.get(online_id=level_id)
-	except:
-		level_object = Level(online_id=level_id)
-		level_object.save()
+	level_object = get_level_object(online_id)
 
 	record = create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.DOWNLOAD, response_object)
 
@@ -164,3 +181,22 @@ def download_level(online_id):
 		record.level_string = create_level_string(level_string)
 		record.unprocessed_data = level_info
 		record.save()
+
+def get_level_page(page_type, page):
+	post_parameters = {'type': page_type, 'page': page}
+	request_result = send_request('getGJLevels21', post_parameters)
+	response = request_result.response_text
+	response_object = request_result.response_object
+
+	request_info = response.split('#')
+	user_dict = create_user_dict(request_info[1])
+
+	#song_array = create_song_array(request_info[2])
+
+	for item in request_info[0].split('|'):
+		level_info = response_to_dict(item, ':')
+		level_object = get_level_object(level_info[1])
+
+		print(level_info)
+
+		create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.GET, response_object)
