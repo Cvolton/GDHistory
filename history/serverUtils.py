@@ -199,7 +199,12 @@ def get_level_page(page_type, page):
 
 		print(level_info)
 
-		create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.GET, response_object)
+		record = create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.GET, response_object)
+		if record.user_id in user_dict:
+			user_record = user_dict[record.user_id]
+			record.username = record.username if 1 not in user_record is None else user_record[1]
+			record.account_id = record.account_id if 2 not in user_record is None else user_record[2]
+			record.save()
 
 def get_first_level_pages(page_type, amount):
 	for i in range(0, amount):
