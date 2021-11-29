@@ -195,7 +195,7 @@ def process_songs_in_mdlm(mdlm, save_file):
 		record = create_song_record_from_data(data, song_object, save_file)
 		record.save_file.add(save_file)
 
-def upload_save_file(file, date):
+def upload_save_file(file, date, user):
 	data_path = get_data_path()
 
 	game_manager = load_game_manager_plist(file)
@@ -205,7 +205,7 @@ def upload_save_file(file, date):
 	game_manager['GJA_004'] = '' #sessionID (2.2)
 
 	save_file = SaveFile(
-		author=HistoryUser.objects.get(user__username='Cvolton'), #TODO: do not hardcode Cvolton
+		author=HistoryUser.objects.get(user=user), #TODO: do not hardcode Cvolton
 		player_name=assign_key_no_pop(game_manager, 'playerName'),
 		player_user_id=assign_key_no_pop(game_manager, 'playerUserID'),
 		player_account_id=assign_key_no_pop(game_manager, 'GJA_003'),
