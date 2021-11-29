@@ -1,5 +1,5 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString
-from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string
+from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object
 
 from celery import shared_task
 
@@ -155,44 +155,10 @@ def process_levels_in_glm(glm, record_type, save_file):
 
 	#LevelRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
 
-def create_song_record_from_data(data, song_object, save_file):
-	try:
-		return SongRecord.objects.get(song=song_object,
-			song_name = assign_key_no_pop(data, '2'),
-			artist_id = assign_key_no_pop(data, '3'),
-			artist_name = assign_key_no_pop(data, '4'),
-			size = assign_key_no_pop(data, '5'),
-			youtube_id = assign_key_no_pop(data, '6'),
-			youtube_channel = assign_key_no_pop(data, '7'),
-			is_verified = assign_key_no_pop(data, '8'),
-			link = assign_key_no_pop(data, '10'),
-			record_type = SongRecord.RecordType.MDLM_001
-		)
-	except:
-		record = SongRecord(song=song_object,
-			song_name = assign_key(data, '2'),
-			artist_id = assign_key(data, '3'),
-			artist_name = assign_key(data, '4'),
-			size = assign_key(data, '5'),
-			youtube_id = assign_key(data, '6'),
-			youtube_channel = assign_key(data, '7'),
-			is_verified = assign_key(data, '8'),
-			link = assign_key(data, '10'),
-			record_type = SongRecord.RecordType.MDLM_001,
-			unprocessed_data = data
-		)
-		record.save()
-		return record
-
 def process_songs_in_mdlm(mdlm, save_file):
 	for song, data in mdlm.items():
-		try:
-			song_object = Song.objects.get(online_id=song)
-		except:
-			song_object = Song(online_id=song)
-			song_object.save()
-
-		record = create_song_record_from_data(data, song_object, save_file)
+		song_object = get_song_object(song_id)
+		record = create_song_record_from_data(data, song_object)
 		record.save_file.add(save_file)
 
 def upload_save_file(file, date, user):

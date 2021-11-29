@@ -1,4 +1,4 @@
-from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor
+from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object
 from .models import ServerResponse, Level, LevelRecord
 
 from .constants import Constants
@@ -205,6 +205,9 @@ def get_level_page(page_type, page):
 			record.username = record.username if 1 not in user_record is None else user_record[1]
 			record.account_id = record.account_id if 2 not in user_record is None else user_record[2]
 			record.save()
+
+	for item in song_array:
+		create_song_record_from_data(item, get_song_object(item[1]))
 
 def get_first_level_pages(page_type, amount):
 	for i in range(0, amount):
