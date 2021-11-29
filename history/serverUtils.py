@@ -58,7 +58,7 @@ def create_user_dict(response):
 def create_song_array(response):
 	song_array = []
 	for item in response.split('~:~'):
-		song_array.append(response_to_dict(response, '~|~'))
+		song_array.append(response_to_dict(item, '~|~'))
 	return song_array
 
 def get_level_object(level_id):
@@ -191,7 +191,7 @@ def get_level_page(page_type, page):
 	request_info = response.split('#')
 	user_dict = create_user_dict(request_info[1])
 
-	#song_array = create_song_array(request_info[2])
+	song_array = create_song_array(request_info[2])
 
 	for item in request_info[0].split('|'):
 		level_info = response_to_dict(item, ':')
