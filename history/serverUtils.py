@@ -190,6 +190,12 @@ def get_level_page(page_type, page):
 	if response == "-1":
 		return False
 
+	if not response:
+		print("Connection failed... waiting")
+		Sleep(60)
+		print("Connection failed... trying again")
+		return get_level_page(page_type, page)
+
 	response_object = request_result.response_object
 
 	request_info = response.split('#')
