@@ -187,6 +187,9 @@ def get_level_page(page_type, page):
 	post_parameters = {'type': page_type, 'page': page}
 	request_result = send_request('getGJLevels21', post_parameters)
 	response = request_result.response_text
+	if response == "-1":
+		return False
+
 	response_object = request_result.response_object
 
 	request_info = response.split('#')
@@ -212,8 +215,13 @@ def get_level_page(page_type, page):
 		#TODO: link song records to server responses
 
 	sleep(0.1)
+	return True
 
 def get_first_level_pages(page_type, amount):
 	for i in range(0, amount):
 		print(f"Page {i}")
 		get_level_page(page_type, i)
+
+def get_level_pages_from(page_type, starting_page):
+	while get_level_page(page_type, starting_page):
+		starting_page += 1
