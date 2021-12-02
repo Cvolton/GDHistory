@@ -1,9 +1,10 @@
 from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object
 from .models import ServerResponse, Level, LevelRecord
 
-from .constants import Constants
+from .constants import XORKeys, GetLevelTypes
 
 from datetime import datetime
+from time import sleep
 import requests
 
 class RequestResult:
@@ -209,6 +210,8 @@ def get_level_page(page_type, page):
 	for item in song_array:
 		create_song_record_from_data(item, get_song_object(item[1]))
 		#TODO: link song records to server responses
+
+	sleep(0.1)
 
 def get_first_level_pages(page_type, amount):
 	for i in range(0, amount):
