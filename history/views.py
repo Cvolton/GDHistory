@@ -64,6 +64,12 @@ def search(request):
 
 	if request.method == 'GET' and form.is_valid():
 		query = form.cleaned_data['q']
+		page = form.cleaned_data['p'] if 'p' in form.cleaned_data and form.cleaned_data['p'] is not None else 1
+
+		results_per_page = 20
+
+		start_offset = (page-1)*results_per_page
+		end_offset = page*results_per_page
 
 		query_filter = Q(levelrecord__level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(levelrecord__level_name__icontains=query)
 
@@ -77,7 +83,7 @@ def search(request):
 			demon=Max('levelrecord__demon'),
 			auto=Max('levelrecord__auto'),
 			level_string=Max('levelrecord__level_string__pk'),
-			).order_by('-oldest_created').order_by('-downloads').distinct().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
+			).order_by('-oldest_created').order_by('-downloads').distinct().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')[start_offset:end_offset]
 		#level_records = LevelRecord.objects.filter(level__online_id=query).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created')).order_by('-oldest_created')
 
 		if len(levels) < 1:
