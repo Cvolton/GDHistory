@@ -75,7 +75,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 	try:
 		level_password = int(level_password)
 	except:
-		level_password = None if level_password is None else robtop_unxor(level_password, Constants.PASSWORD_KEY)
+		level_password = None if level_password is None else robtop_unxor(level_password, XORKeys.PASSWORD_KEY)
 
 	try: #TODO: merge the 2 cases
 		return LevelRecord.objects.get(level=level_object,
