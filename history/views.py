@@ -75,7 +75,7 @@ def search(request):
 
 		query_filter = Q(levelrecord__level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(levelrecord__level_name__icontains=query)
 
-		levels = Level.objects.filter(query_filter)
+		levels = Level.objects.filter(query_filter).distinct()
 
 		level_results = levels.annotate(
 			oldest_created=Max('levelrecord__save_file__created'),
@@ -87,7 +87,7 @@ def search(request):
 			demon=Max('levelrecord__demon'),
 			auto=Max('levelrecord__auto'),
 			level_string=Max('levelrecord__level_string__pk'),
-			).distinct().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')[start_offset:end_offset]
+			).prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')[start_offset:end_offset]
 
 		#TODO: figure out how to sort this without painfully slowing down the entire website
 		#level_results = level_results.order_by('-downloads', '-oldest_created')
