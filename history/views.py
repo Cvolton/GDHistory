@@ -10,6 +10,8 @@ from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelStr
 from .forms import UploadFileForm, SearchForm
 from . import ccUtils, serverUtils, tasks
 
+import math
+
 def index(request):
 	recently_added = LevelRecord.objects.all().prefetch_related('level').order_by('-level__pk')[:5]
 	recently_updated = LevelRecord.objects.all().prefetch_related('level').order_by('-pk')[:5]
@@ -83,15 +85,35 @@ def search(request):
 			demon=Max('levelrecord__demon'),
 			auto=Max('levelrecord__auto'),
 			level_string=Max('levelrecord__level_string__pk'),
-			).order_by('-oldest_created').order_by('-downloads').distinct().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')[start_offset:end_offset]
+			).order_by('-oldest_created').order_by('-downloads').distinct().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
+
+		level_results = levels[start_offset:end_offset]
+		level_count = levels.count()
 		#level_records = LevelRecord.objects.filter(level__online_id=query).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created')).order_by('-oldest_created')
 
-		if len(levels) < 1:
+		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})
+
+		minimum_page_button = page-3
+		if minimum_page_button < 1:
+			minimum_page_button = 1
+
+		maximum_page_button = minimum_page_button+6
+		if maximum_page_button*results_per_page > level_count:
+			maximum_page_button = math.ceil(level_count/results_per_page)
+
+		page_buttons = range(minimum_page_button, maximum_page_button+1)
 
 		context = {
 			'query': query,
-			'level_records': levels,
+			'level_records': level_results,
+			'count': level_count,
+			'page': page,
+			'start_offset': start_offset,
+			'end_offset': end_offset,
+			'page_buttons': page_buttons,
+			'minimum_page_button': minimum_page_button,
+			'maximum_page_button': maximum_page_button,
 		}
 		return render(request, 'search.html', context)
 	else:

@@ -60,5 +60,15 @@ tr:hover, tr:focus-within {
 		</tbody>
 	</table>
 </div>
+<div class="row">
+	<p class="align-center">
+
+		<a href="?q={{ query }}&p={{ page|sub:1 }}" class="btn btn-danger {% if page == minimum_page_button %}disabled{% endif %}" role="button">&lt;</a>
+		{% for button in page_buttons %}
+			<a href="?q={{ query }}&p={{ button }}" class="btn {% if button == page %}btn-primary{% else %}btn-light{% endif %}" role="button">{{ button }}</a>
+		{% endfor %}
+		<a href="?q={{ query }}&p={{ page|add:1 }}" class="btn btn-danger {% if page == maximum_page_button %}disabled{% endif %}" role="button">&gt;</a>
+	</p>
+</div>
 <!-- {{ level.pk }} -->
 {% endblock %}
