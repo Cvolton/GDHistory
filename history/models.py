@@ -20,7 +20,7 @@ class SaveFile(models.Model):
 		db_index=True,
 	)
 	submitted = models.DateTimeField(default=datetime.now)
-	created = models.DateTimeField(default=datetime.now)
+	created = models.DateTimeField(default=datetime.now, db_index=True)
 	comment = models.CharField(max_length=255)
 	is_processed = models.BooleanField(default=False)
 
@@ -131,18 +131,18 @@ class LevelRecord(models.Model):
 	username = models.TextField(blank=True, null=True) #k5
 	user_id = models.IntegerField(blank=True, null=True) #k6
 	official_song = models.IntegerField(blank=True, null=True) #k8
-	rating = models.IntegerField(blank=True, null=True) #k9
-	rating_sum = models.IntegerField(blank=True, null=True) #k10
-	downloads = models.IntegerField(blank=True, null=True) #k11
+	rating = models.IntegerField(blank=True, null=True, db_index=True) #k9
+	rating_sum = models.IntegerField(blank=True, null=True, db_index=True) #k10
+	downloads = models.IntegerField(blank=True, null=True, db_index=True) #k11
 	level_version = models.IntegerField(blank=True, null=True) #k16
 	game_version = models.IntegerField(blank=True, null=True) #k17
-	likes = models.IntegerField(blank=True, null=True) #k22
+	likes = models.IntegerField(blank=True, null=True, db_index=True) #k22
 	length = models.IntegerField(blank=True, null=True) #k23 #technically speaking this would be better as an ENUM but nothing actually guarantees that the value won't go out of bounds
 	dislikes = models.IntegerField(blank=True, null=True) #k24
-	demon = models.BooleanField(blank=True, null=True) #k25
-	stars = models.IntegerField(blank=True, null=True) #k26
+	demon = models.BooleanField(blank=True, null=True, db_index=True) #k25
+	stars = models.IntegerField(blank=True, null=True, db_index=True) #k26
 	feature_score = models.IntegerField(blank=True, null=True) #k27
-	auto = models.BooleanField(blank=True, null=True) #k33
+	auto = models.BooleanField(blank=True, null=True, db_index=True) #k33
 	password = models.IntegerField(blank=True, null=True) #k41
 	two_player = models.BooleanField(blank=True, null=True) #k43
 	custom_song = models.IntegerField(blank=True, null=True) #k41
