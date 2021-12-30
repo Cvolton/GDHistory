@@ -5,7 +5,7 @@ import json
 from django.core.management.base import BaseCommand, CommandError
 
 class Command(BaseCommand):
-	help = 'Deletes all SongRecords'
+	help = 'Exports server responses as JSON'
 
 	def handle(self, *args, **options):
 		data_path = history.utils.get_data_path()
