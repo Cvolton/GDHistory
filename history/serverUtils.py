@@ -160,18 +160,23 @@ def download_level(online_id):
 	if LevelRecord.objects.filter(level__online_id=online_id, server_response__created__gte=datetime.today().replace(day=1), record_type=LevelRecord.RecordType.DOWNLOAD).count() > 0:
 		return
 
+	level_object = get_level_object(online_id)
+
+	#level does not exist anymore, this is not worth trying
+	if level_object.is_deleted is True:
+		return
+
 	post_parameters = {'levelID': online_id, 'extras': '1'}
 	request_result = send_request('downloadGJLevel22', post_parameters)
 	response = request_result.response_text
 	response_object = request_result.response_object
 
 	if response[:2] == '-1': #level doesn't exist or other error
+		level_object.is_deleted = True
+		level_object.save()
 		return
 
 	level_info = response_to_dict(response.split('#')[0], ':')
-
-	level_id = level_info[1] if 1 in level_info else 0
-	level_object = get_level_object(online_id)
 
 	record = create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.DOWNLOAD, response_object)
 

@@ -84,6 +84,7 @@ class Level(models.Model):
 	online_id = models.IntegerField(db_index=True, unique=True)
 	comment = models.TextField(blank=True, null=True)
 	is_public = models.BooleanField(blank=True, null=True) #this is to prevent leaking unlisted levels publicly
+	is_deleted = models.BooleanField(blank=True, null=True)
 
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
