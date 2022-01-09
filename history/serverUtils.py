@@ -8,11 +8,14 @@ from time import sleep
 import requests
 
 class RequestResult:
+	#TODO: remove this class
 	def __init__(self, response_object, response_text):
 		self.response_object = response_object
 		self.response_text = response_text
 
 def send_request(endpoint, data):
+	#TODO: remove all code referencing this function and also the function itself
+	# as this should be handled by the Downloader component instead
 	data_path = get_data_path()
 
 	mandatory_data = {
@@ -157,6 +160,8 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 		return record
 
 def download_level(online_id):
+	#TODO: deprecate this function
+	#TODO: remake this function into something that imports requests made by the Downloader component instead
 	if LevelRecord.objects.filter(level__online_id=online_id, server_response__created__gte=datetime.today().replace(day=1), record_type=LevelRecord.RecordType.DOWNLOAD).count() > 0:
 		return
 
@@ -189,6 +194,8 @@ def download_level(online_id):
 		record.save()
 
 def get_level_page(page_type, page):
+	#TODO: this is unused code
+	#TODO: remake this function into something that imports requests made by the Downloader component instead
 	post_parameters = {'type': page_type, 'page': page}
 	request_result = send_request('getGJLevels21', post_parameters)
 	response = request_result.response_text
