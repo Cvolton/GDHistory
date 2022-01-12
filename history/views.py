@@ -13,8 +13,9 @@ from . import ccUtils, serverUtils, tasks
 import math
 
 def index(request):
-	recently_added = LevelRecord.objects.all().prefetch_related('level').order_by('-level__pk')[:5]
-	recently_updated = LevelRecord.objects.all().prefetch_related('level').order_by('-pk')[:5]
+	all_levels = LevelRecord.objects.prefetch_related('level').filter(level__is_public=True)
+	recently_added = all_levels.order_by('-level__pk')[:5]
+	recently_updated = all_levels.order_by('-pk')[:5]
 
 	context = {
 		'recently_added': recently_added,
@@ -29,7 +30,7 @@ def index(request):
 	return render(request, 'index.html', context)
 
 def view_level(request, online_id=None):
-	level_records = LevelRecord.objects.filter(level__online_id=online_id).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
+	level_records = LevelRecord.objects.filter(level__online_id=online_id, level__is_public=True).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
 
 	tasks.download_level_task.delay(online_id)
 
@@ -75,7 +76,7 @@ def search(request):
 
 		query_filter = Q(levelrecord__level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(levelrecord__level_name__icontains=query)
 
-		levels = Level.objects.filter(query_filter).distinct()
+		levels = Level.objects.filter(query_filter).filter(is_public=True).distinct()
 
 		level_results = levels.annotate(
 			oldest_created=Max('levelrecord__save_file__created'),
