@@ -30,7 +30,12 @@ def index(request):
 	return render(request, 'index.html', context)
 
 def view_level(request, online_id=None):
-	level_records = LevelRecord.objects.filter(level__online_id=online_id, level__is_public=True).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
+	all_levels = LevelRecord.objects.filter(level__is_public=True)
+	#TODO: improve this
+	if request.user.is_authenticated and request.user.is_superuser:
+		all_levels = LevelRecord.objects.all()
+
+	level_records = all_levels.filter(level__online_id=online_id).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
 
 	tasks.download_level_task.delay(online_id)
 
