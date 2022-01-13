@@ -78,6 +78,10 @@ def search(request):
 
 		levels = Level.objects.filter(query_filter).filter(is_public=True).distinct()
 
+		#TODO: better implement admin search filters
+		if request.user.is_authenticated and query == 'admin:private' and request.user.is_superuser:
+			levels = Level.objects.exclude(is_public=True).distinct().order_by('online_id')
+
 		level_results = levels.annotate(
 			oldest_created=Max('levelrecord__save_file__created'),
 			downloads=Max('levelrecord__downloads'),
