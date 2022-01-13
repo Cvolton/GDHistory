@@ -1,6 +1,9 @@
 class XORKeys:
 	PASSWORD_KEY = 26364
 
+class MiscConstants:
+	FIRST_2_1_LEVEL = 28294638 #This constant is not entirely accurate - This level ID points to the original collab part for "Master of the World" by Viprin and Terron, which is the first rated 2.1 level.
+
 class GetLevelTypes:
 	SEARCH = 0
 	DOWNLOADED = 1
