@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.db.models import Min, Max, Q
+from django.db.models import Count, Min, Max, Q
 from django.db.models.functions import Coalesce
 
 from datetime import datetime
@@ -37,7 +37,7 @@ def view_level(request, online_id=None):
 
 	level_records = all_levels.filter(level__online_id=online_id).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
 
-	tasks.download_level_task.delay(online_id)
+	#tasks.download_level_task.delay(online_id)
 
 	if len(level_records) == 0:
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
@@ -97,7 +97,8 @@ def search(request):
 			demon=Max('levelrecord__demon'),
 			auto=Max('levelrecord__auto'),
 			level_string=Max('levelrecord__level_string__pk'),
-			).prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')[start_offset:end_offset]
+			records_count=Count('levelrecord')
+			).filter(records_count__gt=0).prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')[start_offset:end_offset]
 
 		#TODO: figure out how to sort this without painfully slowing down the entire website
 		#level_results = level_results.order_by('-downloads', '-oldest_created')
