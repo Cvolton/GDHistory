@@ -17,6 +17,10 @@ class Command(BaseCommand):
 			print(f"{i} / {record_count} - Updating {record.level.online_id}")
 			record.level.is_public = True
 			record.level.save()
+
+			record.cache_is_public = True
+			record.save()
+
 			i += 1
 
 		print("Done")

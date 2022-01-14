@@ -86,6 +86,8 @@ class Level(models.Model):
 	is_public = models.BooleanField(blank=True, null=True, db_index=True) #this is to prevent leaking unlisted levels publicly
 	is_deleted = models.BooleanField(blank=True, null=True, db_index=True)
 
+	submitted = models.DateTimeField(default=datetime.now, db_index=True)
+
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
 
@@ -127,7 +129,11 @@ class LevelRecord(models.Model):
 		db_index=True,
 	)
 
-	level_name = models.TextField(blank=True, null=True, db_index=True) #k2
+	submitted = models.DateTimeField(default=datetime.now, db_index=True)
+
+	cache_is_public = models.BooleanField(blank=True, null=True, db_index=True)
+
+	level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True) #k2 #in the real world this can't be more than 20, unless you're dealing with private server save files
 	description = models.TextField(blank=True, null=True) #k3
 	username = models.TextField(blank=True, null=True) #k5
 	user_id = models.IntegerField(blank=True, null=True) #k6
