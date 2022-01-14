@@ -200,7 +200,7 @@ def process_get(response_json):
 		level_info = response_to_dict(item, ':')
 		level_object = get_level_object(level_info[1])
 
-		print(level_info)
+		#print(level_info)
 
 		record = create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.GET, response_object)
 		if record.user_id in user_dict:
