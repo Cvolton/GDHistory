@@ -6,39 +6,19 @@ from .constants import XORKeys, GetLevelTypes
 from datetime import datetime
 from time import sleep
 import requests
+import json
 
-class RequestResult:
-	#TODO: remove this class
-	def __init__(self, response_object, response_text):
-		self.response_object = response_object
-		self.response_text = response_text
-
-def send_request(endpoint, data):
-	#TODO: remove all code referencing this function and also the function itself
-	# as this should be handled by the Downloader component instead
+def create_request(response_json):
 	data_path = get_data_path()
 
-	mandatory_data = {
-		"gameVersion": "21",
-		"binaryVersion": "35",
-		"gdw": "0",
-		"secret": "Wmfd2893gb7"
-	}
-
-	data |= mandatory_data 
-
-	headers = {'User-Agent': ''}
-
-	response = requests.post(f"http://www.boomlings.com/database/{endpoint}.php", data=data, headers=headers)
-
-	response_object = ServerResponse(unprocessed_post_parameters=data, endpoint=endpoint)
+	response_object = ServerResponse(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"], created=response_json["created"])
 	response_object.save()
 
 	f = open(f"{data_path}/ServerResponse/{response_object.pk}", "w")
-	f.write(response.text)
+	f.write(response_json["raw_output"])
 	f.close()
 
-	return RequestResult(response_object, response.text)
+	return response_object
 
 def response_to_dict(response, separator):
 	result = {}
@@ -193,22 +173,11 @@ def download_level(online_id):
 		record.unprocessed_data = level_info
 		record.save()
 
-def get_level_page(page_type, page):
-	#TODO: this is unused code
-	#TODO: remake this function into something that imports requests made by the Downloader component instead
-	post_parameters = {'type': page_type, 'page': page}
-	request_result = send_request('getGJLevels21', post_parameters)
-	response = request_result.response_text
+def process_get(response_json):
+	response_object = create_request(response_json)
+	response = response_json["raw_output"]
 	if response == "-1":
 		return False
-
-	if not response:
-		print("Connection failed... waiting")
-		Sleep(60)
-		print("Connection failed... trying again")
-		return get_level_page(page_type, page)
-
-	response_object = request_result.response_object
 
 	request_info = response.split('#')
 	user_dict = create_user_dict(request_info[1])
@@ -234,3 +203,9 @@ def get_level_page(page_type, page):
 
 	sleep(0.1)
 	return True
+
+def import_json(file):
+	response_json = json.load(file)
+	if response_json["endpoint"] == "getGJLevels21":
+		#print("getujem")
+		process_get(response_json)
