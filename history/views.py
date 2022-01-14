@@ -72,7 +72,7 @@ def search(request):
 
 	if request.method == 'GET' and form.is_valid():
 		query = form.cleaned_data['q']
-		page = form.cleaned_data['p'] if 'p' in form.cleaned_data and form.cleaned_data['p'] is not None else 1
+		page = form.cleaned_data['p'] if 'p' in form.cleaned_data and form.cleaned_data['p'] is not None and form.cleaned_data['p'] > 1 else 1
 
 		results_per_page = 20
 
