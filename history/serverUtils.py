@@ -185,10 +185,13 @@ def download_level(online_id):
 def process_get(response_json):
 	response_object = create_request(response_json)
 	response = response_json["raw_output"]
-	if response_object is False or response == "-1":
+	if response_object is False or response == "-1" or response == "":
 		return False
 
 	request_info = response.split('#')
+	if len(request_info) < 4:
+		return False
+
 	user_dict = create_user_dict(request_info[1])
 
 	song_array = create_song_array(request_info[2])
