@@ -17,6 +17,7 @@ class Command(BaseCommand):
 			if not os.path.exists(export_path):
 				print("Save file {export_path} not found")
 				continue
+			print(f"Processing {export_path}")
 			f = open(export_path, "rb")
 			history.serverUtils.import_json(f)
 
