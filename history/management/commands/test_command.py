@@ -10,11 +10,16 @@ class Command(BaseCommand):
 	help = 'is test'
 
 	def handle(self, *args, **options):
-		records = LevelRecord.objects.filter(game_version=20).prefetch_related('level').order_by('-level__online_id')[:10]
+		print("loading")
+		top_record = 0
+		records = LevelRecord.objects.all()
 		record_count = records.count()
 		i = 1
+		print("working")
 		for record in records:
-			print(f"{i} / {record_count} - Updating {record.level.online_id}")
+			if record.level_name is not None and len(record.level_name) >= top_record:
+				top_record = len(record.level_name)
+				print(f"{i} / {record_count} - {top_record}: {record.level.online_id} - {record.level_name}")
 			i += 1
 
 		print("Done")
