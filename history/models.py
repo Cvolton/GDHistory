@@ -83,8 +83,8 @@ class SongRecord(models.Model):
 class Level(models.Model):
 	online_id = models.IntegerField(db_index=True, unique=True)
 	comment = models.TextField(blank=True, null=True)
-	is_public = models.BooleanField(blank=True, null=True) #this is to prevent leaking unlisted levels publicly
-	is_deleted = models.BooleanField(blank=True, null=True)
+	is_public = models.BooleanField(blank=True, null=True, db_index=True) #this is to prevent leaking unlisted levels publicly
+	is_deleted = models.BooleanField(blank=True, null=True, db_index=True)
 
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
@@ -127,7 +127,7 @@ class LevelRecord(models.Model):
 		db_index=True,
 	)
 
-	level_name = models.TextField(blank=True, null=True) #k2
+	level_name = models.TextField(blank=True, null=True, db_index=True) #k2
 	description = models.TextField(blank=True, null=True) #k3
 	username = models.TextField(blank=True, null=True) #k5
 	user_id = models.IntegerField(blank=True, null=True) #k6
