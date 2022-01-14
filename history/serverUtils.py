@@ -25,6 +25,9 @@ def create_request(response_json):
 	return response_object
 
 def response_to_dict(response, separator):
+	if response == "":
+		return False
+
 	result = {}
 	i = 0
 	last_key = 0
@@ -46,7 +49,9 @@ def create_user_dict(response):
 def create_song_array(response):
 	song_array = []
 	for item in response.split('~:~'):
-		song_array.append(response_to_dict(item, '~|~'))
+		response_dict = response_to_dict(item, '~|~')
+		if response_dict is not False:
+			song_array.append(response_dict)
 	return song_array
 
 def get_level_object(level_id):
