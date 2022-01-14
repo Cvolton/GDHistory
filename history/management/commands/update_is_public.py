@@ -10,7 +10,7 @@ class Command(BaseCommand):
 	help = 'Exports server responses as JSON'
 
 	def handle(self, *args, **options):
-		records = LevelRecord.objects.filter(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL).exclude(level__is_public=True).prefetch_related('level')
+		records = LevelRecord.objects.filter( Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecord.RecordType.GET) ).exclude(level__is_public=True).prefetch_related('level')
 		record_count = records.count()
 		i = 1
 		for record in records:
