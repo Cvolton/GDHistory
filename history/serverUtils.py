@@ -11,6 +11,10 @@ import json
 def create_request(response_json):
 	data_path = get_data_path()
 
+	response_count = ServerResponse.objects.filter(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"], created=response_json["created"]).count()
+	if response_count > 0:
+		return False
+
 	response_object = ServerResponse(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"], created=response_json["created"])
 	response_object.save()
 
@@ -176,7 +180,7 @@ def download_level(online_id):
 def process_get(response_json):
 	response_object = create_request(response_json)
 	response = response_json["raw_output"]
-	if response == "-1":
+	if response_object is False or response == "-1":
 		return False
 
 	request_info = response.split('#')
@@ -201,11 +205,10 @@ def process_get(response_json):
 		create_song_record_from_data(item, get_song_object(item[1]))
 		#TODO: link song records to server responses
 
-	sleep(0.1)
 	return True
 
 def import_json(file):
 	response_json = json.load(file)
 	if response_json["endpoint"] == "getGJLevels21":
 		#print("getujem")
-		process_get(response_json)
+		print(process_get(response_json))
