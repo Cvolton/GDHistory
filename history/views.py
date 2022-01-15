@@ -43,6 +43,8 @@ def view_level(request, online_id=None):
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
 	records = {}
+	level_strings = {}
+	level_string_count = 0
 	for record in level_records:
 		if record.real_date is None:
 			continue
@@ -50,11 +52,15 @@ def view_level(request, online_id=None):
 			records[record.real_date.year] = []
 		records[record.real_date.year].append(record)
 
+		if record.level_string is not None and record.level_string.pk not in level_strings:
+			level_string_count += 1
+			level_strings[record.level_string.pk] = True
+
 	years = []
 	for i in range(min(records), max(records)+1):
 		years.append(i)
 
-	context = {'level_records': records, 'first_record': level_records[0], 'online_id': online_id, 'years': years, 'records_count': level_records.count()}
+	context = {'level_records': records, 'first_record': level_records[0], 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count}
 
 	return render(request, 'level.html', context)
 
