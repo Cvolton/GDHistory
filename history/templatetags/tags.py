@@ -36,14 +36,14 @@ def difficulty(rating_sum, rating, demon, auto):
 
 @register.simple_tag
 def game_version(number):
+	if number is None:
+		return None
 	if number > 17:
 		return "%.1f" % (number / 10)
 	if number == 11:
 		return "1.8"
 	if number == 10:
 		return "1.7"
-	if number is None:
-		return None
 	number -= 1
 	return f"1.{number}"
 
