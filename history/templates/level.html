@@ -80,7 +80,7 @@
 						<th>Downloads</th>
 						<th>Likes</th>
 						<th>Difficulty</th>
-						<th>Stars</th>
+						<!--<th>Stars</th>-->
 						<th>Level version</th>
 						<th>Username</th>
 						<th>Game version</th>
@@ -97,10 +97,11 @@
 						{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
 						<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
-Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto %}</a></td>
-						<td>{{ record.stars }}</td>
+Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto %} ({{ record.stars }}*)</a></td>
+						<!--<td>{{ record.stars }}</td>-->
 						<td>{{ record.level_version }}</td>
-						<td><span style="color: {% if record.account_id %}DarkGoldenRod{% else %}darkgreen{% endif %}">{{ record.username }}</span></td>
+						<!--<td><span style="color: {% if record.account_id %}DarkGoldenRod{% else %}darkgreen{% endif %}">{{ record.username }}</span></td>-->
+						<td>{{ record.username }} {% if record.account_id %}<a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}</td>
 						<td>{% game_version record.game_version %}</td>
 						<td>{% if record.level_string %}✅{% else %}❌{% endif %}</td>
 					</tr>
