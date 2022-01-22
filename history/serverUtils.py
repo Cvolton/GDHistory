@@ -148,22 +148,12 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 		record.save()
 		return record
 
-def download_level(online_id):
-	#TODO: deprecate this function
-	#TODO: remake this function into something that imports requests made by the Downloader component instead
-	if LevelRecord.objects.filter(level__online_id=online_id, server_response__created__gte=datetime.today().replace(day=1), record_type=LevelRecord.RecordType.DOWNLOAD).count() > 0:
-		return
-
+def process_download(response_json):
+	online_id = response_json["unprocessed_post_parameters"]["levelID"]
 	level_object = get_level_object(online_id)
 
-	#level does not exist anymore, this is not worth trying
-	if level_object.is_deleted is True:
-		return
-
-	post_parameters = {'levelID': online_id, 'extras': '1'}
-	request_result = send_request('downloadGJLevel22', post_parameters)
-	response = request_result.response_text
-	response_object = request_result.response_object
+	response_object = create_request(response_json)
+	response = response_json["raw_output"]
 
 	if response[:2] == '-1': #level doesn't exist or other error
 		level_object.is_deleted = True
@@ -218,5 +208,7 @@ def process_get(response_json):
 def import_json(file):
 	response_json = json.load(file)
 	if response_json["endpoint"] == "getGJLevels21":
-		#print("getujem")
 		print(process_get(response_json))
+	if response_json["endpoint"] == "downloadGJLevel22":
+		process_download(response_json)
+
