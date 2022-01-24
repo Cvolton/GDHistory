@@ -189,15 +189,20 @@ def process_get(response_json):
 	for item in request_info[0].split('|'):
 		level_info = response_to_dict(item, ':')
 		level_object = get_level_object(level_info[1])
+		level_object.set_public(True)
 
+		#print("among")
 		#print(level_info)
 
 		record = create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.GET, response_object)
+		record.cache_is_public = True
+
 		if record.user_id in user_dict:
 			user_record = user_dict[record.user_id]
 			record.username = record.username if 1 not in user_record is None else user_record[1]
 			record.account_id = record.account_id if 2 not in user_record is None else user_record[2]
-			record.save()
+			
+		record.save()
 
 	for item in song_array:
 		create_song_record_from_data(item, get_song_object(item[1]))

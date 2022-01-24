@@ -88,6 +88,12 @@ class Level(models.Model):
 
 	submitted = models.DateTimeField(default=datetime.now, db_index=True)
 
+	def set_public(self, public):
+		self.is_public = public
+		self.save()
+
+		self.levelrecord_set.update(cache_is_public=True)
+
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
 
