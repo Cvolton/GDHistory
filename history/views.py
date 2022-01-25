@@ -102,6 +102,7 @@ def search(request):
 			stars=Max('levelrecord__stars'),
 			demon=Max('levelrecord__demon'),
 			auto=Max('levelrecord__auto'),
+			demon_type=Max('levelrecord__demon_type'),
 			level_string=Max('levelrecord__level_string__pk'),
 			records_count=Count('levelrecord')
 			).filter(records_count__gt=0).prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')[start_offset:end_offset]

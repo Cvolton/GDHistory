@@ -4,12 +4,24 @@ from django import template
 register = template.Library()
 
 @register.simple_tag
-def difficulty(rating_sum, rating, demon, auto):
+def demon_type(demon_type_number):
+	if demon_type_number is None:
+		return ""
+	if demon_type_number < 3:
+		return "Hard"
+	if demon_type_number < 7:
+		type_list = ["Easy", "Medium", "Insane", "Extreme"]
+		return type_list[demon_type_number - 3]
+	
+	return f"Hard ({demon_type})"
+
+@register.simple_tag
+def difficulty(rating_sum, rating, demon, auto, demon_type_number):
 	if auto:
 		return "Auto"
 
 	if demon:
-		return "Demon"
+		return f"{demon_type(demon_type_number)} Demon"
 
 	if rating == 0 or rating is None or rating_sum == 0 or rating_sum is None:
 		return "N/A"

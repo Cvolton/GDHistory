@@ -38,7 +38,7 @@
 				</tr>
 				<tr>
 					<th>Difficulty</th>
-					<td class="align-right">{% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto %}</td>
+					<td class="align-right">{% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %}</td>
 				</tr>
 				<tr>
 					<th>Stars</th>
@@ -97,7 +97,7 @@
 						{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
 						<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
-Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto %} ({{ record.stars }}*)</a></td>
+Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({{ record.stars }}*)</a></td>
 						<!--<td>{{ record.stars }}</td>-->
 						<td>{{ record.level_version }}</td>
 						<!--<td><span style="color: {% if record.account_id %}DarkGoldenRod{% else %}darkgreen{% endif %}">{{ record.username }}</span></td>-->
