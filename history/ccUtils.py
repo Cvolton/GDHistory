@@ -171,7 +171,7 @@ def upload_save_file(file, date, user):
 	game_manager['GJA_004'] = '' #sessionID (2.2)
 
 	save_file = SaveFile(
-		author=HistoryUser.objects.get(user=user), #TODO: do not hardcode Cvolton
+		author=HistoryUser.objects.get(user=user),
 		player_name=assign_key_no_pop(game_manager, 'playerName'),
 		player_user_id=assign_key_no_pop(game_manager, 'playerUserID'),
 		player_account_id=assign_key_no_pop(game_manager, 'GJA_003'),

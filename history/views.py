@@ -95,11 +95,7 @@ def search(request):
 
 		level_results = levels.order_by('-cache_downloads')[start_offset:end_offset]
 
-		#TODO: figure out how to sort this without painfully slowing down the entire website
-		#level_results = level_results.order_by('-downloads', '-oldest_created')
-
 		level_count = levels.count()
-		#level_records = LevelRecord.objects.filter(level__online_id=query).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created')).order_by('-oldest_created')
 
 		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})
