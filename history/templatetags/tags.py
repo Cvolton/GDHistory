@@ -4,6 +4,12 @@ from django import template
 register = template.Library()
 
 @register.simple_tag
+def display_number(number):
+	if number is None:
+		return 0
+	return number
+
+@register.simple_tag
 def demon_type(demon_type_number):
 	if demon_type_number is None:
 		return ""
