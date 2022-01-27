@@ -17,9 +17,9 @@ class Command(BaseCommand):
 		i = 1
 		print("working")
 		for record in records:
-			if record.level_name is not None and len(record.level_name) >= top_record:
-				top_record = len(record.level_name)
-				print(f"{i} / {record_count} - {top_record}: {record.level.online_id} - {record.level_name}")
+			if record.relative_upload_date is not None and len(record.relative_upload_date) >= top_record:
+				top_record = len(record.relative_upload_date)
+				print(f"{i} / {record_count} - {top_record}: {record.level.online_id} - {record.relative_upload_date}")
 			i += 1
 
 		print("Done")

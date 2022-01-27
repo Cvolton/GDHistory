@@ -141,7 +141,7 @@ class LevelRecord(models.Model):
 
 	level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True) #k2 #in the real world this can't be more than 20, unless you're dealing with private server save files
 	description = models.TextField(blank=True, null=True) #k3
-	username = models.TextField(blank=True, null=True) #k5
+	username = models.CharField(blank=True, null=True, max_length=255, db_index=True) #k5 #in the real world <= 15
 	user_id = models.IntegerField(blank=True, null=True) #k6
 	official_song = models.IntegerField(blank=True, null=True) #k8
 	rating = models.IntegerField(blank=True, null=True, db_index=True) #k9
@@ -170,8 +170,8 @@ class LevelRecord(models.Model):
 	demon_type = models.IntegerField(blank=True, null=True) #k76
 	seconds_spent_editing = models.IntegerField(blank=True, null=True) #k80
 	seconds_spent_editing_copies = models.IntegerField(blank=True, null=True) #k81
-	relative_upload_date = models.TextField(blank=True, null=True) #28
-	relative_update_date = models.TextField(blank=True, null=True) #29
+	relative_upload_date = models.CharField(blank=True, null=True, max_length=255) #28 #in the real world <= 10
+	relative_update_date = models.CharField(blank=True, null=True, max_length=255) #29 #in the real world <= 10
 
 	unprocessed_data = models.JSONField() #this field should only be used for archival purposes, do not pull data from this directly in production
 
