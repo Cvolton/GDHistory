@@ -95,6 +95,8 @@ class Level(models.Model):
 	cache_likes = models.IntegerField(blank=True, null=True, db_index=True)
 	cache_rating_sum = models.IntegerField(blank=True, null=True, db_index=True)
 	cache_rating = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_demon = models.BooleanField(blank=True, null=True, db_index=True)
+	cache_auto = models.BooleanField(blank=True, null=True, db_index=True)
 	cache_demon_type = models.IntegerField(blank=True, null=True, db_index=True)
 	cache_stars = models.IntegerField(blank=True, null=True, db_index=True)
 	cache_username = models.CharField(blank=True, null=True, max_length=255, db_index=True)
@@ -120,6 +122,8 @@ class Level(models.Model):
 		self.cache_likes = best_record.likes
 		self.cache_rating_sum = best_record.rating_sum
 		self.cache_rating = best_record.rating
+		self.cache_demon = best_record.demon
+		self.cache_auto = best_record.auto
 		self.cache_demon_type = best_record.demon_type
 		self.cache_stars = best_record.stars
 		
