@@ -2,6 +2,9 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext as _
 
+from django.db.models import Min
+from django.db.models.functions import Coalesce
+
 from datetime import datetime
 
 class HistoryUser(models.Model):
@@ -86,6 +89,17 @@ class Level(models.Model):
 	is_public = models.BooleanField(blank=True, null=True, db_index=True) #this is to prevent leaking unlisted levels publicly
 	is_deleted = models.BooleanField(blank=True, null=True, db_index=True)
 
+	cache_level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
+	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
+	cache_downloads = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_likes = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_rating_sum = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_rating = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_demon_type = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_stars = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_username = models.CharField(blank=True, null=True, max_length=255, db_index=True)
+	cache_level_string_available = models.BooleanField(blank=True, null=True, db_index=True)
+
 	submitted = models.DateTimeField(default=datetime.now, db_index=True)
 
 	def set_public(self, public):
@@ -93,6 +107,34 @@ class Level(models.Model):
 		self.save()
 
 		self.levelrecord_set.update(cache_is_public=True)
+
+	def revalidate_cache(self):
+		best_record = self.levelrecord_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude(real_date=None).order_by('-downloads')[:1]
+		if len(best_record) < 1:
+			return
+
+		best_record = best_record[0]
+		self.cache_level_name = best_record.level_name
+		self.cache_submitted = best_record.real_date
+		self.cache_downloads = best_record.downloads
+		self.cache_likes = best_record.likes
+		self.cache_rating_sum = best_record.rating_sum
+		self.cache_rating = best_record.rating
+		self.cache_demon_type = best_record.demon_type
+		self.cache_stars = best_record.stars
+		
+		level_string_count = self.levelrecord_set.exclude(level_string=None).count()
+		self.cache_level_string_available = level_string_count > 0
+
+		self.cache_username = best_record.username
+		if best_record.username is None:
+			best_record = self.levelrecord_set.exclude(username=None).order_by('-downloads')[:1]
+			if len(best_record) < 1:
+				self.cache_username = None
+			else:
+				self.cache_username = best_record[0].username
+
+		self.save()
 
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
