@@ -42,20 +42,18 @@ tr:hover, tr:focus-within {
 		</thead>
 		<tbody>
 		{% for level in level_records %}
-			{% with level.levelrecord_set.all|first as record %}
 			<!-- onclick="window.location='{% url 'level' level.online_id %}';" -->
 			<tr>
 				<td><a href="{% url 'level' level.online_id %}">{{ level.online_id }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ record.level_name }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.oldest_created|date:"N j, Y" }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.downloads }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.likes }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% difficulty level.rating_sum level.rating level.demon level.auto level.demon_type %}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.stars }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ record.username }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.level_string %}✅{% else %}❌{% endif %}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_level_name }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_submitted|date:"N j, Y" }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_downloads }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_likes }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% difficulty level.cache_rating_sum level.cache_rating level.cache_demon level.cache_auto level.cache_demon_type %}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_stars }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_username }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.cache_level_string_available %}✅{% else %}❌{% endif %}</a></td>
 			</tr>
-			{% endwith %}
 		{% endfor %}
 		</tbody>
 	</table>

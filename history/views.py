@@ -85,27 +85,15 @@ def search(request):
 		start_offset = (page-1)*results_per_page
 		end_offset = page*results_per_page
 
-		query_filter = Q(levelrecord__level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(levelrecord__level_name__icontains=query)
+		query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
 
-		levels = Level.objects.filter(query_filter).filter(is_public=True).distinct()
+		levels = Level.objects.filter(query_filter).filter(is_public=True)
 
 		#TODO: better implement admin search filters
 		if request.user.is_authenticated and query == 'admin:private' and request.user.is_superuser:
-			levels = Level.objects.exclude(is_public=True).distinct().order_by('online_id')
+			levels = Level.objects.exclude(is_public=True)
 
-		level_results = levels.annotate(
-			oldest_created=Max('levelrecord__save_file__created'),
-			downloads=Max('levelrecord__downloads'),
-			likes=Max('levelrecord__likes'),
-			rating_sum=Max('levelrecord__rating_sum'),
-			rating=Max('levelrecord__rating'),
-			stars=Max('levelrecord__stars'),
-			demon=Max('levelrecord__demon'),
-			auto=Max('levelrecord__auto'),
-			demon_type=Max('levelrecord__demon_type'),
-			level_string=Max('levelrecord__level_string__pk'),
-			records_count=Count('levelrecord')
-			).filter(records_count__gt=0).prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')[start_offset:end_offset]
+		level_results = levels.order_by('-cache_downloads')[start_offset:end_offset]
 
 		#TODO: figure out how to sort this without painfully slowing down the entire website
 		#level_results = level_results.order_by('-downloads', '-oldest_created')
