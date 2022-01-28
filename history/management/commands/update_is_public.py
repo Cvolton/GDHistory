@@ -10,16 +10,13 @@ class Command(BaseCommand):
 	help = 'Exports server responses as JSON'
 
 	def handle(self, *args, **options):
-		records = LevelRecord.objects.filter( Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecord.RecordType.GET) ).exclude(level__is_public=True).prefetch_related('level')
+
+		records = LevelRecord.objects.filter( Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecord.RecordType.GET) | ( Q(record_type=LevelRecord.RecordType.DOWNLOAD) & Q(server_response__created__gt="2021-11-24") ) ).exclude(level__is_public=True).prefetch_related('level')
 		record_count = records.count()
 		i = 1
 		for record in records:
 			print(f"{i} / {record_count} - Updating {record.level.online_id}")
-			record.level.is_public = True
-			record.level.save()
-
-			record.cache_is_public = True
-			record.save()
+			record.level.set_public(True)
 
 			i += 1
 
