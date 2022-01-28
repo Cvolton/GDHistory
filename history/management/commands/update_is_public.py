@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 
-		records = LevelRecord.objects.filter( Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecord.RecordType.GET) | ( Q(record_type=LevelRecord.RecordType.DOWNLOAD) & Q(server_response__created__gt="2021-11-24") ) ).exclude(level__is_public=True).prefetch_related('level')
+		records = LevelRecord.objects.filter( Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecord.RecordType.GET) | ( Q(record_type=LevelRecord.RecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") ) ).exclude(level__is_public=True).prefetch_related('level')
 		record_count = records.count()
 		i = 1
 		for record in records:
