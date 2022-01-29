@@ -214,6 +214,8 @@ def process_levels_in_glm(glm, record_type, save_file):
 			record.unprocessed_data = data
 			record.save()
 
+		level_object.revalidate_cache()
+
 	#LevelRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
 
 def process_songs_in_mdlm(mdlm, save_file):
