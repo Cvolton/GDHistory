@@ -101,6 +101,7 @@ class Level(models.Model):
 	cache_stars = models.IntegerField(blank=True, null=True, db_index=True)
 	cache_username = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_level_string_available = models.BooleanField(blank=True, null=True, db_index=True)
+	cache_user_id = models.IntegerField(blank=True, null=True, db_index=True)
 
 	submitted = models.DateTimeField(default=datetime.now, db_index=True)
 
@@ -126,6 +127,7 @@ class Level(models.Model):
 		self.cache_auto = best_record.auto
 		self.cache_demon_type = best_record.demon_type
 		self.cache_stars = best_record.stars
+		self.cache_user_id = best_record.user_id
 		
 		level_string_count = self.levelrecord_set.exclude(level_string=None).count()
 		self.cache_level_string_available = level_string_count > 0

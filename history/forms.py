@@ -7,3 +7,4 @@ class UploadFileForm(forms.Form):
 class SearchForm(forms.Form):
 	q = forms.CharField(label='Search', required=False)
 	p = forms.IntegerField(label='Page', required=False)
+	userID = forms.IntegerField(label='User ID', required=False)
