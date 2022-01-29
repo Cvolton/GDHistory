@@ -97,6 +97,7 @@ def search(request):
 
 		if 'userID' in form.cleaned_data and form.cleaned_data['userID'] is not None:
 			levels = levels.filter(cache_user_id=form.cleaned_data['userID'])
+			query += f" (userID {form.cleaned_data['userID']})"
 
 		level_results = levels.order_by('-cache_downloads')[start_offset:end_offset]
 
