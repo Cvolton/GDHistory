@@ -59,12 +59,11 @@
 		<img class="round-border" style="max-width:100%;max-height:100%" src="https://cvolton.eu/gdhistory_placeholder2.webp">
 	</div>
 </div>
-<div class="row pt-2">
-	<div class="alert alert-info" role="alert" style="margin-bottom: 0px">
-		<b>Description:</b> {% description first_record.description %}
-	</div>
+<div class="row pt-3">
+	<p><b>Description:</b> {% description first_record.description %}</p>
+	<hr />
 </div>
-<div class="row pt-2">
+<div class="row pt-0">
 
 	<ul class="nav nav-tabs" id="myTab" role="tablist">
 		{% for year in years %}
