@@ -93,7 +93,7 @@ def search(request):
 		if request.user.is_authenticated and query == 'admin:private' and request.user.is_superuser:
 			levels = Level.objects.exclude(is_public=True)
 
-		if 'userID' in form.cleaned_data:
+		if 'userID' in form.cleaned_data and form.cleaned_data['userID'] is not None:
 			levels = levels.filter(cache_user_id=form.cleaned_data['userID'])
 
 		level_results = levels.order_by('-cache_downloads')[start_offset:end_offset]
