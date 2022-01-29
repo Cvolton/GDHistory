@@ -108,6 +108,7 @@ Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.
 						<td>{% if record.username %}{{ record.username }}{% else %}<a data-toggle="tooltip" title="Some sources do not provide the creator's username.">-</a>{% endif %}{% if record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}</td>
 						<td>{% game_version record.game_version %}</td>
 						<td>{% if record.level_string %}✅{% else %}❌{% endif %}</td>
+						<!-- pk: {{ record.pk }}, levelstring: {{ record.level_string }} -->
 					</tr>
 					{% endfor %}
 				</tbody>
