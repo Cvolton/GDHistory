@@ -137,6 +137,7 @@ def login_page_placeholder(request):
 		return render(request, 'error.html', {'error': 'This feature is not available yet.'})
 
 def download_record(request, record_id=None, online_id=None):
+	#TODO: unlisted
 	if record_id == None:
 		return render(request, 'error.html', {'error': 'Invalid record ID'})
 	record = LevelRecord.objects.get(pk=record_id)
