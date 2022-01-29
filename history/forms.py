@@ -5,5 +5,5 @@ class UploadFileForm(forms.Form):
 	time = forms.CharField(label='Enter a time', max_length=10)
 
 class SearchForm(forms.Form):
-	q = forms.CharField(label='Search')
+	q = forms.CharField(label='Search', required=False)
 	p = forms.IntegerField(label='Page', required=False)
