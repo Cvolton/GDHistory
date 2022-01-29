@@ -1,8 +1,12 @@
+from datetime import datetime
+from django.utils.timezone import make_aware
+
 class XORKeys:
 	PASSWORD_KEY = 26364
 
 class MiscConstants:
 	FIRST_2_1_LEVEL = 28294638 #This constant is not entirely accurate - This level ID points to the original collab part for "Master of the World" by Viprin and Terron, which is the first rated 2.1 level.
+	UNLISTED_EXPLOIT_FIX_TIME = make_aware(datetime.fromtimestamp(1637719800)) #2021-11-24 02:10:00+00:00
 
 class GetLevelTypes:
 	SEARCH = 0

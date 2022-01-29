@@ -1,7 +1,10 @@
 from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object
 from .models import ServerResponse, Level, LevelRecord
 
-from .constants import XORKeys, GetLevelTypes
+from .constants import XORKeys, MiscConstants
+
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import make_aware, is_naive
 
 from datetime import datetime
 from time import sleep
@@ -164,13 +167,21 @@ def process_download(response_json):
 
 	record = create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.DOWNLOAD, response_object)
 
+	time_created = parse_datetime(response_json["created"])
+	if is_naive(time_created):
+		time_created = make_aware(time_created)
+
+	if time_created >= MiscConstants.UNLISTED_EXPLOIT_FIX_TIME:
+		level_object.set_public(True)
+		record.cache_is_public = True
+
 	#record.server.add(save_file)
 
 	if 4 in level_info:
 		level_string = assign_key(level_info, 4)
 		record.level_string = create_level_string(level_string)
 		record.unprocessed_data = level_info
-		record.save()
+	record.save()
 
 def process_get(response_json):
 	response_object = create_request(response_json)
