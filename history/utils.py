@@ -4,8 +4,6 @@ import hashlib
 import base64
 from w3lib.html import replace_entities
 
-from .models import LevelString, Song, SongRecord
-
 def assign_key(data, key):
 	if key not in data:
 		return None
@@ -27,6 +25,8 @@ def get_data_path():
 	return os.getenv('DATA_PATH', 'data')
 
 def create_level_string(level_string):
+	from .models import LevelString
+
 	sha256 = hashlib.sha256(level_string.encode('utf-8')).hexdigest()
 	try:
 		return LevelString.objects.get(sha256=sha256)
@@ -47,6 +47,8 @@ def robtop_unxor(string, key):
 	return string.decode('utf-8')
 
 def get_song_object(song):
+	from .models import LevelString, Song
+
 	try:
 		song_object = Song.objects.get(online_id=song)
 	except:
@@ -55,6 +57,8 @@ def get_song_object(song):
 	return song_object
 
 def create_song_record_from_data(data, song_object):
+	from .models import SongRecord
+
 	try:
 		return SongRecord.objects.get(song=song_object,
 			song_name = assign_key_no_pop(data, '2'),

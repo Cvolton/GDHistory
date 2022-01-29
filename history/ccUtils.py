@@ -45,6 +45,21 @@ def robtop_plist_to_plist(game_manager_bytes):
 	game_manager_bytes = game_manager_bytes.replace(b'</r>',b'</real>')
 	return game_manager_bytes
 
+def plist_to_robtop_plist(game_manager_bytes):
+	game_manager_bytes = game_manager_bytes.replace(b'</dict>',b'</d>')
+	game_manager_bytes = game_manager_bytes.replace(b'</key>',b'</k>')
+	game_manager_bytes = game_manager_bytes.replace(b'<dict>',b'<d>')
+	game_manager_bytes = game_manager_bytes.replace(b'<dict />',b'<d />')
+	game_manager_bytes = game_manager_bytes.replace(b'<key>',b'<k>')
+	game_manager_bytes = game_manager_bytes.replace(b'<string>',b'<s>')
+	game_manager_bytes = game_manager_bytes.replace(b'</string>',b'</s>')
+	game_manager_bytes = game_manager_bytes.replace(b'<integer>',b'<i>')
+	game_manager_bytes = game_manager_bytes.replace(b'</integer>',b'</i>')
+	game_manager_bytes = game_manager_bytes.replace(b'<true />',b'<t />')
+	game_manager_bytes = game_manager_bytes.replace(b'<real>',b'<r>')
+	game_manager_bytes = game_manager_bytes.replace(b'</real>',b'</r>')
+	return game_manager_bytes
+
 def remove_invalid_characters(game_manager_bytes):
 	game_manager_bytes = game_manager_bytes.replace(b'&',b'@@amp@@')
 	game_manager_bytes = game_manager_bytes.replace(b'#',b'@@hash@@')
@@ -133,6 +148,52 @@ def create_level_record_from_data(data, level_object, record_type):
 		record.save()
 		return record
 
+def create_data_from_level_record(record):
+	data = {
+		'kCEK': 4,
+		'k1': record.level.online_id,
+		'k2': record.level_name,
+		'k3': record.description,
+		'k4': record.level_string.load_file_content() if record.level_string is not None else None,
+		'k5': record.username,
+		'k6': record.user_id,
+		'k8': record.official_song,
+		'k9': record.rating,
+		'k10': record.rating_sum,
+		'k11': record.downloads,
+		'k16': record.level_version,
+		'k17': record.game_version,
+		'k22': record.likes,
+		'k23': record.length,
+		'k24': record.dislikes,
+		'k25': record.demon,
+		'k26': record.stars,
+		'k27': record.feature_score,
+		'k33': record.auto,
+		'k41': record.password,
+		'k43': record.two_player,
+		'k45': record.custom_song,
+		'k48': record.objects_count,
+		'k60': record.account_id,
+		'k64': record.coins,
+		'k65': record.coins_verified,
+		'k66': record.requested_stars,
+		'k67': record.extra_string,
+		'k74': record.daily_id,
+		'k75': record.epic,
+		'k76': record.demon_type,
+		'k80': record.seconds_spent_editing,
+		'k81': record.seconds_spent_editing_copies
+	}
+
+	data2 = {}
+
+	for key in data:
+		if data[key] is not None and data[key] is not False:
+			data2[key] = data[key]
+
+	return data2
+
 def process_levels_in_glm(glm, record_type, save_file):
 	#records = []
 	for level, data in glm.items():
@@ -206,3 +267,9 @@ def process_save_file(save_id):
 		process_songs_in_mdlm(game_manager['MDLM_001'], save_file)
 
 	print(f"Finished processing save file {save_id}")
+
+def consolidate_plist(plist_content):
+	test = plist_content.split(b'\n')[3:-2]
+	#test = test[:-2]
+	print(test)
+	return b"".join(test)

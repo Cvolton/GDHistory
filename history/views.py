@@ -11,6 +11,7 @@ from .forms import UploadFileForm, SearchForm
 from . import ccUtils, serverUtils, tasks
 
 import math
+import plistlib
 
 def index(request):
 	all_levels = LevelRecord.objects.prefetch_related('level')
@@ -134,3 +135,15 @@ def search(request):
 
 def login_page_placeholder(request):
 		return render(request, 'error.html', {'error': 'This feature is not available yet.'})
+
+def download_record(request, record_id=None, online_id=None):
+	if record_id == None:
+		return render(request, 'error.html', {'error': 'Invalid record ID'})
+	record = LevelRecord.objects.get(pk=record_id)
+	data = ccUtils.create_data_from_level_record(record)
+	data = plistlib.dumps(data)
+	data = ccUtils.consolidate_plist(data)
+	data = ccUtils.plist_to_robtop_plist(data)
+	response = HttpResponse(data)
+	response['Content-Disposition'] = f'attachment; filename={online_id}.gmd'
+	return response

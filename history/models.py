@@ -5,7 +5,10 @@ from django.utils.translation import gettext as _
 from django.db.models import Min
 from django.db.models.functions import Coalesce
 
+from . import utils
+
 from datetime import datetime
+import os
 
 class HistoryUser(models.Model):
     user = models.OneToOneField(
@@ -144,6 +147,16 @@ class Level(models.Model):
 
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
+
+	def load_file_content(self):
+		data_path = utils.get_data_path()
+		directory = f"{data_path}/LevelString/{self.pk}"
+		if not os.path.exists(directory):
+			return None
+		with open(directory) as f:
+			content = f.read()
+		return content
+
 
 class LevelRecord(models.Model):
 
