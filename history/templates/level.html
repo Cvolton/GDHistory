@@ -26,7 +26,7 @@
 				</tr>
 				<tr>
 					<th>Author</th>
-					<td class="align-right">{{ first_record.username }}</td>
+					<td class="align-right">{% if first_record.user_id %}<a href="{% url 'search' %}?userID={{ first_record.user_id }}">{{ first_record.username }}</a>{% else %}{{ first_record.username }}{% endif %}</td>
 				</tr>
 				<tr>
 					<th>Downloads</th>
