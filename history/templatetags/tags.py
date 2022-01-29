@@ -7,6 +7,12 @@ from history.constants import MiscConstants
 register = template.Library()
 
 @register.simple_tag
+def empty_none(content):
+	if content is not None:
+		return content
+	return ""
+
+@register.simple_tag
 def description(content):
 	#TODO: properly distinguish descriptions sourced from pre-2.0 and do not rely on them being outside of the base64 range
 	try:

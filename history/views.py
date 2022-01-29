@@ -80,6 +80,8 @@ def search(request):
 		query = form.cleaned_data['q']
 		page = form.cleaned_data['p'] if 'p' in form.cleaned_data and form.cleaned_data['p'] is not None and form.cleaned_data['p'] > 1 else 1
 
+		del form.cleaned_data['p']
+
 		results_per_page = 20
 
 		start_offset = (page-1)*results_per_page
@@ -118,6 +120,7 @@ def search(request):
 			'level_records': level_results,
 			'count': level_count,
 			'page': page,
+			'filters': form.cleaned_data,
 			'start_offset': start_offset,
 			'end_offset': end_offset,
 			'page_buttons': page_buttons,

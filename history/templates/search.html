@@ -60,12 +60,11 @@ tr:hover, tr:focus-within {
 </div>
 <div class="row">
 	<p class="align-center">
-
-		<a href="?q={{ query }}&p={{ page|sub:1 }}" class="btn btn-danger {% if page == minimum_page_button %}disabled{% endif %}" role="button">&lt;</a>
+		<a href="?p={{ page|sub:1 }}{% for filter in filters %}{% if filters|get_item:filter %}&{{filter}}={{ filters|get_item:filter }}{% endif %}{% endfor %}" class="btn btn-danger {% if page == minimum_page_button %}disabled{% endif %}" role="button">&lt;</a>
 		{% for button in page_buttons %}
-			<a href="?q={{ query }}&p={{ button }}" class="btn {% if button == page %}btn-primary{% else %}btn-light{% endif %}" role="button">{{ button }}</a>
+			<a href="?p={{ button }}{% for filter in filters %}{% if filters|get_item:filter %}&{{filter}}={{ filters|get_item:filter }}{% endif %}{% endfor %}" class="btn {% if button == page %}btn-primary{% else %}btn-light{% endif %}" role="button">{{ button }}</a>
 		{% endfor %}
-		<a href="?q={{ query }}&p={{ page|add:1 }}" class="btn btn-danger {% if page == maximum_page_button %}disabled{% endif %}" role="button">&gt;</a>
+		<a href="?p={{ page|add:1 }}{% for filter in filters %}{% if filters|get_item:filter %}&{{filter}}={{ filters|get_item:filter }}{% endif %}{% endfor %}" class="btn btn-danger {% if page == maximum_page_button %}disabled{% endif %}" role="button">&gt;</a>
 	</p>
 </div>
 <!-- {{ level.pk }} -->
