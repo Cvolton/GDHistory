@@ -220,7 +220,7 @@ def process_levels_in_glm(glm, record_type, save_file):
 
 def process_songs_in_mdlm(mdlm, save_file):
 	for song, data in mdlm.items():
-		song_object = get_song_object(song_id)
+		song_object = get_song_object(song)
 		record = create_song_record_from_data(data, song_object)
 		record.save_file.add(save_file)
 
