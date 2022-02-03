@@ -139,7 +139,13 @@ class Level(models.Model):
 		if best_record.username is None or best_record.username == '-':
 			best_record = self.levelrecord_set.exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
 			if len(best_record) < 1:
-				self.cache_username = None
+				best_record = LevelRecord.objects.filter(user_id=self.cache_user_id).exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
+				if len(best_record) < 1:
+					print(":(((")
+					self.cache_username = None
+				else:
+					print("setting username from other level")
+					self.cache_username = best_record[0].username
 			else:
 				self.cache_username = best_record[0].username
 
