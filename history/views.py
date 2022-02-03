@@ -14,7 +14,7 @@ import math
 import plistlib
 
 def index(request):
-	all_levels = LevelRecord.objects.prefetch_related('level')
+	all_levels = LevelRecord.objects.prefetch_related('level').exclude(level_name=None)
 	recently_added = all_levels.order_by('-level__pk').filter(level__is_public=True)[:5]
 	recently_updated = all_levels.order_by('-pk').filter(cache_is_public=True)[:5]
 
