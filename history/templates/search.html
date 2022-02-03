@@ -35,7 +35,6 @@ tr:hover, tr:focus-within {
 				<th>Downloads</th>
 				<th>Likes</th>
 				<th>Difficulty</th>
-				<th>Stars</th>
 				<th>Creator</th>
 				<th>Data Available</th>
 			</tr>
@@ -49,9 +48,8 @@ tr:hover, tr:focus-within {
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_submitted|date:"N j, Y" }}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_downloads }}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_likes }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% difficulty level.cache_rating_sum level.cache_rating level.cache_demon level.cache_auto level.cache_demon_type %}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_stars }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_username }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% difficulty level.cache_rating_sum level.cache_rating level.cache_demon level.cache_auto level.cache_demon_type %} ({% display_number level.cache_stars %}*)</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.cache_username %}{{ level.cache_username }}{% else %}-{% endif %}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.cache_level_string_available %}✅{% else %}❌{% endif %}</a></td>
 			</tr>
 		{% endfor %}
