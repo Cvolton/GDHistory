@@ -16,7 +16,7 @@ def empty_none(content):
 def description(content):
 	#TODO: properly distinguish descriptions sourced from pre-2.0 and do not rely on them being outside of the base64 range
 	try:
-		return base64.b64decode(content, altchars='-_').decode('utf-8')
+		return base64.b64decode(content, altchars='-_').decode('windows-1251')
 	except:
 		return content
 
