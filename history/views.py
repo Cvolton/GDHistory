@@ -36,7 +36,7 @@ def view_level(request, online_id=None):
 	if request.user.is_authenticated and request.user.is_superuser:
 		all_levels = LevelRecord.objects.all()
 
-	level_records = all_levels.filter(level__online_id=online_id).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
+	level_records = all_levels.filter(level__online_id=online_id).exclude(level_version=None).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
 
 	#tasks.download_level_task.delay(online_id)
 
