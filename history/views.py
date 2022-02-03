@@ -100,7 +100,22 @@ def search(request):
 			levels = levels.filter(cache_user_id=form.cleaned_data['userID'])
 			query += f" (userID {form.cleaned_data['userID']})"
 
-		level_results = levels.order_by('-cache_downloads')[start_offset:end_offset]
+		levels = levels.order_by('-cache_downloads')
+		if 's' in form.cleaned_data:
+			reverse_sort = False
+			order = form.cleaned_data['s']
+			if order[:1] == '-':
+				reverse_sort = True
+				order = order[1:]
+
+			allowed_sorts = { #TODO: fill in other columns
+				'id': 'online_id'
+			}
+
+			if order in allowed_sorts:
+				levels = levels.order_by(f"{'-' if reverse_sort else ''}{allowed_sorts[order]}")
+
+		level_results = levels[start_offset:end_offset]
 
 		level_count = levels.count()
 
