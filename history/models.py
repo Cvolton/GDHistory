@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext as _
 
-from django.db.models import Min
+from django.db.models import Min, Q
 from django.db.models.functions import Coalesce
 
 from . import utils
@@ -136,8 +136,8 @@ class Level(models.Model):
 		self.cache_level_string_available = level_string_count > 0
 
 		self.cache_username = best_record.username
-		if best_record.username is None:
-			best_record = self.levelrecord_set.exclude(username=None).order_by('-downloads')[:1]
+		if best_record.username is None or best_record.username == '-':
+			best_record = self.levelrecord_set.exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
 			if len(best_record) < 1:
 				self.cache_username = None
 			else:
