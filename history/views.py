@@ -40,9 +40,6 @@ def view_level(request, online_id=None):
 
 	#tasks.download_level_task.delay(online_id)
 
-	if len(level_records) == 0:
-		return render(request, 'error.html', {'error': 'Level not found in our database'})
-
 	records = {}
 	level_strings = {}
 	level_string_count = 0
@@ -56,6 +53,9 @@ def view_level(request, online_id=None):
 		if record.level_string is not None and record.level_string.pk not in level_strings:
 			level_string_count += 1
 			level_strings[record.level_string.pk] = True
+
+	if len(records) == 0:
+		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
 	years = []
 	for i in range(min(records), max(records)+1):
