@@ -29,8 +29,13 @@
                   <a class="nav-link {% if request.path == '/' %} active {% endif %} " aria-current="page" href="{% url 'index' %}">Home</a>
                 </li>
                 <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/search' %} active {% endif %} " aria-current="page" href="{% url 'search' %}">Browse</a>
+                </li>
+                {%if user.is_authenticated %}
+                <li class="nav-item">
                   <a class="nav-link {% if request.path == '/upload' %} active {% endif %}" href="{% url 'upload' %}">Submit</a>
                 </li>
+                {% endif %}
               </ul>
               	<form class="d-flex" action="/search">
                   <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
