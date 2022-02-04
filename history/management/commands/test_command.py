@@ -1,4 +1,4 @@
-from history.models import LevelRecord
+from history.models import Level
 from history.constants import MiscConstants
 import history.utils
 import json
@@ -11,15 +11,10 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		print("loading")
-		top_record = 0
-		records = LevelRecord.objects.all()
-		record_count = records.count()
-		i = 1
-		print("working")
+		ids = [152071,4153,179906,152738,13993,201298,75978,108430,121664,145251,153233,160011,184966,22459,73934,100585,203942,27450,28856,162133,145838,119420,100808,72703,75939,109131,126299,67871,111105,140494,52128,53303,57914,131195,140904,87286,60493,60661,97770,64222,64449,134312,191751,109319,72881,72963,149461,173713,73997,72806,165024,74482,74552,140602,139455,77549,189219,213541,120445,126546,201893,110006,115912,91597,120486,109953,184402,187082,115723,140703,160369,100847,214396,119234,111084,218730,110033,110271,191427,162953,203479,119301,119381,119382,133722,140020,174033,217421,197411,184920,158096,216955,204325,199718,173218,173373,216426,199976,198673,216377,214030,203714,217415,199120,201627,214173,206530,215324,219627,218714]
+		records = Level.objects.filter(online_id__in=ids).exclude(cache_username=None)
 		for record in records:
-			if record.relative_upload_date is not None and len(record.relative_upload_date) >= top_record:
-				top_record = len(record.relative_upload_date)
-				print(f"{i} / {record_count} - {top_record}: {record.level.online_id} - {record.relative_upload_date}")
-			i += 1
+			print(f"{record.online_id} - {record.cache_username}")
+
 
 		print("Done")
