@@ -111,12 +111,19 @@ def search(request):
 				reverse_sort = True
 				order = order[1:]
 
-			allowed_sorts = { #TODO: fill in other columns
-				'id': 'online_id'
+			allowed_sorts = {
+				'id': 'online_id',
+				'name': 'cache_level_name',
+				'last_seen': 'cache_submitted',
+				'downloads': 'cache_downloads',
+				'likes': 'cache_likes',
+				'difficulty': 'cache_stars', #TODO: sort demons
+				'username': 'cache_username',
+				'user_id': 'cache_user_id',
 			}
 
 			if order in allowed_sorts:
-				levels = levels.order_by(f"{'-' if reverse_sort else ''}{allowed_sorts[order]}")
+				levels = levels.order_by(f"{'-' if reverse_sort else ''}{allowed_sorts[order]}","-cache_downloads")
 
 		level_results = levels[start_offset:end_offset]
 
