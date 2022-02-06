@@ -38,18 +38,21 @@
 				</tr>
 				<tr>
 					<th>Difficulty</th>
-					<td class="align-right">{% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %}</td>
+					<td class="align-right">{% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}*)</td>
 				</tr>
 				<tr>
-					<th>Stars</th>
-					<td class="align-right">{% display_number first_record.stars %}</td>
+					<th>Featured</th>
+					<td class="align-right">{% if first_record.feature_score > 0 %}✅{% if first_record.epic %} (Epic){% endif %}{% else %}❌{% endif %}</td>
+				</tr>				<tr>
+					<th>Length</th>
+					<td class="align-right">{% length first_record.length %}</td>
 				</tr>
 				<tr>
-					<th>Stored level records</th>
+					<th>Saved records</th>
 					<td class="align-right">{{ records_count }}</td>
 				</tr>
 				<tr>
-					<th>Stored level strings</th>
+					<th>Unique versions</th>
 					<td class="align-right">{{ level_string_count }}</td>
 				</tr>
 			</table>
@@ -60,7 +63,10 @@
 	</div>
 </div>
 <div class="row pt-3">
-	<p><b>Description:</b> {% description first_record.description %}</p>
+	<p>
+		<b>Description:</b> {% description first_record.description %}
+		<br><b>Song:</b> Stereo Madness by ForeverBound (ID: {% if first_record.custom_song > 0 %}{{ first_record.custom_song }}{% else %}{{ first_record.official_song }}{% endif %})
+	</p>
 	<hr />
 </div>
 <div class="row pt-0">

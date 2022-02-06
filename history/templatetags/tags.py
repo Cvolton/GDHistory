@@ -7,6 +7,17 @@ from history.constants import MiscConstants
 register = template.Library()
 
 @register.simple_tag
+def length(length_number):
+	strings = ["Tiny","Short","Medium","Long","XL"]
+	if length_number is None:
+		return strings[0]
+
+	if length_number >= 0 and length_number <= 5:
+		return strings[length_number]
+
+	return f"Unknown ({length_number})"
+
+@register.simple_tag
 def empty_none(content):
 	if content is not None:
 		return content
