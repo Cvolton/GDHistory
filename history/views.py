@@ -6,7 +6,7 @@ from django.db.models.functions import Coalesce
 
 from datetime import datetime
 
-from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString
+from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString, HistoryUser
 from .forms import UploadFileForm, SearchForm
 from . import ccUtils, serverUtils, tasks
 
@@ -173,3 +173,14 @@ def download_record(request, record_id=None, online_id=None):
 	response = HttpResponse(data)
 	response['Content-Disposition'] = f'attachment; filename={online_id}.gmd'
 	return response
+
+@login_required
+def my_submissions(request):
+	user = HistoryUser.objects.get(user=request.user)
+	submissions = SaveFile.objects.filter(author=user)
+
+	context = {
+		'submissions': submissions
+	}
+
+	return render(request, 'my_submissions.html', context)

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% load tags %}
+{% block title %}Results for '{{ query }}'{% endblock title %}
+{% block content %}
+<style>
+td > a:first-child {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	z-index: 0;
+	padding: .5rem !important;
+}
+td > a:first-child:focus {
+	outline: 0;
+}
+td {
+	padding: 0px !important;
+}
+tr:hover, tr:focus-within {
+	background: #f2f3ff;
+	outline: none;
+}
+</style>
+<div class="row">
+	<p class="lead">My submissions</p>
+</div>
+<div class="row">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Submitted</th>
+				<th>Created</th>
+				<th>Comment</th>
+				<th>Is Processed</th>
+				<th>Player Name</th>
+				<th>Player User ID</th>
+				<th>Player Account ID</th>
+				<th>Binary Version</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for submission in submissions %}
+			<tr>
+				<td>{{ submission.submitted }}</td>
+				<td>{{ submission.created }}</td>
+				<td>{{ submission.comment }}</td>
+				<td>{{ submission.is_processed }}</td>
+				<td>{{ submission.player_name }}</td>
+				<td>{{ submission.player_user_id }}</td>
+				<td>{{ submission.player_account_id }}</td>
+				<td>{{ submission.binary_version }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}
