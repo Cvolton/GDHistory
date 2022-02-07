@@ -4,6 +4,19 @@ import hashlib
 import base64
 from w3lib.html import replace_entities
 
+class DecodeResult:
+	def __init__(self, encoded, text):
+		self.encoded = encoded
+		self.text = text
+
+def decode_base64_text(content):
+	try:
+		content = base64.b64decode(content, altchars='-_').decode('windows-1252')
+		encoded = False
+	except:
+		encoded = True
+	return DecodeResult(encoded, content)
+
 def assign_key(data, key):
 	if key not in data:
 		return None

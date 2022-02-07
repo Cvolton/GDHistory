@@ -1,5 +1,5 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString
-from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object
+from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text
 
 from celery import shared_task
 
@@ -73,11 +73,19 @@ def load_game_manager_plist(file):
 	gmb = remove_invalid_characters(gmb)
 	return plistlib.loads(gmb)
 
-def create_level_record_from_data(data, level_object, record_type):
+def create_level_record_from_data(data, level_object, record_type, binary_version):
+	description = assign_key_no_pop(data, 'k3')
+	description_encoded = False
+	if binary_version >= 27:
+		description_result = decode_base64_text(description)
+		description = description_result.text
+		description_encoded = description_result.encoded
+
 	try:
 		return LevelRecord.objects.get(level=level_object,
 			level_name = assign_key_no_pop(data, 'k2'),
-			description = assign_key_no_pop(data, 'k3'),
+			description = description,
+			description_encoded = description_encoded,
 			username = assign_key_no_pop(data, 'k5'),
 			user_id = assign_key_no_pop(data, 'k6'),
 			official_song = assign_key_no_pop(data, 'k8'),
@@ -110,9 +118,11 @@ def create_level_record_from_data(data, level_object, record_type):
 			record_type = record_type
 		)
 	except:
+		assign_key(data, 'k3')
 		record = LevelRecord(level=level_object,
 			level_name = assign_key(data, 'k2'),
-			description = assign_key(data, 'k3'),
+			description = description,
+			description_encoded = description_encoded,
 			username = assign_key(data, 'k5'),
 			user_id = assign_key(data, 'k6'),
 			official_song = assign_key(data, 'k8'),
@@ -204,7 +214,7 @@ def process_levels_in_glm(glm, record_type, save_file):
 			level_object = Level(online_id=level_id)
 			level_object.save()
 
-		record = create_level_record_from_data(data, level_object, record_type)
+		record = create_level_record_from_data(data, level_object, record_type, save_file.binary_version)
 
 		record.save_file.add(save_file)
 

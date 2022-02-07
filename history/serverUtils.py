@@ -66,6 +66,7 @@ def get_level_object(level_id):
 	return level_object
 
 def create_level_record_from_data(level_data, level_object, record_type, server_response):
+	#TODO: decode description
 	level_password = assign_key(level_data, 27)
 	try:
 		level_password = int(level_password)
