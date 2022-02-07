@@ -28,7 +28,10 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY','django-insecure-osonvx0lbz(dmre6pfbr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    '192.168.2.115'
+]
 
 INTERNAL_IPS = [
     '127.0.0.1',
