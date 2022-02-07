@@ -176,8 +176,9 @@ def download_record(request, record_id=None, online_id=None):
 
 @login_required
 def my_submissions(request):
+	#TODO: optimize this
 	user = HistoryUser.objects.get(user=request.user)
-	submissions = SaveFile.objects.filter(author=user)
+	submissions = SaveFile.objects.filter(author=user).annotate(num_levels=Count('levelrecord')).order_by('created')
 
 	context = {
 		'submissions': submissions

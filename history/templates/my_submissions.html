@@ -37,6 +37,7 @@ tr:hover, tr:focus-within {
 				<th>Player User ID</th>
 				<th>Player Account ID</th>
 				<th>Binary Version</th>
+				<th>Levels</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -50,6 +51,7 @@ tr:hover, tr:focus-within {
 				<td>{{ submission.player_user_id }}</td>
 				<td>{{ submission.player_account_id }}</td>
 				<td>{{ submission.binary_version }}</td>
+				<td>{{ submission.num_levels }}</td>
 			</tr>
 		{% endfor %}
 		</tbody>
