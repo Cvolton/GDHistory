@@ -65,13 +65,20 @@ def get_level_object(level_id):
 		level_object.save()
 	return level_object
 
-def create_level_record_from_data(level_data, level_object, record_type, server_response):
+def create_level_record_from_data(level_data, level_object, record_type, server_response, *args, **kwargs):
 	#TODO: decode description
 	level_password = assign_key(level_data, 27)
 	try:
 		level_password = int(level_password)
 	except:
 		level_password = None if level_password is None else robtop_unxor(level_password, XORKeys.PASSWORD_KEY)
+
+	description = assign_key(data, 'k3')
+	description_encoded = False
+	if kwargs.get('legacy_description', False):
+		description_result = decode_base64_text(description)
+		description = description_result.text
+		description_encoded = description_result.encoded
 
 	try: #TODO: merge the 2 cases
 		return LevelRecord.objects.get(level=level_object,
