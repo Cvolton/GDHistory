@@ -278,6 +278,8 @@ def process_save_file(save_id):
 	if 'MDLM_001' in game_manager:
 		process_songs_in_mdlm(game_manager['MDLM_001'], save_file)
 
+	save_file.is_processed = True
+	save_file.save()
 	print(f"Finished processing save file {save_id}")
 
 def consolidate_plist(plist_content):
