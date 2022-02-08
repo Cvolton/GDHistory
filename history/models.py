@@ -240,6 +240,7 @@ class LevelRecord(models.Model):
 	seconds_spent_editing_copies = models.IntegerField(blank=True, null=True) #k81
 	relative_upload_date = models.CharField(blank=True, null=True, max_length=255) #28 #in the real world <= 10
 	relative_update_date = models.CharField(blank=True, null=True, max_length=255) #29 #in the real world <= 10
+	original = models.IntegerField(blank=True, null=True) #k42
 
 	unprocessed_data = models.JSONField() #this field should only be used for archival purposes, do not pull data from this directly in production
 

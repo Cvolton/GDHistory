@@ -112,6 +112,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			seconds_spent_editing_copies = assign_key_no_pop(level_data, 47),
 			relative_upload_date = assign_key_no_pop(level_data, 28),
 			relative_update_date = assign_key_no_pop(level_data, 29),
+			original = assign_key_no_pop(level_data, 30),
 			record_type = record_type,
 			#username = not included,
 			password = level_password,
@@ -152,6 +153,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			seconds_spent_editing_copies = assign_key(level_data, 47),
 			relative_upload_date = assign_key(level_data, 28),
 			relative_update_date = assign_key(level_data, 29),
+			original = assign_key(level_data, 30),
 			record_type = record_type,
 			unprocessed_data = level_data,
 			server_response = server_response

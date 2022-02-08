@@ -115,6 +115,7 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			demon_type = assign_key_no_pop(data, 'k76'),
 			seconds_spent_editing = assign_key_no_pop(data, 'k80'),
 			seconds_spent_editing_copies = assign_key_no_pop(data, 'k81'),
+			original = assign_key_no_pop(data, 'k42'),
 			record_type = record_type
 		)
 	except:
@@ -152,6 +153,7 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			demon_type = assign_key(data, 'k76'),
 			seconds_spent_editing = assign_key(data, 'k80'),
 			seconds_spent_editing_copies = assign_key(data, 'k81'),
+			original = assign_key(data, 'k42'),
 			record_type = record_type,
 			unprocessed_data = data
 		)
@@ -181,6 +183,7 @@ def create_data_from_level_record(record):
 		'k27': record.feature_score,
 		'k33': record.auto,
 		'k41': record.password,
+		'k42': record.original,
 		'k43': record.two_player,
 		'k45': record.custom_song,
 		'k48': record.objects_count,
