@@ -64,7 +64,8 @@
 </div>
 <div class="row pt-3">
 	<p>
-		<b>Description:</b> {% description first_record.description %}
+		{% if first_record.description_encrypted %}<b>Warning:</b> Description decoding failed{% endif %}
+		<b>Description:</b> {% if first_record.description %}{{ first_record.description }}{% else %}(No description provided.){% endif %}
 		<br><b>Song:</b> Stereo Madness by ForeverBound (ID: {% if first_record.custom_song > 0 %}{{ first_record.custom_song }}{% else %}{{ first_record.official_song }}{% endif %})
 	</p>
 	<hr />

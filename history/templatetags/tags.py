@@ -24,14 +24,6 @@ def empty_none(content):
 	return ""
 
 @register.simple_tag
-def description(content):
-	#TODO: properly distinguish descriptions sourced from pre-2.0 and do not rely on them being outside of the base64 range
-	try:
-		return base64.b64decode(content, altchars='-_').decode('windows-1252')
-	except:
-		return content
-
-@register.simple_tag
 def display_number(number):
 	if number is None:
 		return 0
