@@ -60,7 +60,7 @@ def robtop_unxor(string, key):
 	return string.decode('utf-8')
 
 def get_song_object(song):
-	from .models import LevelString, Song
+	from .models import Song
 
 	try:
 		song_object = Song.objects.get(online_id=song)
