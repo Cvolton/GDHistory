@@ -8,7 +8,7 @@ register = template.Library()
 
 @register.simple_tag
 def level_password(password):
-	if password == 0:
+	if password == 0 or password is None:
 		return "Not copyable"
 	if password == 1:
 		return "Free copy"
@@ -16,6 +16,9 @@ def level_password(password):
 
 @register.simple_tag
 def song_name(song_id, game_version):
+	if song_id is None:
+		return SongNames.MAIN[0]
+
 	if game_version < 21:
 		full_song_array = SongNames.PRACTICE + SongNames.MAIN[:20] + SongNames.MELTDOWN
 	else:
