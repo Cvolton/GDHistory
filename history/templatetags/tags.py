@@ -7,6 +7,14 @@ from history.constants import MiscConstants, SongNames
 register = template.Library()
 
 @register.simple_tag
+def level_password(password):
+	if password == 0:
+		return "Not copyable"
+	if password == 1:
+		return "Free copy"
+	return str(password)[1:]
+
+@register.simple_tag
 def song_name(song_id, game_version):
 	if game_version < 21:
 		full_song_array = SongNames.PRACTICE + SongNames.MAIN[:20] + SongNames.MELTDOWN

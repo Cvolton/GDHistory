@@ -68,11 +68,11 @@
 		<b>Description:</b> {% if first_record.description %}{{ first_record.description }}{% else %}(No description provided.){% endif %}
 		<br><b>Song:</b> {% if first_record.song %}{{ first_record.song.cache_song_name }} by {{ first_record.song.cache_artist_name }} (ID: {{ first_record.song.online_id }}){% else %}{% song_name first_record.official_song first_record.game_version %} (ID: {{ first_record.official_song }}){% endif %}
 		<div class="collapse" id="collapseDescription">
-			<b>Password:</b> {{ first_record.password }}<br>
-			<b>Objects:</b> {{ first_record.objects_count }}<br>
-			<b>Coins:</b> {{ first_record.coins }} {% if first_record.coins_verified %}(Verified){% endif %}<br>
-			<b>Requested Stars:</b> {{ first_record.requested_stars }}<br>
-			<b>Original:</b> {{ first_record.original }}<br>
+			<b>Password:</b> {% level_password first_record.password %}<br>
+			{% if first_record.objects_count %}<b>Objects:</b> {{ first_record.objects_count }}<br>{% endif %}
+			<b>Coins:</b> {% display_number first_record.coins %} {% if first_record.coins_verified %}(Verified){% endif %}<br>
+			{% if first_record.requested_stars %}<b>Requested Stars:</b> {{ first_record.requested_stars }}<br>{% endif %}
+			{% if first_record.original %}<b>Original:</b> {{ first_record.original }}<br>{% endif %}
 		</div>
 		<a data-bs-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">
 			More info
