@@ -24,5 +24,4 @@ class Command(BaseCommand):
 			#TODO: handle failures properly
 			try:
 				history.ccUtils.process_save_file(file.pk)
-			except:
-				pass
+			except Exception as e: print(e)

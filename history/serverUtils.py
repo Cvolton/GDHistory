@@ -1,5 +1,5 @@
 from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text
-from .models import ServerResponse, Level, LevelRecord
+from .models import ServerResponse, Level, LevelRecord, SongRecord
 
 from .constants import XORKeys, MiscConstants
 
@@ -228,7 +228,7 @@ def process_get(response_json):
 		record.save()
 
 	for item in song_array:
-		record = create_song_record_from_data(item, get_song_object(item[1]))
+		record = create_song_record_from_data(item, get_song_object(item[1]), SongRecord.RecordType.LEVEL_INFO, decode_link=True)
 		record.server_response.add(response_object)
 
 	return True

@@ -1,6 +1,7 @@
 import os
 import html
 import hashlib
+import urllib
 import base64
 from w3lib.html import replace_entities
 
@@ -18,14 +19,19 @@ def decode_base64_text(content):
 	return DecodeResult(encoded, content)
 
 def assign_key(data, key):
-	if key not in data:
+	if key not in data and str(key) not in data:
 		return None
 	value = assign_key_no_pop(data, key)
-	data.pop(key)
+	if key in data:
+		data.pop(key)
+	if str(key) in data:
+		data.pop(str(key))
 	return value
 
 def assign_key_no_pop(data, key):
 	if key not in data or data[key] == '':
+		if not isinstance(key, str):
+			return assign_key_no_pop(data, str(key))
 		return None
 	value = data[key]
 	if isinstance(value, str):
@@ -78,32 +84,36 @@ def get_song_object(song):
 		song_object.save()
 	return song_object
 
-def create_song_record_from_data(data, song_object):
+def create_song_record_from_data(data, song_object, record_type, *args, **kwargs):
 	from .models import SongRecord
+
+	link = assign_key(data, 10)
+	if kwargs.get('decode_link', True) and link is not None:
+		link = urllib.parse.unquote(link)
 
 	try:
 		return SongRecord.objects.get(song=song_object,
-			song_name = assign_key_no_pop(data, '2'),
-			artist_id = assign_key_no_pop(data, '3'),
-			artist_name = assign_key_no_pop(data, '4'),
-			size = assign_key_no_pop(data, '5'),
-			youtube_id = assign_key_no_pop(data, '6'),
-			youtube_channel = assign_key_no_pop(data, '7'),
-			is_verified = assign_key_no_pop(data, '8'),
-			link = assign_key_no_pop(data, '10'),
-			record_type = SongRecord.RecordType.MDLM_001
+			song_name = assign_key_no_pop(data, 2),
+			artist_id = assign_key_no_pop(data, 3),
+			artist_name = assign_key_no_pop(data, 4),
+			size = assign_key_no_pop(data, 5),
+			youtube_id = assign_key_no_pop(data, 6),
+			youtube_channel = assign_key_no_pop(data, 7),
+			is_verified = assign_key_no_pop(data, 8),
+			link = link,
+			record_type = record_type
 		)
 	except:
 		record = SongRecord(song=song_object,
-			song_name = assign_key(data, '2'),
-			artist_id = assign_key(data, '3'),
-			artist_name = assign_key(data, '4'),
-			size = assign_key(data, '5'),
-			youtube_id = assign_key(data, '6'),
-			youtube_channel = assign_key(data, '7'),
-			is_verified = assign_key(data, '8'),
-			link = assign_key(data, '10'),
-			record_type = SongRecord.RecordType.MDLM_001,
+			song_name = assign_key(data, 2),
+			artist_id = assign_key(data, 3),
+			artist_name = assign_key(data, 4),
+			size = assign_key(data, 5),
+			youtube_id = assign_key(data, 6),
+			youtube_channel = assign_key(data, 7),
+			is_verified = assign_key(data, 8),
+			link = link,
+			record_type = record_type,
 			unprocessed_data = data
 		)
 		record.save()
