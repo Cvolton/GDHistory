@@ -1,4 +1,4 @@
-from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object
+from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text
 from .models import ServerResponse, Level, LevelRecord
 
 from .constants import XORKeys, MiscConstants
@@ -73,9 +73,9 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 	except:
 		level_password = None if level_password is None else robtop_unxor(level_password, XORKeys.PASSWORD_KEY)
 
-	description = assign_key(data, 'k3')
+	description = assign_key(level_data, 3)
 	description_encoded = False
-	if kwargs.get('legacy_description', False):
+	if not kwargs.get('legacy_description', False):
 		description_result = decode_base64_text(description)
 		description = description_result.text
 		description_encoded = description_result.encoded
@@ -83,7 +83,8 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 	try: #TODO: merge the 2 cases
 		return LevelRecord.objects.get(level=level_object,
 			level_name = assign_key_no_pop(level_data, 2),
-			description = assign_key_no_pop(level_data, 3),
+			description = description,
+			description_encoded = description_encoded,
 			user_id = assign_key_no_pop(level_data, 6),
 			official_song = assign_key_no_pop(level_data, 12),
 			rating = assign_key_no_pop(level_data, 8),
@@ -121,7 +122,8 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 	except:
 		record = LevelRecord(level=level_object,
 			level_name = assign_key(level_data, 2),
-			description = assign_key(level_data, 3),
+			description = description,
+			description_encoded = description_encoded,
 			#username = not included,
 			user_id = assign_key(level_data, 6),
 			official_song = assign_key(level_data, 12),
