@@ -84,11 +84,8 @@ class SongRecord(models.Model):
 		SaveFile,
 	)
 
-	server_response = models.ForeignKey(
+	server_response = models.ManyToManyField(
 		ServerResponse,
-		on_delete=models.CASCADE,
-		blank=True, null=True,
-		db_index=True,
 	)
 
 	song_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)

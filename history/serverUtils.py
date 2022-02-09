@@ -226,8 +226,8 @@ def process_get(response_json):
 		record.save()
 
 	for item in song_array:
-		create_song_record_from_data(item, get_song_object(item[1]))
-		#TODO: link song records to server responses
+		record = create_song_record_from_data(item, get_song_object(item[1]))
+		record.server_response.add(response_object)
 
 	return True
 
