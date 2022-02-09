@@ -2,9 +2,21 @@ import datetime
 import base64
 from django import template
 
-from history.constants import MiscConstants
+from history.constants import MiscConstants, SongNames
 
 register = template.Library()
+
+@register.simple_tag
+def song_name(song_id, game_version):
+	if game_version < 21:
+		full_song_array = SongNames.PRACTICE + SongNames.MAIN[:20] + SongNames.MELTDOWN
+	else:
+		full_song_array = SongNames.PRACTICE + SongNames.MAIN + SongNames.MELTDOWN + SongNames.CHALLENGE + SongNames.WORLD + SongNames.SUBZERO
+
+	song_id = song_id + 1
+	if song_id < 0 or song_id > len(full_song_array):
+		return "Unknown by DJVI"
+	return full_song_array[song_id]
 
 @register.simple_tag
 def length(length_number):
