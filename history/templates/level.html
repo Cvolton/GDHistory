@@ -67,6 +67,16 @@
 		{% if first_record.description_encrypted %}<b>Warning:</b> Description decoding failed{% endif %}
 		<b>Description:</b> {% if first_record.description %}{{ first_record.description }}{% else %}(No description provided.){% endif %}
 		<br><b>Song:</b> Stereo Madness by ForeverBound (ID: {% if first_record.custom_song > 0 %}{{ first_record.custom_song }}{% else %}{{ first_record.official_song }}{% endif %})
+		<div class="collapse" id="collapseDescription">
+			<b>Password:</b> {{ first_record.password }}<br>
+			<b>Objects:</b> {{ first_record.objects_count }}<br>
+			<b>Coins:</b> {{ first_record.coins }} {% if first_record.coins_verified %}(Verified){% endif %}<br>
+			<b>Requested Stars:</b> {{ first_record.requested_stars }}<br>
+			<b>Original:</b> {{ first_record.original }}<br>
+		</div>
+		<a data-bs-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">
+			More info
+		</a>
 	</p>
 	<hr />
 </div>
