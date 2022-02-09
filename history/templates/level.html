@@ -66,7 +66,7 @@
 	<p>
 		{% if first_record.description_encrypted %}<b>Warning:</b> Description decoding failed{% endif %}
 		<b>Description:</b> {% if first_record.description %}{{ first_record.description }}{% else %}(No description provided.){% endif %}
-		<br><b>Song:</b> Stereo Madness by ForeverBound (ID: {% if first_record.custom_song > 0 %}{{ first_record.custom_song }}{% else %}{{ first_record.official_song }}{% endif %})
+		<br><b>Song:</b> Stereo Madness by ForeverBound (ID: {% if first_record.song %}{{ first_record.song.online_id }}{% else %}{{ first_record.official_song }}{% endif %})
 		<div class="collapse" id="collapseDescription">
 			<b>Password:</b> {{ first_record.password }}<br>
 			<b>Objects:</b> {{ first_record.objects_count }}<br>

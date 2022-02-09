@@ -45,6 +45,22 @@ class ServerResponse(models.Model):
 class Song(models.Model):
 	online_id = models.IntegerField(unique=True)
 
+	cache_song_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
+	cache_artist_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
+
+	def revalidate_cache(self):
+		best_record = self.songrecord_set.annotate(newest_created=Max('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude(real_date=None, song_name=None).order_by('-real_date')[:1]
+		if len(best_record) < 1:
+			self.cache_song_name = None
+			self.cache_artist_name = None
+			self.save()
+			return
+
+		best_record = best_record[0]
+		self.cache_song_name = best_record.song_name
+		self.cache_artist_name = best_record.artist_name
+		self.save()
+
 
 class SongRecord(models.Model):
 
@@ -75,9 +91,9 @@ class SongRecord(models.Model):
 		db_index=True,
 	)
 
-	song_name = models.TextField(blank=True, null=True)
+	song_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	artist_id = models.IntegerField(null=True)
-	artist_name = models.TextField(blank=True, null=True)
+	artist_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	size = models.FloatField(null=True)
 	youtube_id = models.TextField(blank=True, null=True)
 	youtube_channel = models.TextField(blank=True, null=True)
@@ -237,7 +253,6 @@ class LevelRecord(models.Model):
 	auto = models.BooleanField(blank=True, null=True, db_index=True) #k33
 	password = models.IntegerField(blank=True, null=True) #k41
 	two_player = models.BooleanField(blank=True, null=True) #k43
-	custom_song = models.IntegerField(blank=True, null=True) #k41
 	objects_count = models.IntegerField(blank=True, null=True) #k48
 	account_id = models.IntegerField(blank=True, null=True) #k60
 	coins = models.IntegerField(blank=True, null=True) #k64
@@ -252,6 +267,13 @@ class LevelRecord(models.Model):
 	relative_upload_date = models.CharField(blank=True, null=True, max_length=255) #28 #in the real world <= 10
 	relative_update_date = models.CharField(blank=True, null=True, max_length=255) #29 #in the real world <= 10
 	original = models.IntegerField(blank=True, null=True) #k42
+
+	song = models.ForeignKey(
+		Song,
+		on_delete=models.CASCADE,
+		blank=True, null=True,
+		db_index=True,
+	)
 
 	unprocessed_data = models.JSONField() #this field should only be used for archival purposes, do not pull data from this directly in production
 

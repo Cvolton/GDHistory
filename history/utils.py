@@ -68,6 +68,9 @@ def robtop_unxor(string, key):
 def get_song_object(song):
 	from .models import Song
 
+	if song == 0 or song is None:
+		return None
+
 	try:
 		song_object = Song.objects.get(online_id=song)
 	except:
