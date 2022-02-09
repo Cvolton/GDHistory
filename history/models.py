@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext as _
 
-from django.db.models import Min, Q
+from django.db.models import Min, Max, Q
 from django.db.models.functions import Coalesce
 
 from . import utils
@@ -49,7 +49,7 @@ class Song(models.Model):
 	cache_artist_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 
 	def revalidate_cache(self):
-		best_record = self.songrecord_set.annotate(newest_created=Max('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude(real_date=None, song_name=None).order_by('-real_date')[:1]
+		best_record = self.songrecord_set.annotate(newest_created=Max('save_file__created'), real_date=Coalesce('newest_created', 'server_response__created')).exclude(real_date=None, song_name=None).order_by('-real_date')[:1]
 		if len(best_record) < 1:
 			self.cache_song_name = None
 			self.cache_artist_name = None
