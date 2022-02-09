@@ -155,14 +155,23 @@ class Level(models.Model):
 
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
+	requires_base64 = models.BooleanField(default=False)
 
 	def load_file_content(self):
+		import base64
+
 		data_path = utils.get_data_path()
 		directory = f"{data_path}/LevelString/{self.pk}"
 		if not os.path.exists(directory):
 			return None
-		with open(directory) as f:
+		with open(directory, 'rb') as f:
 			content = f.read()
+			print(content)
+
+		if self.requires_base64:
+			content = base64.b64encode(content, altchars=b'-_')
+
+		content = content.decode('windows-1252')
 		return content
 
 

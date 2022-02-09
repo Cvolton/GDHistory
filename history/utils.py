@@ -40,14 +40,20 @@ def get_data_path():
 def create_level_string(level_string):
 	from .models import LevelString
 
-	sha256 = hashlib.sha256(level_string.encode('utf-8')).hexdigest()
+	level_string = level_string.encode('windows-1252')
+	sha256 = hashlib.sha256(level_string).hexdigest()
 	try:
 		return LevelString.objects.get(sha256=sha256)
 	except:
 		data_path = get_data_path()
-		record = LevelString(sha256=sha256)
+		requires_base64 = False
+		if level_string[:2] == b'eJ' or level_string[:2] == b'H4':
+			level_string = base64.b64decode(level_string, altchars='-_')
+			requires_base64 = True
+
+		record = LevelString(sha256=sha256, requires_base64=requires_base64)
 		record.save()
-		f = open(f"{data_path}/LevelString/{record.pk}", "w")
+		f = open(f"{data_path}/LevelString/{record.pk}", "wb")
 		f.write(level_string)
 		f.close()
 		return record
@@ -57,7 +63,7 @@ def robtop_unxor(string, key):
 	string = bytearray(base64.b64decode(string, altchars='-_'))
 	for i in range(0, len(string)):
 		string[i] ^= ord(key[i%len(key)])
-	return string.decode('utf-8')
+	return string.decode('windows-1252')
 
 def get_song_object(song):
 	from .models import Song
