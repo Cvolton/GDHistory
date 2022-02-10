@@ -76,7 +76,7 @@ def load_game_manager_plist(file):
 def create_level_record_from_data(data, level_object, record_type, binary_version):
 	description = assign_key_no_pop(data, 'k3')
 	description_encoded = False
-	if binary_version >= 27:
+	if binary_version is not None and binary_version >= 27:
 		description_result = decode_base64_text(description)
 		description = description_result.text
 		description_encoded = description_result.encoded
