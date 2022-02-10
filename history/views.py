@@ -162,10 +162,12 @@ def login_page_placeholder(request):
 		return render(request, 'error.html', {'error': 'This feature is not available yet.'})
 
 def download_record(request, record_id=None, online_id=None):
-	#TODO: unlisted
 	if record_id == None:
 		return render(request, 'error.html', {'error': 'Invalid record ID'})
-	record = LevelRecord.objects.get(pk=record_id)
+	try: record = LevelRecord.objects.get(pk=record_id)
+	except: return render(request, 'error.html', {'error': 'Record not found in our database'})
+	if record.level.is_public is not True:
+		return render(request, 'error.html', {'error': 'You do not have the rights to download this record'})
 	data = ccUtils.create_data_from_level_record(record)
 	data = plistlib.dumps(data)
 	data = ccUtils.consolidate_plist(data)
