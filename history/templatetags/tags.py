@@ -19,7 +19,7 @@ def song_name(song_id, game_version):
 	if song_id is None:
 		return SongNames.MAIN[0]
 
-	if game_version < 21:
+	if game_version is not None and game_version < 21:
 		full_song_array = SongNames.PRACTICE + SongNames.MAIN[:20] + SongNames.MELTDOWN
 	else:
 		full_song_array = SongNames.PRACTICE + SongNames.MAIN + SongNames.MELTDOWN + SongNames.CHALLENGE + SongNames.WORLD + SongNames.SUBZERO
