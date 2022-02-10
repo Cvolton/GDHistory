@@ -51,7 +51,6 @@ def create_level_string(level_string):
 	try:
 		return LevelString.objects.get(sha256=sha256)
 	except:
-		data_path = get_data_path()
 		requires_base64 = False
 		if level_string[:2] == b'eJ' or level_string[:2] == b'H4':
 			level_string = base64.b64decode(level_string, altchars='-_')
@@ -59,7 +58,7 @@ def create_level_string(level_string):
 
 		record = LevelString(sha256=sha256, requires_base64=requires_base64)
 		record.save()
-		f = open(f"{data_path}/LevelString/{record.pk}", "wb")
+		f = open(record.get_file_path(), "wb")
 		f.write(level_string)
 		f.close()
 		return record

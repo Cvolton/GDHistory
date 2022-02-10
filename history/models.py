@@ -170,11 +170,17 @@ class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
 	requires_base64 = models.BooleanField(default=False)
 
+	def get_file_path(self):
+		data_path = utils.get_data_path()
+		directory = f"{data_path}/LevelString/{self.sha256[:2]}"
+		if not os.path.exists(directory):
+			os.mkdir(directory)
+		return f"{directory}/{self.sha256}"
+
 	def load_file_content(self):
 		import base64
 
-		data_path = utils.get_data_path()
-		directory = f"{data_path}/LevelString/{self.pk}"
+		directory = self.get_file_path()
 		if not os.path.exists(directory):
 			return None
 		with open(directory, 'rb') as f:
