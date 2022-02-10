@@ -185,7 +185,7 @@ def create_data_from_level_record(record):
 		'k41': record.password,
 		'k42': record.original,
 		'k43': record.two_player,
-		'k45': record.custom_song,
+		'k45': record.song.online_id,
 		'k48': record.objects_count,
 		'k60': record.account_id,
 		'k64': record.coins,
