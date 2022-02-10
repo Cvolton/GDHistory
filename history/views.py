@@ -169,6 +169,9 @@ def download_record(request, record_id=None, online_id=None):
 	if record.level.is_public is not True:
 		return render(request, 'error.html', {'error': 'You do not have the rights to download this record'})
 	data = ccUtils.create_data_from_level_record(record)
+	if 'k4' not in data:
+		return render(request, 'error.html', {'error': 'This record does not contain any level data. If you have reached this page using a link claiming that the data is available, please report this bug immediately.'})
+
 	data = plistlib.dumps(data)
 	data = ccUtils.consolidate_plist(data)
 	data = ccUtils.plist_to_robtop_plist(data)
