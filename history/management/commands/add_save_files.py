@@ -4,6 +4,7 @@ from history.models import SaveFile
 import os
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
+from django.conf import settings
 
 class Command(BaseCommand):
 	help = 'Adds save files from a pre-defined directory'
@@ -19,8 +20,5 @@ class Command(BaseCommand):
 			f = open(game_manager_path, "rb")
 			parsed_date = datetime.strptime(filename, '%Y-%m-%d')
 			print(parsed_date)
-			if SaveFile.objects.filter(created=parsed_date).exists():
-				print(f"{parsed_date} already exists")
-			else:
-				history.ccUtils.process_save_file(f, parsed_date)
+			ccUtils.upload_save_file(f, parsed_date, settings.AUTH_USER_MODEL.objects.get(username="Cvolton"))
 			f.close()
