@@ -237,7 +237,7 @@ def process_songs_in_mdlm(mdlm, save_file):
 		record = create_song_record_from_data(data, song_object, SongRecord.RecordType.MDLM_001)
 		record.save_file.add(save_file)
 
-def upload_save_file(file, date, user):
+def upload_save_file(file, date, user, *args, **kwargs):
 	data_path = get_data_path()
 
 	game_manager = load_game_manager_plist(file)
@@ -260,7 +260,8 @@ def upload_save_file(file, date, user):
 	plistlib.dump(game_manager, f)
 	f.close()
 
-	process_save_file.delay(save_file.pk)
+	if not kwargs.get('skip_processing', False):
+		process_save_file.delay(save_file.pk)
 
 @shared_task
 def process_save_file(save_id):

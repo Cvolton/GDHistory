@@ -1,4 +1,5 @@
 from history.models import Level
+from django.contrib.auth import User
 from history.constants import MiscConstants
 import history.utils
 import json

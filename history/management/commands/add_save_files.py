@@ -21,5 +21,5 @@ class Command(BaseCommand):
 			f = open(game_manager_path, "rb")
 			parsed_date = datetime.strptime(filename, '%Y-%m-%d')
 			print(parsed_date)
-			history.ccUtils.upload_save_file(f, parsed_date, User.objects.get(username="Cvolton"))
+			history.ccUtils.upload_save_file(f, parsed_date, User.objects.get(username="Cvolton"), skip_processing=True)
 			f.close()
