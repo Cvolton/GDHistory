@@ -41,6 +41,14 @@ INTERNAL_IPS = [
     '192.168.2.113'
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    os.getenv('CSRF_TRUSTED_ORIGIN_1','127.0.0.1'),
+    os.getenv('CSRF_TRUSTED_ORIGIN_2','127.0.0.1'),
+    os.getenv('CSRF_TRUSTED_ORIGIN_3','127.0.0.1'),
+    os.getenv('CSRF_TRUSTED_ORIGIN_4','127.0.0.1'),
+    os.getenv('CSRF_TRUSTED_ORIGIN_5','127.0.0.1')
+]
+
 # Celery settings
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
