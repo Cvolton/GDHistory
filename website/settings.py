@@ -29,8 +29,11 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY','django-insecure-osonvx0lbz(dmre6pfbr
 DEBUG = bool(os.getenv('DEBUG',False))
 
 ALLOWED_HOSTS = [
-    '127.0.0.1',
-    '192.168.2.115'
+    os.getenv('ALLOWED_HOST_1','127.0.0.1'),
+    os.getenv('ALLOWED_HOST_2','127.0.0.1'),
+    os.getenv('ALLOWED_HOST_3','127.0.0.1'),
+    os.getenv('ALLOWED_HOST_4','127.0.0.1'),
+    os.getenv('ALLOWED_HOST_5','127.0.0.1')
 ]
 
 INTERNAL_IPS = [
