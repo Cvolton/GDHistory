@@ -17,8 +17,9 @@ class Command(BaseCommand):
 
 		songs = Song.objects.all().prefetch_related('songrecord_set__save_file')
 		song_count = songs.count()
-		i = 1
-		for song in songs:
+		for i in range(0,song_count):
+			song = songs[i:i+1]
+			song = song[0]
 			print(f"{i} / {song_count} - Updating {song.online_id}")
 			song.revalidate_cache()
 			i += 1
