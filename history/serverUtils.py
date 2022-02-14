@@ -174,7 +174,11 @@ def process_download(response_json):
 		level_object.save()
 		return
 
-	level_info = response_to_dict(response.split('#')[0], ':')
+	request_info = response.split('#')
+	if len(request_info) < 3:
+		return False
+
+	level_info = response_to_dict(request_info[0], ':')
 
 	record = create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.DOWNLOAD, response_object)
 
@@ -234,6 +238,10 @@ def process_get(response_json):
 
 def import_json(file):
 	response_json = json.load(file)
+	#Avoid importing invalid data from CloudFlare
+	if response_json["raw_output"][:5] == '<html' or response_json["raw_output"][:5] == 'error':
+		return False
+
 	if response_json["endpoint"] == "getGJLevels21":
 		print(process_get(response_json))
 	if response_json["endpoint"] == "downloadGJLevel22":
