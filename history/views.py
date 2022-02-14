@@ -107,6 +107,10 @@ def search(request):
 			levels = levels.filter(is_deleted=True)
 			query += f" (deleted only)"
 
+		if 'playable' in form.cleaned_data and form.cleaned_data['playable'] is True:
+			levels = levels.filter(cache_level_string_available=True)
+			query += f" (playable only)"
+
 		levels = levels.order_by('-cache_downloads')
 		if 's' in form.cleaned_data:
 			reverse_sort = False

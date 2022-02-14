@@ -9,4 +9,5 @@ class SearchForm(forms.Form):
 	p = forms.IntegerField(label='Page', required=False)
 	userID = forms.IntegerField(label='User ID', required=False)
 	deleted = forms.BooleanField(label='Deleted only', required=False)
+	playable = forms.BooleanField(label='Data available', required=False)
 	s = forms.CharField(label='Sort', required=False)
