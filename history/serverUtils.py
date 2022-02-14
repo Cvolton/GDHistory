@@ -169,7 +169,7 @@ def process_download(response_json):
 	response_object = create_request(response_json)
 	response = response_json["raw_output"]
 
-	if response[:2] == '-1': #level doesn't exist or other error
+	if response[:2] == '-1' or not response: #level doesn't exist or other error
 		level_object.is_deleted = True
 		level_object.save()
 		return
