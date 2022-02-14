@@ -103,6 +103,10 @@ def search(request):
 			levels = levels.filter(cache_user_id=form.cleaned_data['userID'])
 			query += f" (userID {form.cleaned_data['userID']})"
 
+		if 'deleted' in form.cleaned_data and form.cleaned_data['deleted'] is True:
+			levels = levels.filter(is_deleted=True)
+			query += f" (deleted only)"
+
 		levels = levels.order_by('-cache_downloads')
 		if 's' in form.cleaned_data:
 			reverse_sort = False
