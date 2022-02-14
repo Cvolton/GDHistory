@@ -188,7 +188,7 @@ def process_download(response_json):
 
 	#record.server.add(save_file)
 
-	if 4 in level_info:
+	if 4 in level_info and level_info[4]:
 		level_string = assign_key(level_info, 4)
 		record.level_string = create_level_string(level_string)
 		record.unprocessed_data = level_info
