@@ -24,7 +24,7 @@ class Command(BaseCommand):
 			print(f"{i} / {file_count} - Processing {export_path}")
 			f = open(export_path, "rb")
 			if history.serverUtils.import_json(f) is not False:
-				os.rename(export_path, "{imports_root}/ServerResponse-Processed/{filename}")
+				os.rename(export_path, f"{imports_root}/ServerResponse-Processed/{filename}")
 			i += 1
 
 		print("Done")
