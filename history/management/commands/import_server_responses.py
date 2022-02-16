@@ -11,7 +11,8 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		data_path = history.utils.get_data_path()
-		directory = f"{data_path}/Imports/ServerResponse/"
+		imports_root = f"{data_path}/Imports"
+		directory = f"{imports_root}/ServerResponse/"
 		files = os.listdir(directory)
 		file_count = len(files)
 		i = 1
@@ -22,7 +23,8 @@ class Command(BaseCommand):
 				continue
 			print(f"{i} / {file_count} - Processing {export_path}")
 			f = open(export_path, "rb")
-			history.serverUtils.import_json(f)
+			if history.serverUtils.import_json(f) is not False:
+				os.rename(export_path, "{imports_root}/ServerResponse-Processed/{filename}")
 			i += 1
 
 		print("Done")
