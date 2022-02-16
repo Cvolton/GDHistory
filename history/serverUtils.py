@@ -169,14 +169,17 @@ def process_download(response_json):
 	response_object = create_request(response_json)
 	response = response_json["raw_output"]
 
+	if response_object is False:
+		return False
+
 	if response[:2] == '-1' or not response: #level doesn't exist or other error
 		level_object.is_deleted = True
 		level_object.save()
-		return
+		return None
 
 	request_info = response.split('#')
 	if len(request_info) < 3:
-		return False
+		return None
 
 	level_info = response_to_dict(request_info[0], ':')
 
@@ -198,15 +201,19 @@ def process_download(response_json):
 		record.unprocessed_data = level_info
 	record.save()
 
+	return True
+
 def process_get(response_json):
 	response_object = create_request(response_json)
 	response = response_json["raw_output"]
-	if response_object is False or response == "-1" or response == "":
+	if response_object is False:
 		return False
+	if response == "-1" or response == "":
+		return None
 
 	request_info = response.split('#')
 	if len(request_info) < 4:
-		return False
+		return None
 
 	user_dict = create_user_dict(request_info[1])
 
@@ -243,7 +250,7 @@ def import_json(file):
 		return False
 
 	if response_json["endpoint"] == "getGJLevels21":
-		print(process_get(response_json))
+		return process_get(response_json)
 	if response_json["endpoint"] == "downloadGJLevel22":
-		process_download(response_json)
+		return process_download(response_json)
 
