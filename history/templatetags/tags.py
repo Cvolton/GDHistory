@@ -7,6 +7,14 @@ from history.constants import MiscConstants, SongNames
 register = template.Library()
 
 @register.simple_tag
+def print_filters(filters):
+	string = ""
+	for filter_string in filters:
+		if filters[filter_string]:
+			string += f"&{filter_string}={filters[filter_string]}"
+	return string
+
+@register.simple_tag
 def level_password(password):
 	if password == 0 or password is None:
 		return "Not copyable"
