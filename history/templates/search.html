@@ -23,7 +23,7 @@ tr:hover, tr:focus-within {
 }
 </style>
 <div class="row">
-	<p class="lead">Showing results for {{ query }}</p>
+	<p class="lead">{% if query %}Showing results for {{ query }}{% else %}Showing all levels{% endif %}</p>
 </div>
 <div class="row">
 	<div class="card">
