@@ -32,7 +32,7 @@ tr:hover, tr:focus-within {
 				<th>ID</th>
 				<th>Name</th>
 				<th>Last record update</th>
-				<th>Downloads</th>
+				<th>Downloads<!--{% if not filters|get_item:"s" or filters|get_item:"s" == "-downloads" %}▼{% endif %}--></th>
 				<th>Likes</th>
 				<th>Difficulty</th>
 				<th>Creator</th>
