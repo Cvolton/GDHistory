@@ -201,6 +201,8 @@ def process_download(response_json):
 		record.unprocessed_data = level_info
 	record.save()
 
+	level_object.revalidate_cache()
+
 	return True
 
 def process_get(response_json):
@@ -235,6 +237,8 @@ def process_get(response_json):
 			record.username = record.username if 1 not in user_record is None else user_record[1]
 			record.account_id = record.account_id if 2 not in user_record is None else user_record[2]
 			
+		level_object.revalidate_cache()
+
 		record.save()
 
 	for item in song_array:
