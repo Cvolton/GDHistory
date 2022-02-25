@@ -31,11 +31,11 @@ tr:hover, tr:focus-within {
 			<p class="lead">Filters</p>
 			<form>
 				<div class="form-check form-check-inline">
-					<input type="checkbox" class="form-check-input" id="deletedCheck" {% if filters|get_item:"deleted" %}checked{% endif %}>
+					<input type="checkbox" class="form-check-input" id="deletedCheck" {% if filters|get_item:"deleted" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'deleted' %}' ">
 					<label class="form-check-label" for="deletedCheck">Deleted only</label>
 				</div>
 				<div class="form-check form-check-inline">
-					<input type="checkbox" class="form-check-input" id="playableCheck" {% if filters|get_item:"playable" %}checked{% endif %}>
+					<input type="checkbox" class="form-check-input" id="playableCheck" {% if filters|get_item:"playable" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'playable' %}' ">
 					<label class="form-check-label" for="playableCheck">Playable only</label>
 				</div>
 			</form>

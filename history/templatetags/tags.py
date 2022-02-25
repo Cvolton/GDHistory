@@ -15,6 +15,14 @@ def print_filters(filters):
 	return string
 
 @register.simple_tag
+def print_filters_toggled(filters, to_toggle):
+	filter_list = filters.copy()
+	if to_toggle in filter_list: filter_list[to_toggle] = not filter_list[to_toggle]
+	else: filter_list[to_toggle] = True
+	return print_filters(filter_list)
+
+
+@register.simple_tag
 def level_password(password):
 	if password == 0 or password is None:
 		return "Not copyable"
