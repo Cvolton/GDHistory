@@ -240,7 +240,7 @@ class LevelRecord(models.Model):
 	description = models.TextField(blank=True, null=True) #k3
 	description_encoded = models.BooleanField(blank=True, null=True)
 	username = models.CharField(blank=True, null=True, max_length=255, db_index=True) #k5 #in the real world <= 15
-	user_id = models.IntegerField(blank=True, null=True) #k6
+	user_id = models.IntegerField(blank=True, null=True, db_index=True) #k6
 	official_song = models.IntegerField(blank=True, null=True) #k8
 	rating = models.IntegerField(blank=True, null=True, db_index=True) #k9
 	rating_sum = models.IntegerField(blank=True, null=True, db_index=True) #k10
