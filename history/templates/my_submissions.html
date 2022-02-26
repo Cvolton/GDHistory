@@ -29,6 +29,7 @@ tr:hover, tr:focus-within {
 	<table class="table table-striped">
 		<thead>
 			<tr>
+				<th>PK</th>
 				<th>Submitted</th>
 				<th>Created</th>
 				<th>Comment</th>
@@ -43,6 +44,7 @@ tr:hover, tr:focus-within {
 		<tbody>
 		{% for submission in submissions %}
 			<tr>
+				<td>{{ submission.pk }}</td>
 				<td>{{ submission.submitted }}</td>
 				<td>{{ submission.created }}</td>
 				<td>{{ submission.comment }}</td>
