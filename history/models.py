@@ -128,7 +128,7 @@ class Level(models.Model):
 		self.levelrecord_set.update(cache_is_public=True)
 
 	def revalidate_cache(self):
-		best_record = self.levelrecord_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude(real_date=None, level_name=None).order_by('-downloads')[:1]
+		best_record = self.levelrecord_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) ).order_by('-downloads')[:1]
 		if len(best_record) < 1:
 			self.cache_level_name = None
 			self.save()
