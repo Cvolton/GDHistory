@@ -1,5 +1,5 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString
-from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text
+from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text, encode_base64_text
 
 from celery import shared_task
 
@@ -165,7 +165,7 @@ def create_data_from_level_record(record):
 		'kCEK': 4,
 		'k1': record.level.online_id,
 		'k2': record.level_name,
-		'k3': record.description,
+		'k3': record.get_encoded_description(),
 		'k4': record.level_string.load_file_content() if record.level_string is not None else None,
 		'k5': record.username,
 		'k6': record.user_id,

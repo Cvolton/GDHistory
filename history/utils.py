@@ -10,6 +10,9 @@ class DecodeResult:
 		self.encoded = encoded
 		self.text = text
 
+def encode_base64_text(content):
+	return base64.b64encode(content.encode('windows-1252'), altchars=b'-_').decode('windows-1252')
+
 def decode_base64_text(content):
 	try:
 		content = base64.b64decode(content, altchars='-_').decode('windows-1252')
