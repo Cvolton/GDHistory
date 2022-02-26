@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		data_path = history.utils.get_data_path()
-		levels = Level.objects.exclude(is_deleted=True, cache_level_string_available=True).prefetch_related('levelrecord_set')
+		levels = Level.objects.exclude( Q(is_deleted=True) | Q(cache_level_string_available=True) ).prefetch_related('levelrecord_set')
 		level_count = levels.count()
 		levels_to_export = []
 		for i in range(0,level_count):
