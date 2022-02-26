@@ -14,9 +14,9 @@ class Command(BaseCommand):
 		levels = Level.objects.exclude(is_deleted=True).prefetch_related('levelrecord_set')
 		level_count = levels.count()
 		levels_to_export = []
-		i = 0
-		for level in levels:
-			i += 1
+		for i in range(0,level_count):
+			level = levels[i:i+1]
+			level = level[0]
 			string_count = level.levelrecord_set.exclude(level_string=None).count()
 			if string_count > 0:
 				continue
