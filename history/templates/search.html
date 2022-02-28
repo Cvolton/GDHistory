@@ -46,13 +46,14 @@ tr:hover, tr:focus-within {
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Last record update</th>
-				<th>Downloads<!--{% if not filters|get_item:"s" or filters|get_item:"s" == "-downloads" %}▼{% endif %}--></th>
-				<th>Likes</th>
-				<th>Difficulty</th>
-				<th>Creator</th>
+				<!-- TODO: have a function to make printing this header easier -->
+				<th>{% print_search_th filters 'id' False 'ID' %}</th>
+				<th>{% print_search_th filters 'name' False 'Name' %}</th>
+				<th>{% print_search_th filters 'last_seen' False 'Last record update' %}</th>
+				<th>{% print_search_th filters 'downloads' False 'Downloads' %}</th>
+				<th>{% print_search_th filters 'likes' False 'Likes' %}</th>
+				<th>{% print_search_th filters 'stars' False 'Difficulty' %}</th>
+				<th>{% print_search_th filters 'username' False 'Creator' %}</th>
 				<th>Data Available</th>
 			</tr>
 		</thead>

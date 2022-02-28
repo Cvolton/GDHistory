@@ -1,6 +1,7 @@
 import datetime
 import base64
 from django import template
+from django.utils.safestring import mark_safe
 
 from history.constants import MiscConstants, SongNames
 
@@ -21,6 +22,27 @@ def print_filters_toggled(filters, to_toggle):
 	else: filter_list[to_toggle] = True
 	return print_filters(filter_list)
 
+@register.simple_tag
+def print_filters_without(filters, to_delete):
+	filter_list = filters.copy()
+	if to_delete in filter_list: del filter_list[to_delete]
+	return print_filters(filter_list)
+
+@register.simple_tag
+def print_search_th(filters, sort, default_desc, human_readable):
+	filters_without = print_filters_without(filters, 's')
+	sort_mark = ""
+	if 's' in filters and filters['s'] == sort:
+		default_desc = True
+		sort_mark = " &#9650;"
+	elif 's' in filters and filters['s'] == f"-{sort}":
+		default_desc = False
+		sort_mark = " &#9660;"
+
+	if default_desc == True:
+		sort = f"-{sort}"
+
+	return mark_safe(f'<a href="?p=1{filters_without}&s={sort}">{human_readable}{sort_mark}</a>')
 
 @register.simple_tag
 def level_password(password):
