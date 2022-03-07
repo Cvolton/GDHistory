@@ -30,7 +30,7 @@ def index(request):
 
 	return render(request, 'index.html', context)
 
-def view_level(request, online_id=None):
+def view_level(request, online_id=None, record_id=None):
 	all_levels = LevelRecord.objects.filter(level__is_public=True)
 	#TODO: improve this
 	if request.user.is_authenticated and request.user.is_superuser:
@@ -39,6 +39,9 @@ def view_level(request, online_id=None):
 	level_records = all_levels.filter(level__online_id=online_id).exclude(level_version=None).prefetch_related('level').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
 
 	#tasks.download_level_task.delay(online_id)
+
+	record_belongs = False
+	first_record = None
 
 	records = {}
 	level_strings = {}
@@ -54,14 +57,25 @@ def view_level(request, online_id=None):
 			level_string_count += 1
 			level_strings[record.level_string.pk] = True
 
+		print(f"{record.pk} {record_id}")
+		if str(record.pk) == str(record_id):
+			record_belongs = True
+			first_record = record
+
 	if len(records) == 0:
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
+
+	if first_record is None:
+		first_record = level_records[0]
+	
+	if record_id is not None and not record_belongs:
+		return render(request, 'error.html', {'error': 'Level record does not belong to this level'})
 
 	years = []
 	for i in range(min(records), max(records)+1):
 		years.append(i)
 
-	context = {'level_records': records, 'first_record': level_records[0], 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count}
+	context = {'level_records': records, 'first_record': first_record, 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count}
 
 	return render(request, 'level.html', context)
 
