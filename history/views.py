@@ -75,7 +75,7 @@ def view_level(request, online_id=None, record_id=None):
 	for i in range(min(records), max(records)+1):
 		years.append(i)
 
-	context = {'level_records': records, 'first_record': first_record, 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count}
+	context = {'level_records': records, 'record_id': record_id, 'first_record': first_record, 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count}
 
 	return render(request, 'level.html', context)
 
