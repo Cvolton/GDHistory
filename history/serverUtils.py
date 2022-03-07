@@ -175,7 +175,7 @@ def process_download(response_json):
 	if response[:2] == '-1' or not response: #level doesn't exist or other error
 		level_object.is_deleted = True
 		level_object.save()
-		return False
+		return True
 
 	request_info = response.split('#')
 	if len(request_info) < 3:
