@@ -11,6 +11,7 @@ class DecodeResult:
 		self.text = text
 
 def encode_base64_text(content):
+	if content is None: return None
 	return base64.b64encode(content.encode('windows-1252'), altchars=b'-_').decode('windows-1252')
 
 def decode_base64_text(content):
