@@ -46,7 +46,6 @@ tr:hover, tr:focus-within {
 	<table class="table table-striped">
 		<thead>
 			<tr>
-				<!-- TODO: have a function to make printing this header easier -->
 				<th>{% print_search_th filters 'id' False 'ID' %}</th>
 				<th>{% print_search_th filters 'name' False 'Name' %}</th>
 				<th>{% print_search_th filters 'last_seen' False 'Last record update' %}</th>
@@ -61,6 +60,7 @@ tr:hover, tr:focus-within {
 		{% for level in level_records %}
 			<!-- onclick="window.location='{% url 'level' level.online_id %}';" -->
 			<tr>
+				<!-- pk: {{ level.pk }} -->
 				<td><a href="{% url 'level' level.online_id %}">{{ level.online_id }}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_level_name }}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_submitted|date:"N j, Y" }}</a></td>
