@@ -66,7 +66,7 @@
 	<p>
 		{% if first_record.description_encrypted %}<b>Warning:</b> Description decoding failed{% endif %}
 		<b>Description:</b> {% if first_record.description %}{{ first_record.description }}{% else %}(No description provided.){% endif %}
-		<br><b>Song:</b> {% if first_record.song %}{{ first_record.song.cache_song_name }} by {{ first_record.song.cache_artist_name }} (ID: {{ first_record.song.online_id }}){% else %}{% song_name first_record.official_song first_record.game_version %} (ID: {{ first_record.official_song }}){% endif %}
+		<br><b>Song:</b> {% if first_record.song and first_record.song.online_id != 0 %}{{ first_record.song.cache_song_name }} by {{ first_record.song.cache_artist_name }} (ID: {{ first_record.song.online_id }}){% else %}{% song_name first_record.official_song first_record.game_version %} (ID: {{ first_record.official_song }}){% endif %}
 		<div class="collapse" id="collapseDescription">
 			<b>Password:</b> {% level_password first_record.password %}<br>
 			{% if first_record.objects_count %}<b>Objects:</b> {{ first_record.objects_count }}<br>{% endif %}
