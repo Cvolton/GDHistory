@@ -242,8 +242,10 @@ def process_get(response_json):
 		record.save()
 
 	for item in song_array:
-		record = create_song_record_from_data(item, get_song_object(item[1]), SongRecord.RecordType.LEVEL_INFO, decode_link=True)
+		song_object = get_song_object(item[1])
+		record = create_song_record_from_data(item, song_object, SongRecord.RecordType.LEVEL_INFO, decode_link=True)
 		record.server_response.add(response_object)
+		song_object.revalidate_cache()
 
 	return True
 
