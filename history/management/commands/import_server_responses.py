@@ -15,8 +15,7 @@ class Command(BaseCommand):
 		directory = f"{imports_root}/ServerResponse/"
 		files = os.listdir(directory)
 		file_count = len(files)
-		i = 1
-		for filename in files:
+		for i, filename in enumerate(files):
 			export_path = f"{directory}/{filename}"
 			if not os.path.exists(export_path):
 				print("Save file {export_path} not found")
@@ -25,6 +24,5 @@ class Command(BaseCommand):
 			f = open(export_path, "rb")
 			if history.serverUtils.import_json(f) is not None:
 				os.rename(export_path, f"{imports_root}/ServerResponse-Processed/{filename}")
-			i += 1
 
 		print("Done")
