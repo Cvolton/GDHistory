@@ -20,7 +20,7 @@ class Command(BaseCommand):
 			#string_count = level.levelrecord_set.exclude(level_string=None).count()
 			#if string_count > 0:
 			#	continue
-			print(f"{i} / {level_count} - {level.online_id} {string_count}")
+			print(f"{i} / {level_count} - {level.online_id}")
 			levels_to_export.append(level.online_id)
 
 		task_json = {
