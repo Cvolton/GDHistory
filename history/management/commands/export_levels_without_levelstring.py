@@ -17,9 +17,9 @@ class Command(BaseCommand):
 		for i in range(0,level_count):
 			level = levels[i:i+1]
 			level = level[0]
-			string_count = level.levelrecord_set.exclude(level_string=None).count()
-			if string_count > 0:
-				continue
+			#string_count = level.levelrecord_set.exclude(level_string=None).count()
+			#if string_count > 0:
+			#	continue
 			print(f"{i} / {level_count} - {level.online_id} {string_count}")
 			levels_to_export.append(level.online_id)
 
