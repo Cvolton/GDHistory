@@ -2,6 +2,7 @@ from history.models import Level
 from history.constants import MiscConstants
 import history.utils
 import json
+import math
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
@@ -14,15 +15,15 @@ class Command(BaseCommand):
 		levels = Level.objects.exclude( Q(is_deleted=True) | Q(cache_level_string_available=True) ).prefetch_related('levelrecord_set')
 		level_count = levels.count()
 		levels_to_export = []
-		for i in range(0,level_count):
-			level = levels[i:i+1]
-			level = level[0]
-			#string_count = level.levelrecord_set.exclude(level_string=None).count()
-			#if string_count > 0:
-			#	continue
-			print(f"{i} / {level_count} - {level.online_id}")
-			levels_to_export.append(level.online_id)
+		batch_size = 2500
+		batch_count = math.ceil(level_count/2500)
+		for i in range(0,batch_count):
+			levels_small = levels[i*batch_size:(i+1)*batch_size]
+			for level in levels_small:
+				print(f"{i} / {batch_count} - {level.online_id}")
+				levels_to_export.append(level.online_id)
 
+		print("Creating JSON")
 		task_json = {
 			"endpoint": "downloadGJLevel22",
 			"parameters": {
@@ -32,6 +33,7 @@ class Command(BaseCommand):
 			"levelList": levels_to_export
 		}
 
+		print("Saving JSON")
 		f = open(f"{data_path}/Exports/LevelTask.json", "w")
 		json.dump(task_json, f)
 		f.close()
