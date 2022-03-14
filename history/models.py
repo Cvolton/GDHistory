@@ -42,6 +42,26 @@ class ServerResponse(models.Model):
 	unprocessed_post_parameters = models.JSONField()
 	endpoint = models.CharField(max_length=32)
 
+class GDUser(models.Model):
+	user_id = models.IntegerField(blank=True, null=True, db_index=True) #k6
+
+class GDUserRecord(models.Model):
+	record_type = models.CharField(
+		max_length=8,
+		choices=LevelRecord.RecordType.choices,
+	)
+
+	account_id = models.IntegerField(blank=True, null=True) #k60
+	username = models.CharField(blank=True, null=True, max_length=255, db_index=True) #k5 #in the real world <= 15
+
+	save_file = models.ManyToManyField(
+		SaveFile,
+	)
+
+	server_response = models.ManyToManyField(
+		ServerResponse,
+	)
+
 class Song(models.Model):
 	online_id = models.IntegerField(unique=True)
 
