@@ -121,3 +121,37 @@ def create_song_record_from_data(data, song_object, record_type, *args, **kwargs
 		)
 		record.save()
 		return record
+
+def get_user_object(user_id):
+	from .models import GDUser
+	try:
+		user_object = GDUser.objects.get(online_id=user_id)
+	except:
+		user_object = GDUser(online_id=user_id)
+		user_object.save()
+	return user_object
+
+def create_user_record(user_object, account_id, username, date, server_response, save_file, record_type):
+	if username == "": return
+	from .models import GDUserRecord, ServerResponse, SaveFile, LevelRecord
+
+	try:
+		record = GDUserRecord.objects.get(user=user_object,
+			username = username, 
+			account_id = account_id,
+			server_response = server_response,
+			record_type = record_type
+		)
+	except:
+		record = GDUserRecord(user=user_object,
+			username = username, 
+			account_id = account_id,
+			server_response = server_response,
+			record_type = record_type
+		)
+		record.save()
+	if date is not None and ((record.cache_created is not None and date < record.cache_created) or record.cache_created):
+		record.cache_created = date
+		record.save()
+	record.save_file.add(*(save_file.all()))
+	return record

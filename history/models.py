@@ -10,6 +10,13 @@ from . import utils
 from datetime import datetime
 import os
 
+class LevelRecordType(models.TextChoices):
+		GLM_03 = 'glm_03', _('GLM_03')
+		GLM_10 = 'glm_10', _('GLM_10')
+		GLM_16 = 'glm_16', _('GLM_16')
+		DOWNLOAD = 'download', _('downloadGJLevel')
+		GET = 'get', _('getGJLevels')
+
 class HistoryUser(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -43,12 +50,18 @@ class ServerResponse(models.Model):
 	endpoint = models.CharField(max_length=32)
 
 class GDUser(models.Model):
-	user_id = models.IntegerField(blank=True, null=True, db_index=True) #k6
+	online_id = models.IntegerField(blank=True, null=True, db_index=True) #k6
 
 class GDUserRecord(models.Model):
+	user = models.ForeignKey(
+		GDUser,
+		on_delete=models.CASCADE,
+		db_index=True,
+	)
+
 	record_type = models.CharField(
 		max_length=8,
-		choices=LevelRecord.RecordType.choices,
+		choices=LevelRecordType.choices,
 	)
 
 	account_id = models.IntegerField(blank=True, null=True) #k60
@@ -58,9 +71,14 @@ class GDUserRecord(models.Model):
 		SaveFile,
 	)
 
-	server_response = models.ManyToManyField(
+	server_response = models.ForeignKey(
 		ServerResponse,
+		on_delete=models.CASCADE,
+		blank=True, null=True,
+		db_index=True,
 	)
+
+	cache_created = models.DateTimeField(blank = True, null=True, db_index=True)
 
 class Song(models.Model):
 	online_id = models.IntegerField(unique=True)
@@ -216,16 +234,9 @@ class LevelString(models.Model):
 
 class LevelRecord(models.Model):
 
-	class RecordType(models.TextChoices):
-		GLM_03 = 'glm_03', _('GLM_03')
-		GLM_10 = 'glm_10', _('GLM_10')
-		GLM_16 = 'glm_16', _('GLM_16')
-		DOWNLOAD = 'download', _('downloadGJLevel')
-		GET = 'get', _('getGJLevels')
-
 	record_type = models.CharField(
 		max_length=8,
-		choices=RecordType.choices,
+		choices=LevelRecordType.choices,
 	)
 
 	level = models.ForeignKey(
@@ -250,6 +261,22 @@ class LevelRecord(models.Model):
 		on_delete=models.CASCADE,
 		blank=True, null=True,
 		db_index=True,
+	)
+
+	cache_user_record = models.ForeignKey(
+		GDUserRecord,
+		on_delete=models.SET_NULL,
+		blank=True, null=True,
+		db_index=True,
+		related_name= "gd_user_record_set_cache"
+	)
+
+	real_user_record = models.ForeignKey(
+		GDUserRecord,
+		on_delete=models.SET_NULL,
+		blank=True, null=True,
+		db_index=True,
+		related_name= "gd_user_record_set_real"
 	)
 
 	submitted = models.DateTimeField(default=datetime.now, db_index=True)
