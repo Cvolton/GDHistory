@@ -1,5 +1,5 @@
 from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text
-from .models import ServerResponse, Level, LevelRecord, SongRecord
+from .models import ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType
 
 from .constants import XORKeys, MiscConstants
 
@@ -183,7 +183,7 @@ def process_download(response_json):
 
 	level_info = response_to_dict(request_info[0], ':')
 
-	record = create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.DOWNLOAD, response_object)
+	record = create_level_record_from_data(level_info, level_object, LevelRecordType.DOWNLOAD, response_object)
 
 	time_created = parse_datetime(response_json["created"])
 	if is_naive(time_created):
@@ -229,7 +229,7 @@ def process_get(response_json):
 		#print("among")
 		#print(level_info)
 
-		record = create_level_record_from_data(level_info, level_object, LevelRecord.RecordType.GET, response_object)
+		record = create_level_record_from_data(level_info, level_object, LevelRecordType.GET, response_object)
 		record.cache_is_public = True
 
 		if record.user_id in user_dict:

@@ -1,4 +1,4 @@
-from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString
+from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString, LevelRecordType
 from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text, encode_base64_text
 
 from celery import shared_task
@@ -275,11 +275,11 @@ def process_save_file(save_id):
 		game_manager = plistlib.load(game_manager_file)
 
 	if 'GLM_03' in game_manager:
-		process_levels_in_glm(game_manager['GLM_03'], LevelRecord.RecordType.GLM_03, save_file)
+		process_levels_in_glm(game_manager['GLM_03'], LevelRecordType.GLM_03, save_file)
 	if 'GLM_10' in game_manager:
-		process_levels_in_glm(game_manager['GLM_10'], LevelRecord.RecordType.GLM_10, save_file)
+		process_levels_in_glm(game_manager['GLM_10'], LevelRecordType.GLM_10, save_file)
 	if 'GLM_16' in game_manager:
-		process_levels_in_glm(game_manager['GLM_16'], LevelRecord.RecordType.GLM_16, save_file)
+		process_levels_in_glm(game_manager['GLM_16'], LevelRecordType.GLM_16, save_file)
 	if 'MDLM_001' in game_manager:
 		process_songs_in_mdlm(game_manager['MDLM_001'], save_file)
 
