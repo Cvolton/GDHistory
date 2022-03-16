@@ -1,4 +1,4 @@
-from history.models import Level, LevelRecord
+from history.models import Level, LevelRecord, LevelRecordType
 from history.constants import MiscConstants
 import history.utils
 import json
@@ -17,7 +17,7 @@ class Command(BaseCommand):
 		for i in range(0,level_count):
 			level = levels[i:i+1]
 			level = level[0]
-			string_count = level.levelrecord_set.filter( Q(record_type=LevelRecord.RecordType.DOWNLOAD) | Q(record_type=LevelRecord.RecordType.GET) ).count()
+			string_count = level.levelrecord_set.filter( Q(record_type=LevelRecordType.DOWNLOAD) | Q(record_type=LevelRecordType.GET) ).count()
 			if string_count > 0:
 				continue
 			print(f"{i} / {level_count} - {level.online_id} {string_count}")
