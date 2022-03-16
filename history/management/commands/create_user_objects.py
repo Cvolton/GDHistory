@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 
-		records = LevelRecord.objects.exclude(level_version=None).annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
+		records = LevelRecord.objects.exclude(level_version=None).filter(real_user_record=None).annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).order_by('-real_date')
 		records_count = records.count()
 		batch_size = 2500
 		batch_count = math.ceil(records_count/2500)
