@@ -111,7 +111,7 @@
 				<tbody>
 					{% for record in level_records|get_item:year %}
 					<tr>
-						<td>{{ record.real_date|date:"N j, Y" }}</td>
+						<td><a href="{% url 'level' online_id record.pk %}">{{ record.real_date|date:"N j, Y" }}</a></td>
 						<td>{{ record.record_type }}</td>
 						<td>{{ record.level_name }}</td>
 						<td>{{ record.downloads }}</td>
@@ -124,6 +124,8 @@ Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.
 						<td>{% if record.real_user_record and record.real_user_record.username %}{{ record.real_user_record.username }}{% else %}<a data-toggle="tooltip" title="Some sources do not provide the creator's username.">-</a>{% endif %}{% if record.real_user_record and record.real_user_record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}</td>
 						<td>{% game_version record.game_version %}</td>
 						<td>{% if record.level_string %}✅ <a href="{% url 'download_record' online_id record.pk %}">(.gmd)</a>{% else %}❌{% endif %}</td>
+						<!--<td><a class="btn btn-primary" href="{% url 'level' online_id record.pk %}" role="button">Details</a></td>-->
+						<!--<td><a href="{% url 'level' online_id record.pk %}">Details</a></td>-->
 						<!-- pk: {{ record.pk }}, levelstring: {{ record.level_string }} -->
 					</tr>
 					{% endfor %}
