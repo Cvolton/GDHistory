@@ -227,7 +227,7 @@ def process_levels_in_glm(glm, record_type, save_file):
 			record.unprocessed_data = data
 			record.save()
 
-		#level_object.revalidate_cache()
+		level_object.revalidate_cache()
 
 	#LevelRecord.objects.bulk_create(records, ignore_conflicts=True, batch_size=1000)
 
@@ -236,6 +236,7 @@ def process_songs_in_mdlm(mdlm, save_file):
 		song_object = get_song_object(song)
 		record = create_song_record_from_data(data, song_object, SongRecord.RecordType.MDLM_001)
 		record.save_file.add(save_file)
+		song_object.revalidate_cache()
 
 def upload_save_file(file, date, user, *args, **kwargs):
 	data_path = get_data_path()
