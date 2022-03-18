@@ -1,6 +1,7 @@
 from history.models import GDUser, LevelRecordType
 import history.utils
 import json
+import math
 
 from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
@@ -10,8 +11,9 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		records = GDUser.objects.filter(gduserrecord__record_type=LevelRecordType.GET, gduserrecord__username=None).prefetch_related('gduserrecord_set').distinct()
+		record_count = records.count()
 		batch_size = 2500
-		batch_count = math.ceil(level_count/2500)
+		batch_count = math.ceil(record_count/2500)
 		for i in range(0,batch_count):
 			users_small = records[i*batch_size:(i+1)*batch_size]
 			for user in users_small:
