@@ -1,4 +1,4 @@
-from history.models import GDUser, LevelRecordType
+from history.models import GDUser, LevelRecordType, GDUserRecord
 import history.utils
 import json
 import math
@@ -20,7 +20,7 @@ class Command(BaseCommand):
 			users_small = records[i*batch_size:(i+1)*batch_size]
 			for user in users_small:
 				print(f"_user {user.online_id}")
-				record_list = user.gduserrecord_set.exclude( Q(username='-') | Q(username=None) ).order_by('-cache_created')
+				record_list = GDUserRecord.objects.filter(user=user).exclude( Q(username='-') | Q(username=None) ).order_by('-cache_created')
 				non_player_record = record_list.exclude(username='Player')[:1]
 				if len(non_player_record) > 0:
 					print(f"{user.online_id} - {non_player_record[0].username}")
