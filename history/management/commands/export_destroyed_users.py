@@ -15,6 +15,7 @@ class Command(BaseCommand):
 		print("_begin")
 		records = GDUser.objects.filter(gduserrecord__record_type=LevelRecordType.GET, gduserrecord__username=None).prefetch_related('gduserrecord_set').distinct()
 		record_count = records.count()
+		print(f"_count: {record_count}")
 		batch_size = 2500
 		batch_count = math.ceil(record_count/2500)
 		for i in range(0,batch_count):
