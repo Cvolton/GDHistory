@@ -21,9 +21,9 @@ def create_request(response_json):
 	response_object = ServerResponse(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"], created=response_json["created"])
 	response_object.save()
 
-	f = open(f"{data_path}/ServerResponse/{response_object.pk}", "w")
-	f.write(response_json["raw_output"])
-	f.close()
+	#f = open(f"{data_path}/ServerResponse/{response_object.pk}", "w")
+	#f.write(response_json["raw_output"])
+	#f.close()
 
 	return response_object
 
