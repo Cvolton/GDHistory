@@ -202,13 +202,16 @@ def download_record(request, record_id=None, online_id=None):
 	return response
 
 @login_required
-def my_submissions(request):
+def my_submissions(request, show_all=None):
 	#TODO: optimize this
-	user = HistoryUser.objects.get(user=request.user)
-	submissions = SaveFile.objects.filter(author=user).annotate(num_levels=Count('levelrecord')).order_by('created')
+	submissions = SaveFile.objects.annotate(num_levels=Count('levelrecord')).order_by('created').prefetch_related("author")
+	if not (show_all and request.user.is_superuser):
+		user = HistoryUser.objects.get(user=request.user)
+		submissions = submissions.filter(author=user)
 
 	context = {
-		'submissions': submissions
+		'submissions': submissions,
+		'show_all': show_all
 	}
 
 	return render(request, 'my_submissions.html', context)

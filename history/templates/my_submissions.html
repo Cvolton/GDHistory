@@ -30,6 +30,7 @@ tr:hover, tr:focus-within {
 		<thead>
 			<tr>
 				<th>PK</th>
+				{% if show_all %}<th>Uploader</th>{% endif %}
 				<th>Submitted</th>
 				<th>Created</th>
 				<th>Comment</th>
@@ -45,6 +46,7 @@ tr:hover, tr:focus-within {
 		{% for submission in submissions %}
 			<tr>
 				<td>{{ submission.pk }}</td>
+				{% if show_all %}<td>{{ submission.author.user.username }}</td>{% endif %}
 				<td>{{ submission.submitted }}</td>
 				<td>{{ submission.created }}</td>
 				<td>{{ submission.comment }}</td>
