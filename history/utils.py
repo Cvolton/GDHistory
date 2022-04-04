@@ -41,6 +41,7 @@ def assign_key_no_pop(data, key):
 	if isinstance(value, str):
 		value = value.replace('@@amp@@','&')
 		value = value.replace('@@hash@@','#')
+		value = value.replace('@@inverted_question@@','¿')
 		value = replace_entities(value)
 	return value
 

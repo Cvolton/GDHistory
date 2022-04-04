@@ -65,6 +65,7 @@ def plist_to_robtop_plist(game_manager_bytes):
 def remove_invalid_characters(game_manager_bytes):
 	game_manager_bytes = game_manager_bytes.replace(b'&',b'@@amp@@')
 	game_manager_bytes = game_manager_bytes.replace(b'#',b'@@hash@@')
+	game_manager_bytes = game_manager_bytes.replace(b'\xbf',b'@@inverted_question@@')
 	return game_manager_bytes
 
 def load_game_manager_plist(file):
