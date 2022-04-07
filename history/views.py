@@ -107,7 +107,7 @@ def search(request):
 
 		query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
 
-		levels = Level.objects.filter(query_filter).filter(is_public=True)
+		levels = Level.objects.filter(query_filter).filter(is_public=True, hide_from_search=False)
 
 		#TODO: better implement admin search filters
 		if request.user.is_authenticated and query == 'admin:private' and request.user.is_superuser:

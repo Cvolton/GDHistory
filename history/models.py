@@ -142,6 +142,7 @@ class Level(models.Model):
 	comment = models.TextField(blank=True, null=True)
 	is_public = models.BooleanField(blank=True, null=True, db_index=True) #this is to prevent leaking unlisted levels publicly
 	is_deleted = models.BooleanField(blank=True, null=True, db_index=True)
+	hide_from_search = models.BooleanField(db_index=True, default=False)
 
 	cache_level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
