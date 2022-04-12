@@ -182,6 +182,8 @@ def process_download(response_json):
 		return False
 
 	level_info = response_to_dict(request_info[0], ':')
+	if online_id < 0:
+		level_object = get_level_object(level_info[1])
 
 	record = create_level_record_from_data(level_info, level_object, LevelRecordType.DOWNLOAD, response_object)
 
@@ -199,6 +201,14 @@ def process_download(response_json):
 		level_string = assign_key(level_info, 4)
 		record.level_string = create_level_string(level_string)
 		record.unprocessed_data = level_info
+
+	if 3 in request_info:
+		user_dict = create_user_dict(request_info[3])
+		if len(user_dict) > 0:
+			user_record = user_dict[0]
+			record.username = record.username if 1 not in user_record is None else user_record[1]
+			record.account_id = record.account_id if 2 not in user_record is None else user_record[2]
+
 	record.save()
 
 	level_object.revalidate_cache()
