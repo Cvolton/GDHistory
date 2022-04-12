@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% load tags %}
+{% block title %}Results for '{{ query }}'{% endblock title %}
+{% block content %}
+<style>
+td > a:first-child {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	z-index: 0;
+	padding: .5rem !important;
+}
+td > a:first-child:focus {
+	outline: 0;
+}
+td {
+	padding: 0px !important;
+}
+tr:hover, tr:focus-within {
+	background: #f2f3ff;
+	outline: none;
+}
+</style>
+<div class="row">
+	<p class="lead">Showing all daily levels</p>
+</div>
+<div class="row mt-2">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Difficulty</th>
+				<th>Creator</th>
+				<th>Data Available</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for level in level_records %}
+			<!-- onclick="window.location='{% url 'level' level.online_id %}';" -->
+			<tr>
+				<!-- pk: {{ level.pk }} -->
+				<td><a href="{% url 'level' level.online_id %}">{{ level.cache_daily_id }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}">{{ level.online_id }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_level_name }}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% difficulty level.cache_rating_sum level.cache_rating level.cache_demon level.cache_auto level.cache_demon_type %} ({% display_number level.cache_stars %}*)</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.cache_username %}{{ level.cache_username }}{% else %}-{% endif %}</a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.cache_level_string_available %}✅{% else %}❌{% endif %}</a></td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
+<!-- {{ level.pk }} -->
+{% endblock %}

@@ -180,6 +180,18 @@ def search(request):
 	else:
 		return render(request, 'error.html', {'error': 'Invalid search query'})
 
+def daily(request):
+	levels = Level.objects.filter(is_public=True, hide_from_search=False, cache_daily_id__gt=0).order_by('cache_daily_id')
+	level_count = levels.count()
+
+	if len(levels) < 1:
+		return render(request, 'error.html', {'error': 'No results found'})
+
+	context = {
+		'level_records': levels,
+	}
+	return render(request, 'daily.html', context)
+
 def login_page_placeholder(request):
 		return render(request, 'error.html', {'error': 'This feature is not available yet.'})
 
