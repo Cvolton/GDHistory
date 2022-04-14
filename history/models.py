@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext as _
+from django.utils import timezone
 
 from django.db.models import Min, Max, Q
 from django.db.models.functions import Coalesce
@@ -32,8 +33,8 @@ class SaveFile(models.Model):
 		on_delete=models.CASCADE,
 		db_index=True,
 	)
-	submitted = models.DateTimeField(default=datetime.now)
-	created = models.DateTimeField(default=datetime.now, db_index=True)
+	submitted = models.DateTimeField(default=timezone.now)
+	created = models.DateTimeField(default=timezone.now, db_index=True)
 	comment = models.CharField(max_length=255)
 	is_processed = models.BooleanField(default=False)
 
@@ -45,7 +46,7 @@ class SaveFile(models.Model):
 
 class ServerResponse(models.Model):
 
-	created = models.DateTimeField(default=datetime.now)
+	created = models.DateTimeField(default=timezone.now)
 	unprocessed_post_parameters = models.JSONField()
 	endpoint = models.CharField(max_length=32)
 
@@ -159,7 +160,7 @@ class Level(models.Model):
 	cache_user_id = models.IntegerField(blank=True, null=True, db_index=True)
 	cache_daily_id = models.IntegerField(default=0, db_index=True)
 
-	submitted = models.DateTimeField(default=datetime.now, db_index=True)
+	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 
 	def set_public(self, public):
 		self.is_public = public
@@ -286,7 +287,7 @@ class LevelRecord(models.Model):
 		related_name= "gd_user_record_set_real"
 	)
 
-	submitted = models.DateTimeField(default=datetime.now, db_index=True)
+	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 
 	cache_is_public = models.BooleanField(blank=True, null=True, db_index=True)
 
