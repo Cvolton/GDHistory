@@ -29,11 +29,14 @@
                   <a class="nav-link {% if request.path == '/' %} active {% endif %} " aria-current="page" href="{% url 'index' %}">Home</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link {% if request.path == '/search' %} active {% endif %} " aria-current="page" href="{% url 'search' %}">Browse</a>
+                  <a class="nav-link {% if request.path == '/search/' %} active {% endif %} " aria-current="page" href="{% url 'search' %}">Browse</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/daily/' %} active {% endif %} " aria-current="page" href="{% url 'daily' %}">Daily</a>
                 </li>
                 {%if user.is_authenticated %}
                 <li class="nav-item">
-                  <a class="nav-link {% if request.path == '/upload' %} active {% endif %}" href="{% url 'upload' %}">Submit</a>
+                  <a class="nav-link {% if request.path == '/upload/' %} active {% endif %}" href="{% url 'upload' %}">Submit</a>
                 </li>
                 {% endif %}
               </ul>
