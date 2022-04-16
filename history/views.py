@@ -8,7 +8,7 @@ from datetime import datetime
 
 from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString, HistoryUser
 from .forms import UploadFileForm, SearchForm
-from . import ccUtils, serverUtils, tasks
+from . import ccUtils, serverUtils, tasks, utils
 
 import math
 import plistlib
@@ -63,6 +63,7 @@ def view_level(request, online_id=None, record_id=None):
 			first_record = record
 
 	if len(records) == 0:
+		utils.get_level_object(online_id)
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
 	if first_record is None:
