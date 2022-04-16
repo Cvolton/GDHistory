@@ -156,3 +156,12 @@ def create_user_record(user_object, account_id, username, date, server_response,
 		record.save()
 	record.save_file.add(*(save_file.all()))
 	return record
+
+def get_level_object(level_id):
+	from .models import Level
+	try:
+		level_object = Level.objects.get(online_id=level_id)
+	except:
+		level_object = Level(online_id=level_id)
+		level_object.save()
+	return level_object

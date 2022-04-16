@@ -1,4 +1,4 @@
-from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text
+from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text, get_level_object
 from .models import ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType
 
 from .constants import XORKeys, MiscConstants
@@ -56,14 +56,6 @@ def create_song_array(response):
 		if response_dict is not False:
 			song_array.append(response_dict)
 	return song_array
-
-def get_level_object(level_id):
-	try:
-		level_object = Level.objects.get(online_id=level_id)
-	except:
-		level_object = Level(online_id=level_id)
-		level_object.save()
-	return level_object
 
 def create_level_record_from_data(level_data, level_object, record_type, server_response, *args, **kwargs):
 	level_password = assign_key(level_data, 27)

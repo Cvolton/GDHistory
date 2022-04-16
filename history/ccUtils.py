@@ -1,5 +1,5 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString, LevelRecordType
-from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text, encode_base64_text
+from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text, encode_base64_text, get_level_object
 
 from celery import shared_task
 
@@ -214,12 +214,8 @@ def process_levels_in_glm(glm, record_type, save_file):
 	#records = []
 	for level, data in glm.items():
 		level_id = data['k1'] if 'k1' in data else 0
-		try:
-			level_object = Level.objects.get(online_id=level_id)
-		except:
-			level_object = Level(online_id=level_id)
-			level_object.save()
-
+		level_object = get_level_object(online_id=level_id)
+		
 		record = create_level_record_from_data(data, level_object, record_type, save_file.binary_version)
 
 		record.save_file.add(save_file)
