@@ -182,13 +182,34 @@ def search(request):
 
 def daily(request):
 	levels = Level.objects.filter(is_public=True, hide_from_search=False, cache_daily_id__gt=0).order_by('cache_daily_id')
-	level_count = levels.count()
 
 	if len(levels) < 1:
 		return render(request, 'error.html', {'error': 'No results found'})
 
+	records = {}
+
+	records["Weekly"] = []
+	#TODO: do not hardcode years
+	for i in range(2016, 2023):
+		records[i] = []
+		#records[f"Weekly {i}"] = []
+
+	#TODO: read year from level if possible
+	for record in levels:
+		if record.cache_daily_id is None: continue
+		if record.cache_daily_id < 100000:
+			if record.cache_daily_id < 12: records[2016].append(record)
+			elif record.cache_daily_id < 385: records[2017].append(record)
+			elif record.cache_daily_id < 752: records[2018].append(record) #estimated - 2019 start: Code by Anubis + 5
+			elif record.cache_daily_id < 1124: records[2019].append(record) #estimated - Both Suiteki and True Damage are off by 18 on this list: https://geometry-dash.fandom.com/es/wiki/Daily_Level/Niveles_1101_-_1200, therefore Overdoze's ID should be 1106+1
+			elif record.cache_daily_id < 1492: records[2020].append(record) #estimated - unable to determine if off by 20 or 21 from said list, assuming 20
+			elif record.cache_daily_id < 1858: records[2021].append(record)
+			else: records[2022].append(record)
+		else: records["Weekly"].append(record)	
+
 	context = {
-		'level_records': levels,
+		'level_records': records,
+		'reversed_records': reversed(records)
 	}
 	return render(request, 'daily.html', context)
 
