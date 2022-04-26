@@ -66,6 +66,10 @@ def remove_invalid_characters(game_manager_bytes):
 	game_manager_bytes = game_manager_bytes.replace(b'&',b'@@amp@@')
 	game_manager_bytes = game_manager_bytes.replace(b'#',b'@@hash@@')
 	game_manager_bytes = game_manager_bytes.replace(b'\xbf',b'@@inverted_question@@')
+	game_manager_bytes = game_manager_bytes.replace(b'\xa1',b'@@inverted_exclamation@@')
+	game_manager_bytes = game_manager_bytes.replace(b'\xc2',b'@@c2@@')
+	game_manager_bytes = game_manager_bytes.replace(b'\xb2',b'@@squared@@')
+	game_manager_bytes = game_manager_bytes.replace(b'\xce',b'@@ce@@')
 	return game_manager_bytes
 
 def load_game_manager_plist(file):

@@ -38,10 +38,14 @@ def assign_key_no_pop(data, key):
 			return assign_key_no_pop(data, str(key))
 		return None
 	value = data[key]
-	if isinstance(value, str):
+	if isinstance(value, str): #TODO: proper escaping
 		value = value.replace('@@amp@@','&')
 		value = value.replace('@@hash@@','#')
 		value = value.replace('@@inverted_question@@','¿')
+		value = value.replace('@@inverted_exclamation@@','¡')
+		value = value.replace('@@c2@@','Â')
+		value = value.replace('@@squared@@','²')
+		value = value.replace('@@ce@@','Î')
 		value = replace_entities(value)
 	return value
 
