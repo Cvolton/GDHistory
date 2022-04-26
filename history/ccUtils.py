@@ -218,7 +218,7 @@ def process_levels_in_glm(glm, record_type, save_file):
 	#records = []
 	for level, data in glm.items():
 		level_id = data['k1'] if 'k1' in data else 0
-		level_object = get_level_object(online_id=level_id)
+		level_object = get_level_object(level_id)
 		
 		record = create_level_record_from_data(data, level_object, record_type, save_file.binary_version)
 
