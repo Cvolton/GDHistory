@@ -76,10 +76,6 @@ def load_game_manager_plist(file):
 	gmb = ungzip_if_needed(gmb)
 	gmb = robtop_plist_to_plist(gmb)
 	gmb = remove_invalid_characters(gmb)
-
-	with open("/home/cvolton/testdata/decode_test", "wb") as f:
-		f.write(gmb)
-
 	return plistlib.loads(gmb)
 
 def create_level_record_from_data(data, level_object, record_type, binary_version):
