@@ -41,11 +41,16 @@ def assign_key_no_pop(data, key):
 	if isinstance(value, str): #TODO: proper escaping
 		value = value.replace('@@amp@@','&')
 		value = value.replace('@@hash@@','#')
-		value = value.replace('@@inverted_question@@','¿')
+		"""value = value.replace('@@inverted_question@@','¿')
 		value = value.replace('@@inverted_exclamation@@','¡')
 		value = value.replace('@@c2@@','Â')
 		value = value.replace('@@squared@@','²')
-		value = value.replace('@@ce@@','Î')
+		value = value.replace('@@ce@@','Î')"""
+		for i in range(128,255):
+			try: #TODO: deal with out of range characters in a sensible manner
+				value = value.replace('@@char'+str(i)+'@@', i.to_bytes(1, byteorder='big').decode('windows-1252'))
+			except:
+				pass
 		value = replace_entities(value)
 	return value
 

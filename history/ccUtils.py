@@ -65,11 +65,9 @@ def plist_to_robtop_plist(game_manager_bytes):
 def remove_invalid_characters(game_manager_bytes):
 	game_manager_bytes = game_manager_bytes.replace(b'&',b'@@amp@@')
 	game_manager_bytes = game_manager_bytes.replace(b'#',b'@@hash@@')
-	game_manager_bytes = game_manager_bytes.replace(b'\xbf',b'@@inverted_question@@')
-	game_manager_bytes = game_manager_bytes.replace(b'\xa1',b'@@inverted_exclamation@@')
-	game_manager_bytes = game_manager_bytes.replace(b'\xc2',b'@@c2@@')
-	game_manager_bytes = game_manager_bytes.replace(b'\xb2',b'@@squared@@')
-	game_manager_bytes = game_manager_bytes.replace(b'\xce',b'@@ce@@')
+	for i in range(128,255):
+		print(f"working {i}")
+		game_manager_bytes = game_manager_bytes.replace(i.to_bytes(1, byteorder='big'), b'@@char'+str(i).encode('windows-1252')+b'@@')
 	return game_manager_bytes
 
 def load_game_manager_plist(file):
@@ -78,6 +76,10 @@ def load_game_manager_plist(file):
 	gmb = ungzip_if_needed(gmb)
 	gmb = robtop_plist_to_plist(gmb)
 	gmb = remove_invalid_characters(gmb)
+
+	with open("/home/cvolton/testdata/decode_test", "wb") as f:
+		f.write(gmb)
+
 	return plistlib.loads(gmb)
 
 def create_level_record_from_data(data, level_object, record_type, binary_version):
