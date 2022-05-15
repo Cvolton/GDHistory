@@ -224,15 +224,16 @@ class Level(models.Model):
 
 			data_record = data_record[0]
 			if best_record.description != data_record.description: self.cache_needs_updating = True
-			if best_record.official_song != data_record.official_song: self.cache_needs_updating = True
-			if best_record.level_version != data_record.level_version: self.cache_needs_updating = True
-			if best_record.game_version != data_record.game_version: self.cache_needs_updating = True
-			if best_record.length != data_record.length: self.cache_needs_updating = True
-			if best_record.two_player != data_record.two_player: self.cache_needs_updating = True
-			if best_record.objects_count != data_record.objects_count: self.cache_needs_updating = True
-			if best_record.coins != data_record.coins: self.cache_needs_updating = True
-			if best_record.requested_stars != data_record.requested_stars: self.cache_needs_updating = True
-			if best_record.original != data_record.original: self.cache_needs_updating = True
+			if (best_record.official_song or 0) != (data_record.official_song or 0): self.cache_needs_updating = True
+			if best_record.song != data_record.song: self.cache_needs_updating = True
+			if (best_record.level_version or 0) != (data_record.level_version or 0): self.cache_needs_updating = True
+			if (best_record.game_version or 0) != (data_record.game_version or 0): self.cache_needs_updating = True
+			if (best_record.length or 0) != (data_record.length or 0): self.cache_needs_updating = True
+			if (best_record.two_player or 0) != (data_record.two_player or 0): self.cache_needs_updating = True
+			if (best_record.objects_count or 0) != (data_record.objects_count or 0): self.cache_needs_updating = True
+			if (best_record.coins or 0) != (data_record.coins or 0): self.cache_needs_updating = True
+			if (best_record.requested_stars or 0) != (data_record.requested_stars or 0): self.cache_needs_updating = True
+			if (best_record.original or 0) != (data_record.original or 0): self.cache_needs_updating = True
 		else:
 			self.cache_needs_updating = True
 
