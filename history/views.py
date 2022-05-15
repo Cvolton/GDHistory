@@ -109,7 +109,7 @@ def search(request):
 		#levels = Level.objects.filter(cache_search_available=True)
 		levels = Level.objects.filter(hide_from_search=False, is_public=True)
 
-		if query == '':
+		if query != '':
 			query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
 			levels = levels.filter(query_filter)
 
