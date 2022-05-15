@@ -153,7 +153,7 @@ def search(request):
 
 		level_results = levels[start_offset:end_offset]
 
-		level_count = levels.count()
+		level_count = levels[:end_offset+41].count()
 
 		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})
