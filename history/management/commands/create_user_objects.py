@@ -25,6 +25,7 @@ class Command(BaseCommand):
 				user_record = history.utils.create_user_record(user_object, record.account_id, record.username, record.real_date, record.server_response, record.save_file, record.record_type)
 				record.real_user_record = user_record
 				record.save()
+				user_object.revalidate_cache()
 				
 
 
