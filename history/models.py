@@ -53,6 +53,17 @@ class ServerResponse(models.Model):
 class GDUser(models.Model):
 	online_id = models.IntegerField(unique=True, db_index=True) #k6
 
+	cache_username = models.CharField(blank=True, null=True, max_length=255, db_index=True)
+	cache_account_id = models.IntegerField(blank=True, null=True, db_index=True)
+
+	def revalidate_cache(self):
+		username_record = self.gduserrecord_set.exclude( Q(username='-') | Q(username=None) ).order_by('-cache_created')[:1]
+		if len(username_record) != 0:
+			self.cache_username = username_record[0].username
+			print("Setting username from user record")
+		else:
+			print(":((( User record not found")
+
 class GDUserRecord(models.Model):
 	user = models.ForeignKey(
 		GDUser,
@@ -202,16 +213,13 @@ class Level(models.Model):
 		#set username
 		self.cache_username = best_record.username
 		if best_record.username is None or best_record.username == '-':
-			username_record = GDUser.objects.filter(online_id=self.cache_user_id).prefetch_related('gduserrecord_set')[:1]
-			if len(username_record) != 0:
-				username_record = username_record[0].gduserrecord_set.exclude( Q(username='-') | Q(username=None) ).order_by('-cache_created')[:1]
-				if len(username_record) != 0:
-					self.cache_username = username_record[0].username
-					print("Setting username from user record")
-				else:
-					print(":((( User record not found")
+			user_record = GDUser.objects.filter(online_id=self.cache_user_id)[:1]
+			if len(user_record) > 0:
+				self.cache_username = user_record[0].cache_username
+				print("Setting username from user record")
 			else:
-				print(":(((( User object not found")
+				print(":(((( Unable to set username")
+			#TODO: username fix
 
 			"""username_record = self.levelrecord_set.exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
 			if len(username_record) < 1:
