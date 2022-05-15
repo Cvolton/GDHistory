@@ -228,7 +228,6 @@ class Level(models.Model):
 			if best_record.level_version != data_record.level_version: self.cache_needs_updating = True
 			if best_record.game_version != data_record.game_version: self.cache_needs_updating = True
 			if best_record.length != data_record.length: self.cache_needs_updating = True
-			if best_record.password != data_record.password: self.cache_needs_updating = True
 			if best_record.two_player != data_record.two_player: self.cache_needs_updating = True
 			if best_record.objects_count != data_record.objects_count: self.cache_needs_updating = True
 			if best_record.coins != data_record.coins: self.cache_needs_updating = True
