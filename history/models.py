@@ -159,6 +159,8 @@ class Level(models.Model):
 	cache_level_string_available = models.BooleanField(blank=True, null=True, db_index=True)
 	cache_user_id = models.IntegerField(blank=True, null=True, db_index=True)
 	cache_daily_id = models.IntegerField(default=0, db_index=True)
+	cache_needs_updating = models.BooleanField(default=True, db_index=True)
+	cache_available_versions = models.IntegerField(default=0, db_index=True)
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 
@@ -196,19 +198,44 @@ class Level(models.Model):
 		level_string_count = self.levelrecord_set.exclude(level_string=None).count()
 		self.cache_level_string_available = level_string_count > 0
 
+		#set username
 		self.cache_username = best_record.username
 		if best_record.username is None or best_record.username == '-':
-			best_record = self.levelrecord_set.exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
-			if len(best_record) < 1:
-				best_record = LevelRecord.objects.filter(user_id=self.cache_user_id).exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
-				if len(best_record) < 1:
+			username_record = self.levelrecord_set.exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
+			if len(username_record) < 1:
+				username_record = LevelRecord.objects.filter(user_id=self.cache_user_id).exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
+				if len(username_record) < 1:
 					print(":(((")
 					self.cache_username = None
 				else:
 					print("setting username from other level")
-					self.cache_username = best_record[0].username
+					self.cache_username = username_record[0].username
 			else:
-				self.cache_username = best_record[0].username
+				self.cache_username = username_record[0].username
+
+		#needs updating field
+		data_record = self.levelrecord_set.prefetch_related('save_file').prefetch_related('server_response').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) | Q(level_string=None) ).order_by('-downloads')
+		self.cache_needs_updating = False
+		if len(data_record) > 0:
+			level_strings = {}
+			for record in data_record:
+				level_strings[record.level_string.pk] = True
+			self.cache_available_versions = len(level_strings)
+
+			data_record = data_record[0]
+			if best_record.description != data_record.description: self.cache_needs_updating = True
+			if best_record.official_song != data_record.official_song: self.cache_needs_updating = True
+			if best_record.level_version != data_record.level_version: self.cache_needs_updating = True
+			if best_record.game_version != data_record.game_version: self.cache_needs_updating = True
+			if best_record.length != data_record.length: self.cache_needs_updating = True
+			if best_record.password != data_record.password: self.cache_needs_updating = True
+			if best_record.two_player != data_record.two_player: self.cache_needs_updating = True
+			if best_record.objects_count != data_record.objects_count: self.cache_needs_updating = True
+			if best_record.coins != data_record.coins: self.cache_needs_updating = True
+			if best_record.requested_stars != data_record.requested_stars: self.cache_needs_updating = True
+			if best_record.original != data_record.original: self.cache_needs_updating = True
+		else:
+			self.cache_needs_updating = True
 
 		self.save()
 
