@@ -51,7 +51,7 @@ class ServerResponse(models.Model):
 	endpoint = models.CharField(max_length=32)
 
 class GDUser(models.Model):
-	online_id = models.IntegerField(unique=True) #k6
+	online_id = models.IntegerField(unique=True, db_index=True) #k6
 
 class GDUserRecord(models.Model):
 	user = models.ForeignKey(
