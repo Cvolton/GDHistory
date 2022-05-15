@@ -106,9 +106,11 @@ def search(request):
 		start_offset = (page-1)*results_per_page
 		end_offset = page*results_per_page
 
-		query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
+		levels = Level.objects.filter(cache_search_available=True)
 
-		levels = Level.objects.filter(query_filter).filter(is_public=True, hide_from_search=False)
+		if query == '':
+			query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
+			levels = levels.filter(query_filter)
 
 		#TODO: better implement admin search filters
 		if request.user.is_authenticated and query == 'admin:private' and request.user.is_superuser:

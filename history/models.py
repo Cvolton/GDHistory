@@ -161,6 +161,7 @@ class Level(models.Model):
 	cache_daily_id = models.IntegerField(default=0, db_index=True)
 	cache_needs_updating = models.BooleanField(default=True, db_index=True)
 	cache_available_versions = models.IntegerField(default=0, db_index=True)
+	cache_search_available = models.BooleanField(default=False, db_index=True)
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 
@@ -201,7 +202,18 @@ class Level(models.Model):
 		#set username
 		self.cache_username = best_record.username
 		if best_record.username is None or best_record.username == '-':
-			username_record = self.levelrecord_set.exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
+			username_record = GDUser.objects.filter(online_id=self.cache_user_id).prefetch_related('gduserrecord_set')[:1]
+			if len(username_record) != 0:
+				username_record = username_record[0].gduserrecord_set.exclude( Q(username='-') | Q(username=None) ).order_by('-cache_created')[:1]
+				if len(username_record) != 0:
+					self.cache_username = username_record[0].username
+					print("Setting username from user record")
+				else:
+					print(":((( User record not found")
+			else:
+				print(":(((( User object not found")
+
+			"""username_record = self.levelrecord_set.exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
 			if len(username_record) < 1:
 				username_record = LevelRecord.objects.filter(user_id=self.cache_user_id).exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
 				if len(username_record) < 1:
@@ -211,7 +223,7 @@ class Level(models.Model):
 					print("setting username from other level")
 					self.cache_username = username_record[0].username
 			else:
-				self.cache_username = username_record[0].username
+				self.cache_username = username_record[0].username"""
 
 		#needs updating field
 		data_record = self.levelrecord_set.prefetch_related('save_file').prefetch_related('server_response').prefetch_related('song').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) | Q(level_string=None) ).order_by('-downloads')
@@ -236,6 +248,8 @@ class Level(models.Model):
 			if (best_record.original or 0) != (data_record.original or 0): self.cache_needs_updating = True
 		else:
 			self.cache_needs_updating = True
+
+		self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.cache_level_name is not None)
 
 		self.save()
 
