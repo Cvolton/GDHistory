@@ -107,7 +107,7 @@ def search(request):
 		end_offset = page*results_per_page
 
 		#levels = Level.objects.filter(cache_search_available=True)
-		levels = Level.objects.filter(hide_from_search=False, cache_is_public=True)
+		levels = Level.objects.filter(hide_from_search=False, is_public=True)
 
 		if query == '':
 			query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
