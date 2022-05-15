@@ -214,7 +214,7 @@ class Level(models.Model):
 				self.cache_username = username_record[0].username
 
 		#needs updating field
-		data_record = self.levelrecord_set.prefetch_related('save_file').prefetch_related('server_response').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) | Q(level_string=None) ).order_by('-downloads')
+		data_record = self.levelrecord_set.prefetch_related('save_file').prefetch_related('server_response').prefetch_related('song').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) | Q(level_string=None) ).order_by('-downloads')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
 			level_strings = {}
@@ -225,7 +225,7 @@ class Level(models.Model):
 			data_record = data_record[0]
 			if best_record.description != data_record.description: self.cache_needs_updating = True
 			if (best_record.official_song or 0) != (data_record.official_song or 0): self.cache_needs_updating = True
-			if best_record.song != data_record.song: self.cache_needs_updating = True
+			if (best_record.song != data_record.song) and not ((data_record.song is None and best_record.song.online_id == 0) or (best_record.song is None and data_record.song.online_id == 0)): self.cache_needs_updating = True
 			if (best_record.level_version or 0) != (data_record.level_version or 0): self.cache_needs_updating = True
 			if (best_record.game_version or 0) != (data_record.game_version or 0): self.cache_needs_updating = True
 			if (best_record.length or 0) != (data_record.length or 0): self.cache_needs_updating = True
