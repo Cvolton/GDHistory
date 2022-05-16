@@ -106,11 +106,12 @@ def search(request):
 		start_offset = (page-1)*results_per_page
 		end_offset = page*results_per_page
 
-		#levels = Level.objects.filter(cache_search_available=True)
-		levels = Level.objects.filter(hide_from_search=False, is_public=True)
+		levels = Level.objects.filter(cache_search_available=True)
+		#levels = Level.objects.filter(hide_from_search=False, is_public=True, cache_blank_name=False)
 
 		if query != '':
-			query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
+			#query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
+			query_filter = Q(cache_level_name__istartswith=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__istartswith=query)
 			levels = levels.filter(query_filter)
 
 		#TODO: better implement admin search filters
@@ -129,6 +130,7 @@ def search(request):
 			levels = levels.filter(cache_level_string_available=True)
 			query += f" (playable only)"
 
+		level_count = levels[:end_offset+41].count()
 		levels = levels.order_by('-cache_downloads')
 		if 's' in form.cleaned_data:
 			reverse_sort = False
@@ -146,14 +148,20 @@ def search(request):
 				'difficulty': 'cache_stars', #TODO: sort demons
 				'username': 'cache_username',
 				'user_id': 'cache_user_id',
+				'versions': 'cache_available_versions',
 			}
 
+			unique_sorts = ['id', 'likes']
+
 			if order in allowed_sorts:
-				levels = levels.order_by(f"{'-' if reverse_sort else ''}{allowed_sorts[order]}","-cache_downloads")
+				primary_parameter = f"{'-' if reverse_sort else ''}{allowed_sorts[order]}"
+				if order not in unique_sorts:
+					levels = levels.order_by(primary_parameter, "-cache_downloads")
+				else: 
+					levels = levels.order_by(primary_parameter)
 
 		level_results = levels[start_offset:end_offset]
 
-		level_count = levels[:end_offset+41].count()
 
 		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})

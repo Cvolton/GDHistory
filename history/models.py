@@ -168,16 +168,16 @@ class Level(models.Model):
 
 	cache_level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
-	cache_downloads = models.IntegerField(blank=True, null=True, db_index=True)
-	cache_likes = models.IntegerField(blank=True, null=True, db_index=True)
-	cache_rating_sum = models.IntegerField(blank=True, null=True, db_index=True)
-	cache_rating = models.IntegerField(blank=True, null=True, db_index=True)
-	cache_demon = models.BooleanField(blank=True, null=True, db_index=True)
-	cache_auto = models.BooleanField(blank=True, null=True, db_index=True)
+	cache_downloads = models.IntegerField(db_index=True)
+	cache_likes = models.IntegerField(db_index=True)
+	cache_rating_sum = models.IntegerField(db_index=True)
+	cache_rating = models.IntegerField(db_index=True)
+	cache_demon = models.BooleanField(db_index=True)
+	cache_auto = models.BooleanField(db_index=True)
 	cache_demon_type = models.IntegerField(blank=True, null=True, db_index=True)
-	cache_stars = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_stars = models.IntegerField(db_index=True)
 	cache_username = models.CharField(blank=True, null=True, max_length=255, db_index=True)
-	cache_level_string_available = models.BooleanField(blank=True, null=True, db_index=True)
+	cache_level_string_available = models.BooleanField(default=False, db_index=True)
 	cache_user_id = models.IntegerField(blank=True, null=True, db_index=True)
 	cache_daily_id = models.IntegerField(default=0, db_index=True)
 	cache_needs_updating = models.BooleanField(default=True, db_index=True)
@@ -185,6 +185,26 @@ class Level(models.Model):
 	cache_search_available = models.BooleanField(default=False, db_index=True)
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
+	class Meta:
+		indexes = [
+			#models.Index(fields=['cache_search_available', 'online_id']),
+			#models.Index(fields=['cache_search_available', 'cache_level_name']),
+			#models.Index(fields=['cache_search_available', 'cache_submitted']),
+			#models.Index(fields=['cache_search_available', 'cache_downloads']),
+			##models.Index(fields=['cache_search_available', 'cache_likes']),
+			#models.Index(fields=['cache_search_available', 'cache_username']),
+			models.Index(fields=['online_id', 'cache_downloads']),
+			models.Index(fields=['cache_level_name', 'cache_downloads']),
+			models.Index(fields=['cache_submitted', 'cache_downloads']),
+			models.Index(fields=['cache_likes', 'cache_downloads']),
+			models.Index(fields=['cache_stars', 'cache_downloads']),
+			models.Index(fields=['cache_username', 'cache_downloads']),
+			models.Index(fields=['cache_user_id', 'cache_downloads']),
+			models.Index(fields=['cache_available_versions', 'cache_downloads']),
+
+			models.Index(fields=['cache_search_available', 'cache_level_name']),
+			models.Index(fields=['cache_search_available', 'cache_user_id']),
+		]
 
 	def set_public(self, public):
 		self.is_public = public
@@ -202,15 +222,17 @@ class Level(models.Model):
 		best_record = best_record[0]
 		self.cache_level_name = best_record.level_name
 		self.cache_submitted = best_record.real_date
-		self.cache_downloads = best_record.downloads
-		self.cache_likes = best_record.likes
-		self.cache_rating_sum = best_record.rating_sum
-		self.cache_rating = best_record.rating
-		self.cache_demon = best_record.demon
-		self.cache_auto = best_record.auto
-		self.cache_demon_type = best_record.demon_type
-		self.cache_stars = best_record.stars
-		self.cache_user_id = best_record.user_id
+		self.cache_downloads = best_record.downloads or 0
+		self.cache_likes = best_record.likes or 0
+		self.cache_rating_sum = best_record.rating_sum or 0
+		self.cache_rating = best_record.rating or 0
+		self.cache_demon = best_record.demon or 0
+		self.cache_auto = best_record.auto or 0
+		self.cache_demon_type = best_record.demon_type or 0
+		self.cache_stars = best_record.stars or 0
+		self.cache_user_id = best_record.user_id or 0
+
+		self.cache_blank_name = (self.cache_level_name is None)
 
 		best_daily_record = self.levelrecord_set.exclude( Q(daily_id = 0) | Q(daily_id = None) ).order_by('-daily_id')
 		best_record_set = best_daily_record[:1]
