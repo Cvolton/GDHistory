@@ -21,7 +21,7 @@ def index(request):
 	context = {
 		'recently_added': recently_added,
 		'recently_updated': recently_updated,
-		'level_count': Level.objects.count(),
+		'level_count': Level.objects.filter(cache_search_available=True).count(),
 		'song_count': Song.objects.count(),
 		'save_count': SaveFile.objects.count(),
 		'request_count': ServerResponse.objects.count(),
