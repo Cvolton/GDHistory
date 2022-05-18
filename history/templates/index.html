@@ -48,8 +48,8 @@
 					<tbody>
 						{% for record in recently_added %}
 						<tr>
-							<td>{{ record.level_name }}</td>
-							<td><a href="{% url 'level' record.level.online_id %}">{{ record.level.online_id }}</a></td>
+							<td>{{ record.cache_level_name }}</td>
+							<td><a href="{% url 'level' record.online_id %}">{{ record.online_id }}</a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
