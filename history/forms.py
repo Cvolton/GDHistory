@@ -10,4 +10,6 @@ class SearchForm(forms.Form):
 	userID = forms.IntegerField(label='User ID', required=False)
 	deleted = forms.BooleanField(label='Deleted only', required=False)
 	playable = forms.BooleanField(label='Data available', required=False)
+	rated = forms.BooleanField(label='Star only', required=False)
+	difficulty = forms.IntegerField(label='Difficulty', required=False)
 	s = forms.CharField(label='Sort', required=False)

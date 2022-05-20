@@ -183,6 +183,7 @@ class Level(models.Model):
 	cache_needs_updating = models.BooleanField(default=True, db_index=True)
 	cache_available_versions = models.IntegerField(default=0, db_index=True)
 	cache_search_available = models.BooleanField(default=False, db_index=True)
+	cache_main_difficulty = models.IntegerField(default=0, db_index=True)
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 	class Meta:
@@ -232,6 +233,7 @@ class Level(models.Model):
 		self.cache_stars = best_record.stars or 0
 		self.cache_user_id = best_record.user_id or 0
 
+		self.cache_main_difficulty = 0 if self.cache_rating == 0 else self.cache_rating_sum / self.cache_rating
 		self.cache_blank_name = (self.cache_level_name is None)
 
 		best_daily_record = self.levelrecord_set.exclude( Q(daily_id = 0) | Q(daily_id = None) ).order_by('-daily_id')

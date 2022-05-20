@@ -30,14 +30,45 @@ tr:hover, tr:focus-within {
 		<div class="card-body">
 			<p class="lead">Filters</p>
 			<form>
-				<div class="form-check form-check-inline">
-					<input type="checkbox" class="form-check-input" id="deletedCheck" {% if filters|get_item:"deleted" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'deleted' %}' ">
-					<label class="form-check-label" for="deletedCheck">Deleted only</label>
+				<p>
+					<div class="form-check form-check-inline">
+						<input type="checkbox" class="form-check-input" id="deletedCheck" {% if filters|get_item:"deleted" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'deleted' %}' ">
+						<label class="form-check-label" for="deletedCheck">Deleted only</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input type="checkbox" class="form-check-input" id="playableCheck" {% if filters|get_item:"playable" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'playable' %}' ">
+						<label class="form-check-label" for="playableCheck">Playable only</label>
+					</div>
+				</p>
+				<div class="collapse" id="collapseFilters">
+					<p>
+						<div class="form-check-inline">
+							<select class="form-select form-select-inline" aria-label="Difficulty" id="difficulty">
+								<option selected>Difficulty</option>
+								<option value="0">N/A</option>
+								<option value="1">Auto</option>
+								<option value="2">Easy</option>
+								<option value="3">Normal</option>
+								<option value="4">Hard</option>
+								<option value="5">Harder</option>
+								<option value="6">Insane</option>
+								<option value="7">Demon</option>
+								<option value="8">Easy Demon</option>
+								<option value="9">Medium Demon</option>
+								<option value="10">Hard Demon</option>
+								<option value="11">Insane Demon</option>
+								<option value="12">Extreme Demon</option>
+							</select>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="ratedCheck" {% if filters|get_item:"rated" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'rated' %}' ">
+							<label class="form-check-label" for="ratedCheck">Star only</label>
+						</div>
+					</p>
 				</div>
-				<div class="form-check form-check-inline">
-					<input type="checkbox" class="form-check-input" id="playableCheck" {% if filters|get_item:"playable" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'playable' %}' ">
-					<label class="form-check-label" for="playableCheck">Playable only</label>
-				</div>
+				<a data-bs-toggle="collapse" href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+					Additional filters
+				</a>
 			</form>
 		</div>
 	</div>
@@ -74,6 +105,13 @@ tr:hover, tr:focus-within {
 		</tbody>
 	</table>
 </div>
+
+<script>
+document.getElementById('difficulty').addEventListener('change', function() {
+	window.location.href = '?p=1{% print_filters_without filters 'difficulty' %}&difficulty=' + this.value
+});
+</script>
+
 <div class="row">
 	<p class="align-center">
 		<a href="?p={{ page|sub:1 }}{% print_filters filters %}" class="btn btn-danger {% if page == minimum_page_button %}disabled{% endif %}" role="button">&lt;</a>

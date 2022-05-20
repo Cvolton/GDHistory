@@ -130,6 +130,29 @@ def search(request):
 			levels = levels.filter(cache_level_string_available=True)
 			query += f" (playable only)"
 
+		if 'rated' in form.cleaned_data and form.cleaned_data['rated'] is True:
+			levels = levels.filter(cache_stars__gt=0)
+			query += f" (rated only)"
+
+		if 'difficulty' in form.cleaned_data and form.cleaned_data['difficulty'] is not None:
+			if form.cleaned_data['difficulty'] >= 7: #level is demon
+				levels = levels.filter(cache_demon=True)
+				demon_difficulty = form.cleaned_data['difficulty'] - 8
+				if demon_difficulty == 2:
+					levels = levels.filter(cache_demon_type__lte=2)
+				else:
+					demon_difficulty = demon_difficulty + 4
+					if demon_difficulty > 2:
+						demon_difficulty = demon_difficulty - 2
+					levels = levels.filter(cache_demon_type=demon_difficulty)
+			elif form.cleaned_data['difficulty'] == 1:
+				levels = levels.filter(cache_auto=True)
+			else:
+				main_difficulty = form.cleaned_data['difficulty'] - 1
+				levels = levels.filter(cache_main_difficulty=main_difficulty, cache_demon=False)
+
+			query += f" (difficulty filter)"
+
 		level_count = levels[:end_offset+41].count()
 		levels = levels.order_by('-cache_downloads')
 		if 's' in form.cleaned_data:
