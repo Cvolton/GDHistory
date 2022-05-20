@@ -137,13 +137,13 @@ def search(request):
 		if 'difficulty' in form.cleaned_data and form.cleaned_data['difficulty'] is not None:
 			if form.cleaned_data['difficulty'] >= 7: #level is demon
 				levels = levels.filter(cache_demon=True)
-				demon_difficulty = form.cleaned_data['difficulty'] - 8
-				if demon_difficulty == 2:
+				demon_difficulty = form.cleaned_data['difficulty'] - 7
+				if demon_difficulty == 3:
 					levels = levels.filter(cache_demon_type__lte=2)
-				else:
-					demon_difficulty = demon_difficulty + 4
-					if demon_difficulty > 2:
-						demon_difficulty = demon_difficulty - 2
+				elif demon_difficulty != 0:
+					if demon_difficulty > 3:
+						demon_difficulty = demon_difficulty - 1
+					demon_difficulty = demon_difficulty + 2
 					levels = levels.filter(cache_demon_type=demon_difficulty)
 			elif form.cleaned_data['difficulty'] == 1:
 				levels = levels.filter(cache_auto=True)
