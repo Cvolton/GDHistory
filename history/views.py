@@ -149,7 +149,7 @@ def search(request):
 				levels = levels.filter(cache_auto=True)
 			else:
 				main_difficulty = form.cleaned_data['difficulty'] - 1
-				levels = levels.filter(cache_main_difficulty=main_difficulty, cache_demon=False)
+				levels = levels.filter(cache_main_difficulty=main_difficulty, cache_demon=False, cache_auto=False)
 
 			query += f" (difficulty filter)"
 
