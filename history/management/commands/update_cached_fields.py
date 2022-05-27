@@ -42,7 +42,7 @@ class Command(BaseCommand):
 			#record.save()
 			i += 1
 
-		Level.objects.bulk_update(records, ['cache_stars', 'cache_likes', 'cache_downloads'], batch_size=1000)
+		Level.objects.bulk_update(records, ['cache_search_available'], batch_size=1000)
 
 	def handle(self, *args, **options):
 		self.do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=False).exclude(level__is_public=False))
