@@ -18,7 +18,7 @@ class Command(BaseCommand):
 			#record.save()
 			i += 1
 
-		LevelRecord.objects.bulk_update(records, ['cache_is_public'])
+		LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
 
 	def do_none_updating(self, records):
 		record_count = records.count()
@@ -31,7 +31,18 @@ class Command(BaseCommand):
 			#record.save()
 			i += 1
 
-		Level.objects.bulk_update(records, ['cache_stars', 'cache_likes', 'cache_downloads'])
+		Level.objects.bulk_update(records, ['cache_stars', 'cache_likes', 'cache_downloads'], batch_size=1000)
+
+	def do_search_cache_updating(self, records, status):
+		record_count = records.count()
+		i = 1
+		for record in records:
+			print(f"{i} / {record_count} - Updating {record.online_id}")
+			record.cache_search_available = status
+			#record.save()
+			i += 1
+
+		Level.objects.bulk_update(records, ['cache_stars', 'cache_likes', 'cache_downloads'], batch_size=1000)
 
 	def handle(self, *args, **options):
 		self.do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=False).exclude(level__is_public=False))
@@ -39,5 +50,8 @@ class Command(BaseCommand):
 		self.do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=None).exclude(level__is_public=None))
 
 		self.do_none_updating(Level.objects.filter( Q(cache_downloads=None) | Q(cache_likes=None) | Q(cache_stars=None) ))
+
+		self.do_search_cache_updating(Level.objects.filter(is_public=True, hide_from_search=False).exclude(cache_level_name=None).exclude(cache_search_available=True), True)
+		self.do_search_cache_updating(Level.objects.filter( Q(is_public=False) | Q( hide_from_search=True) | Q(cache_level_name=None) ).exclude(cache_search_available=False), False)
 
 		print("Done")

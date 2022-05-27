@@ -118,6 +118,9 @@ def search(request):
 		if request.user.is_authenticated and query == 'admin:private' and request.user.is_superuser:
 			levels = Level.objects.exclude(is_public=True)
 
+		if request.user.is_authenticated and query == 'admin:hidden' and request.user.is_superuser:
+			levels = Level.objects.exclude(cache_search_available=True)
+
 		if 'userID' in form.cleaned_data and form.cleaned_data['userID'] is not None:
 			levels = levels.filter(cache_user_id=form.cleaned_data['userID'])
 			query += f" (userID {form.cleaned_data['userID']})"
