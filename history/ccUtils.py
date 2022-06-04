@@ -247,6 +247,7 @@ def upload_save_file(file, date, user, *args, **kwargs):
 	#stripping sensitive data
 	game_manager['GJA_002'] = '' #password
 	game_manager['GJA_004'] = '' #sessionID (2.2)
+	game_manager['GJA_005'] = '' #gjp2 (2.2)
 
 	save_file = SaveFile(
 		author=HistoryUser.objects.get(user=user),
