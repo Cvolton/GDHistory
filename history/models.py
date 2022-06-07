@@ -268,7 +268,7 @@ class Level(models.Model):
 				self.cache_username = username_record[0].username"""
 
 		#needs updating field
-		data_record = self.levelrecord_set.prefetch_related('save_file').prefetch_related('server_response').prefetch_related('song').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) | Q(level_string=None) ).order_by('-downloads', '-oldest_created')[:1]
+		data_record = self.levelrecord_set.prefetch_related('save_file').prefetch_related('server_response').prefetch_related('song').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) | Q(level_string=None) ).order_by('-downloads', '-oldest_created')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
 			level_strings = {}
