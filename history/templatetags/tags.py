@@ -69,7 +69,7 @@ def song_name(song_id, game_version):
 
 @register.simple_tag
 def length(length_number):
-	strings = ["Tiny","Short","Medium","Long","XL"]
+	strings = ["Tiny","Short","Medium","Long","XL","Plat."]
 	if length_number is None:
 		return strings[0]
 
