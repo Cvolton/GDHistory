@@ -20,7 +20,7 @@ class Command(BaseCommand):
 			if not os.path.exists(export_path):
 				print("Save file {export_path} not found")
 				continue
-			print(f"{i} / {file_count} - Processing {export_path}")
+			print(f"{i} / {file_count} - Processing {filename}")
 			f = open(export_path, "rb")
 			if history.serverUtils.import_json(f) is not None:
 				os.rename(export_path, f"{imports_root}/ServerResponse-Processed/{filename}")
