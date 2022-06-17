@@ -50,6 +50,11 @@ class ServerResponse(models.Model):
 	unprocessed_post_parameters = models.JSONField()
 	endpoint = models.CharField(max_length=32)
 
+	class Meta:
+		indexes = [
+			models.Index(fields=['created', 'endpoint'])
+		]
+
 class GDUser(models.Model):
 	online_id = models.IntegerField(unique=True, db_index=True) #k6
 
