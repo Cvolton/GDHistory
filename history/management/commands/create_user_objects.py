@@ -22,8 +22,5 @@ class Command(BaseCommand):
 			for record in records_small:
 				print(f"{i} / {batch_count} - {record.pk}")
 				record.create_user()
-				user_object.revalidate_cache()
 				
-
-
 		print("Done")

@@ -447,5 +447,7 @@ class LevelRecord(models.Model):
 
 		user_object = utils.get_user_object(self.user_id)
 		user_record = utils.create_user_record(user_object, self.account_id, self.username, record_date, self.server_response, self.save_file, self.record_type)
+		user_object.revalidate_cache()
+		
 		self.real_user_record = user_record
 		self.save()
