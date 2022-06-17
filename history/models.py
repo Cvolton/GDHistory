@@ -266,7 +266,7 @@ class Level(models.Model):
 			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-':
 				self.cache_username = record.real_user_record.username
 
-		if record.daily_id is not None and record.daily_id > 0:
+		if record.daily_id is not None and int(record.daily_id) > 0:
 			changed = True
 			self.cache_daily_id = record.daily_id
 
@@ -448,6 +448,6 @@ class LevelRecord(models.Model):
 		user_object = utils.get_user_object(self.user_id)
 		user_record = utils.create_user_record(user_object, self.account_id, self.username, record_date, self.server_response, self.save_file, self.record_type)
 		user_object.revalidate_cache()
-		
+
 		self.real_user_record = user_record
 		self.save()
