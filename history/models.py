@@ -214,6 +214,8 @@ class Level(models.Model):
 		self.levelrecord_set.update(cache_is_public=True)
 
 	def verify_needs_updating(self):
+		print(f"Begin verify_needs_updating: {timezone.now()}")
+
 		data_record = self.levelrecord_set.exclude( Q(level_name=None) | Q(level_string=None) ).order_by('-downloads')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
@@ -242,7 +244,11 @@ class Level(models.Model):
 			self.cache_level_string_available = False
 		self.save()
 
+		print(f"End verify_needs_updating: {timezone.now()}")
+
 	def update_with_record(self, record, record_date):
+		print(f"Begin update_with_record: {timezone.now()}")
+
 		changed = False
 		check_level_string = False
 
@@ -280,6 +286,8 @@ class Level(models.Model):
 		if changed:
 			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.cache_level_name is not None)
 			self.save()
+
+		print(f"End update_with_record: {timezone.now()}")
 
 	def revalidate_cache(self):
 		best_record = self.levelrecord_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) ).order_by('-downloads', '-oldest_created')[:1]
@@ -441,6 +449,8 @@ class LevelRecord(models.Model):
 		return self.description if self.description_encoded is True else utils.encode_base64_text(self.description)
 
 	def create_user(self):
+		print(f"Begin create_user: {timezone.now()}")
+
 		record_date = None
 		if self.server_response: record_date = self.server_response.created
 		if self.save_file.count() > 0: record_date = self.save_file.order_by('-created')[:1][0].created
@@ -451,3 +461,5 @@ class LevelRecord(models.Model):
 
 		self.real_user_record = user_record
 		self.save()
+
+		print(f"End create_user: {timezone.now()}")
