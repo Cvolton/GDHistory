@@ -46,7 +46,7 @@ class SaveFile(models.Model):
 
 class ServerResponse(models.Model):
 
-	created = models.DateTimeField(default=timezone.now, db_index=True, unique=True)
+	created = models.DateTimeField(default=timezone.now, db_index=True)
 	unprocessed_post_parameters = models.JSONField()
 	endpoint = models.CharField(max_length=32)
 
