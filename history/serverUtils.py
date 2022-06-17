@@ -201,8 +201,8 @@ def process_download(response_json):
 			record.account_id = user_record[2]
 
 	record.save()
-
-	level_object.revalidate_cache()
+	record.create_user()
+	level_object.update_with_record(record, response_object.created)
 
 	return True
 
@@ -239,8 +239,8 @@ def process_get(response_json):
 			record.account_id = record.account_id if 2 not in user_record is None else user_record[2]
 			
 		record.save()
-
-		level_object.revalidate_cache()
+		record.create_user()
+		level_object.update_with_record(record, response_object.created)
 
 	for item in song_array:
 		song_object = get_song_object(item[1])

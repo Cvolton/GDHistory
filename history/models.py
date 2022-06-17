@@ -213,68 +213,17 @@ class Level(models.Model):
 
 		self.levelrecord_set.update(cache_is_public=True)
 
-	def revalidate_cache(self):
-		best_record = self.levelrecord_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) ).order_by('-downloads', '-oldest_created')[:1]
-		if len(best_record) < 1:
-			self.cache_level_name = None
-			self.save()
-			return
-
-		best_record = best_record[0]
-		self.cache_level_name = best_record.level_name
-		self.cache_submitted = best_record.real_date
-		self.cache_downloads = best_record.downloads or 0
-		self.cache_likes = best_record.likes or 0
-		self.cache_rating_sum = best_record.rating_sum or 0
-		self.cache_rating = best_record.rating or 0
-		self.cache_demon = best_record.demon or 0
-		self.cache_auto = best_record.auto or 0
-		self.cache_demon_type = best_record.demon_type or 0
-		self.cache_stars = best_record.stars or 0
-		self.cache_user_id = best_record.user_id or 0
-
-		self.cache_main_difficulty = 0 if self.cache_rating == 0 else self.cache_rating_sum / self.cache_rating
-		self.cache_blank_name = (self.cache_level_name is None)
-
-		best_daily_record = self.levelrecord_set.exclude( Q(daily_id = 0) | Q(daily_id = None) ).order_by('-daily_id')
-		best_record_set = best_daily_record[:1]
-		if len(best_record_set) > 0:
-			self.cache_daily_id = best_record_set[0].daily_id
-		
-		level_string_count = self.levelrecord_set.exclude(level_string=None).count()
-		self.cache_level_string_available = level_string_count > 0
-
-		#set username
-		self.cache_username = best_record.username
-		if best_record.username is None or best_record.username == '-':
-			user_record = GDUser.objects.filter(online_id=self.cache_user_id)[:1]
-			if len(user_record) > 0:
-				self.cache_username = user_record[0].cache_username
-				print("Setting username from user record")
-			else:
-				print(":(((( Unable to set username")
-			#TODO: username fix
-
-			"""username_record = self.levelrecord_set.exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
-			if len(username_record) < 1:
-				username_record = LevelRecord.objects.filter(user_id=self.cache_user_id).exclude( Q(username=None) | Q(username='-') ).order_by('-downloads')[:1]
-				if len(username_record) < 1:
-					print(":(((")
-					self.cache_username = None
-				else:
-					print("setting username from other level")
-					self.cache_username = username_record[0].username
-			else:
-				self.cache_username = username_record[0].username"""
-
-		#needs updating field
-		data_record = self.levelrecord_set.prefetch_related('save_file').prefetch_related('server_response').prefetch_related('song').prefetch_related('level_string').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) | Q(level_string=None) ).order_by('-downloads', '-oldest_created')
+	def verify_needs_updating(self):
+		data_record = self.levelrecord_set.exclude( Q(level_name=None) | Q(level_string=None) ).order_by('-downloads')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
+			best_record = self.levelrecord_set.exclude( Q(level_name=None) ).order_by('-downloads')[:1][0]
+
 			level_strings = {}
 			for record in data_record:
 				level_strings[record.level_string.pk] = True
 			self.cache_available_versions = len(level_strings)
+			self.cache_level_string_available = True
 
 			data_record = data_record[0]
 			if best_record.description != data_record.description: self.cache_needs_updating = True
@@ -290,8 +239,75 @@ class Level(models.Model):
 			if (best_record.original or 0) != (data_record.original or 0): self.cache_needs_updating = True
 		else:
 			self.cache_needs_updating = True
+			self.cache_level_string_available = False
+		self.save()
 
-		self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.cache_level_name is not None)
+	def update_with_record(self, record, record_date):
+		changed = False
+		check_level_string = False
+
+		if record.downloads is not None and record_date is not None and (self.cache_downloads is None or int(record.downloads) > self.cache_downloads):
+			changed = True
+			self.cache_level_name = record.level_name
+			self.cache_submitted = record_date
+			self.cache_downloads = record.downloads or 0
+			self.cache_likes = record.likes or 0
+			self.cache_rating_sum = record.rating_sum or 0
+			self.cache_rating = record.rating or 0
+			self.cache_demon = record.demon or 0
+			self.cache_auto = record.auto or 0
+			self.cache_demon_type = record.demon_type or 0
+			self.cache_stars = record.stars or 0
+			self.cache_user_id = record.user_id or 0
+			self.cache_main_difficulty = 0 if int(self.cache_rating) == 0 else int(self.cache_rating_sum) / int(self.cache_rating)
+			self.cache_blank_name = (self.cache_level_name is None)
+			check_level_string = True
+
+			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-':
+				self.cache_username = record.real_user_record.username
+
+		if record.daily_id is not None and record.daily_id > 0:
+			changed = True
+			self.cache_daily_id = record.daily_id
+
+		if record.level_string:
+			changed = True
+			check_level_string = True
+
+		if check_level_string:
+			self.verify_needs_updating()
+
+		if changed:
+			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.cache_level_name is not None)
+			self.save()
+
+	def revalidate_cache(self):
+		best_record = self.levelrecord_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) ).order_by('-downloads', '-oldest_created')[:1]
+		if len(best_record) < 1:
+			self.cache_level_name = None
+			self.save()
+			return
+
+		self.update_with_record(best_record[0], best_record[0].real_date)
+
+		best_daily_record = self.levelrecord_set.exclude( Q(daily_id = 0) | Q(daily_id = None) ).order_by('-daily_id')
+		best_record_set = best_daily_record[:1]
+		if len(best_record_set) > 0:
+			self.update_with_record(best_record_set[0], None)
+
+		#set username
+		best_record = best_record[0]
+		self.cache_username = best_record.username
+		if best_record.username is None or best_record.username == '-':
+			user_record = GDUser.objects.filter(online_id=self.cache_user_id)[:1]
+			if len(user_record) > 0:
+				self.cache_username = user_record[0].cache_username
+				print("Setting username from user record")
+			else:
+				print(":(((( Unable to set username")
+
+		#needs updating field
+		self.verify_needs_updating()
 
 		self.save()
 
@@ -423,3 +439,13 @@ class LevelRecord(models.Model):
 
 	def get_encoded_description(self):
 		return self.description if self.description_encoded is True else utils.encode_base64_text(self.description)
+
+	def create_user(self):
+		record_date = None
+		if self.server_response: record_date = self.server_response.created
+		if self.save_file.count() > 0: record_date = self.save_file.order_by('-created')[:1][0].created
+
+		user_object = utils.get_user_object(self.user_id)
+		user_record = utils.create_user_record(user_object, self.account_id, self.username, record_date, self.server_response, self.save_file, self.record_type)
+		self.real_user_record = user_record
+		self.save()

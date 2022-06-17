@@ -21,10 +21,7 @@ class Command(BaseCommand):
 			records_small = records[0:batch_size]
 			for record in records_small:
 				print(f"{i} / {batch_count} - {record.pk}")
-				user_object = history.utils.get_user_object(record.user_id)
-				user_record = history.utils.create_user_record(user_object, record.account_id, record.username, record.real_date, record.server_response, record.save_file, record.record_type)
-				record.real_user_record = user_record
-				record.save()
+				record.create_user()
 				user_object.revalidate_cache()
 				
 

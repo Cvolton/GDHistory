@@ -163,6 +163,7 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			unprocessed_data = data
 		)
 		record.save()
+		record.create_user()
 		return record
 
 def create_data_from_level_record(record):
