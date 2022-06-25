@@ -62,11 +62,15 @@ class GDUser(models.Model):
 	cache_non_player_username = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_account_id = models.IntegerField(blank=True, null=True, db_index=True)
 
+	cache_username_created = models.DateTimeField(blank = True, null=True, db_index=True)
+	cache_non_player_username_created = models.DateTimeField(blank = True, null=True, db_index=True)
+
 	def revalidate_cache(self):
 		username_record_set = self.gduserrecord_set.exclude( Q(username='-') | Q(username=None) ).order_by('-cache_created')
 		username_record = username_record_set[:1]
 		if len(username_record) > 0:
 			self.cache_username = username_record[0].username
+			self.cache_username_created = username_record[0].cache_created
 			print("Setting username from user record")
 			if self.cache_username == 'Player':
 				non_player_username_record = username_record_set.exclude(username='Player')[:1]
@@ -75,6 +79,7 @@ class GDUser(models.Model):
 
 			if len(non_player_username_record) > 0:
 				self.cache_non_player_username = non_player_username_record[0].username
+				self.cache_non_player_username_created = username_record[0].cache_created
 				print("Setting non-player username from user record")
 		else:
 			print(":((( User record not found")
