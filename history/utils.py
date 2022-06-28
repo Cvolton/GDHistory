@@ -5,6 +5,8 @@ import urllib
 import base64
 from w3lib.html import replace_entities
 
+from django.utils import timezone
+
 class DecodeResult:
 	def __init__(self, encoded, text):
 		self.encoded = encoded
@@ -160,8 +162,14 @@ def create_user_record(user_object, account_id, username, date, server_response,
 			record_type = record_type
 		)
 		record.save()
-	if date is not None and ((record.cache_created is not None and date < record.cache_created) or record.cache_created is None):
-		record.cache_created = date
+
+	parsed_date = date
+	parsed_cache = record.cache_created
+	if isinstance(date, str): parsed_date = timezone.datetime.fromisoformat(date)
+	if isinstance(record.cache_created, str): parsed_cache = timezone.datetime.fromisoformat(record.cache_created)
+
+	if date is not None and ((record.cache_created is not None and parsed_date < parsed_cache) or record.cache_created is None):
+		record.cache_created = parsed_date
 		record.save()
 	record.save_file.add(*(save_file.all()))
 	return record
