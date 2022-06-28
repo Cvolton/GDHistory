@@ -160,7 +160,7 @@ def create_user_record(user_object, account_id, username, date, server_response,
 			record_type = record_type
 		)
 		record.save()
-	if date is not None and ((record.cache_created is not None and date < record.cache_created) or record.cache_created):
+	if date is not None and ((record.cache_created is not None and date < record.cache_created) or record.cache_created is None):
 		record.cache_created = date
 		record.save()
 	record.save_file.add(*(save_file.all()))
