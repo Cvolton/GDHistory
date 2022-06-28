@@ -79,10 +79,32 @@ class GDUser(models.Model):
 
 			if len(non_player_username_record) > 0:
 				self.cache_non_player_username = non_player_username_record[0].username
-				self.cache_non_player_username_created = username_record[0].cache_created
+				self.cache_non_player_username_created = non_player_username_record[0].cache_created
 				print("Setting non-player username from user record")
 		else:
 			print(":((( User record not found")
+
+	def update_with_record(self, record):
+		should_save = False
+		if record.username is None or record.username == '-' or record.username == '' or record.cache_created is None:
+			print("Null username")
+			return
+
+		if self.cache_username_created is None or record.cache_created > self.cache_username_created:
+			print("Setting username from user record")
+			self.cache_username = record.username
+			self.cache_username_created = record.cache_created
+			should_save = True
+
+		if record.username != 'Player' and (self.cache_non_player_username_created is None or record.cache_created > self.cache_non_player_username_created):
+			print("Setting non-player username from user record")
+			self.cache_non_player_username = record.username
+			self.cache_non_player_username_created = record.cache_created
+			should_save = True
+
+		if should_save:
+			self.save()
+			
 
 class GDUserRecord(models.Model):
 	user = models.ForeignKey(
@@ -450,13 +472,14 @@ class LevelRecord(models.Model):
 		return self.description if self.description_encoded is True else utils.encode_base64_text(self.description)
 
 	def create_user(self):
+
 		record_date = None
 		if self.server_response: record_date = self.server_response.created
 		if self.save_file.count() > 0: record_date = self.save_file.order_by('-created')[:1][0].created
 
 		user_object = utils.get_user_object(self.user_id)
 		user_record = utils.create_user_record(user_object, self.account_id, self.username, record_date, self.server_response, self.save_file, self.record_type)
-		user_object.revalidate_cache()
+		user_object.update_with_record(user_record)
 
 		self.real_user_record = user_record
 		self.save()
