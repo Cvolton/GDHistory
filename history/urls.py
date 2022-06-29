@@ -17,4 +17,5 @@ urlpatterns = [
     path('accounts/logout/', auth_views.LogoutView.as_view(template_name='accounts/logout.html'), name='logout'),
 
     path('api/v1/counts/', api_views.index_counts, name='api_counts'),
+    path('api/v1/level/<online_id>/', api_views.level_info, name='api_level'),
 ]

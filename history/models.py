@@ -134,6 +134,14 @@ class GDUserRecord(models.Model):
 
 	cache_created = models.DateTimeField(blank = True, null=True, db_index=True)
 
+	def get_serialized_base(self):
+		response = {
+			'user_id': self.user.online_id,
+			'username': self.username,
+			'account_id': self.account_id
+		}
+		return response
+
 class Song(models.Model):
 	online_id = models.IntegerField(unique=True)
 
@@ -152,6 +160,14 @@ class Song(models.Model):
 		self.cache_song_name = best_record.song_name
 		self.cache_artist_name = best_record.artist_name
 		self.save()
+
+	def get_serialized_base(self):
+		record = {
+			'online_id': self.online_id,
+			'song_name': self.cache_song_name,
+			'arist_name': self.cache_artist_name
+		}
+		return record
 
 
 class SongRecord(models.Model):
@@ -342,6 +358,32 @@ class Level(models.Model):
 
 		self.save()
 
+	def get_serialized_base(self):
+		response = {
+			'online_id': self.online_id,
+			'comment': self.comment,
+			'is_deleted': self.is_deleted,
+			'cache_level_name': self.cache_level_name,
+			'cache_submitted': self.cache_submitted,
+			'cache_downloads': self.cache_downloads,
+			'cache_likes': self.cache_likes,
+			'cache_rating_sum': self.cache_rating_sum,
+			'cache_rating': self.cache_rating,
+			'cache_demon': self.cache_demon,
+			'cache_auto': self.cache_auto,
+			'cache_demon_type': self.cache_demon_type,
+			'cache_stars': self.cache_stars,
+			'cache_username': self.cache_username,
+			'cache_level_string_available': self.cache_level_string_available,
+			'cache_user_id': self.cache_user_id,
+			'cache_daily_id': self.cache_daily_id,
+			'cache_needs_updating': self.cache_needs_updating,
+			'cache_available_versions': self.cache_available_versions,
+			'cache_search_available': self.cache_search_available,
+			'cache_main_difficulty': self.cache_main_difficulty,
+		}
+		return response
+
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
 	requires_base64 = models.BooleanField(default=False)
@@ -483,3 +525,29 @@ class LevelRecord(models.Model):
 
 		self.real_user_record = user_record
 		self.save()
+
+	def get_serialized_base(self):
+		response = self.__dict__.copy()
+
+		del response['_prefetched_objects_cache']
+		del response['_state']
+		del response['unprocessed_data']
+		del response['username']
+		del response['user_id']
+		del response['real_user_record_id']
+		del response['cache_user_record_id']
+		del response['level_id']
+		del response['server_response_id']
+		del response['submitted']
+		del response['song_id']
+		del response['level_string_id']
+
+		response['level_string_available'] = self.level_string is not None
+
+		return response
+
+	def get_serialized_full(self):
+		response = self.get_serialized_base()
+		response['real_user_record'] = self.real_user_record.get_serialized_base()
+		response['song'] = None if self.song is None else self.song.get_serialized_base()
+		return response
