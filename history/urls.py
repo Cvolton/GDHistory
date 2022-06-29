@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
-from . import views
+from . import views, api_views
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -15,4 +15,6 @@ urlpatterns = [
     path('my_submissions/<show_all>/', views.my_submissions, name='all_submissions'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(template_name='accounts/logout.html'), name='logout'),
+
+    path('api/v1/counts/', api_views.index_counts, name='api_counts'),
 ]

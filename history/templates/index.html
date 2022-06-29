@@ -15,23 +15,23 @@
 					<tbody>
 						<tr>
 							<td>Levels in our database:</td>
-							<td>{{ level_count }}</td>
+							<td><span id="level-count"></span></td>
 						</tr>
 						<tr>
 							<td>Songs in our database:</td>
-							<td>{{ song_count }}</td>
+							<td><span id="song-count"></span></td>
 						</tr>
 						<tr>
 							<td>Submitted save files:</td>
-							<td>{{ save_count }}</td>
+							<td><span id="save-count"></span></td>
 						</tr>
 						<tr>
 							<td>Processed server requests:</td>
-							<td>{{ request_count }}</td>
+							<td><span id="request-count"></span></td>
 						</tr>
 						<tr>
 							<td>Stored level strings:</td>
-							<td>{{ level_string_count }}</td>
+							<td><span id="level-string-count"></span></td>
 						</tr>
 					</tbody>
 				</table>
@@ -77,4 +77,14 @@
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	$.getJSON('/api/v1/counts', function(counts) {
+		$('#level-count').append(counts.level_count);
+		$('#song-count').append(counts.song_count);
+		$('#save-count').append(counts.save_count);
+		$('#request-count').append(counts.request_count);
+		$('#level-string-count').append(counts.level_string_count);
+	});
+</script>
 {% endblock %}
