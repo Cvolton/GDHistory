@@ -281,3 +281,6 @@ def my_submissions(request, show_all=None):
 	}
 
 	return render(request, 'my_submissions.html', context)
+
+def api_documentation(request):
+	return render(request, 'api.html')

@@ -15,6 +15,7 @@ urlpatterns = [
     path('my_submissions/<show_all>/', views.my_submissions, name='all_submissions'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(template_name='accounts/logout.html'), name='logout'),
+    path('api/', views.api_documentation, name='api'),
 
     path('api/v1/counts/', api_views.index_counts, name='api_counts'),
     path('api/v1/level/<online_id>/', api_views.level_info, name='api_level'),

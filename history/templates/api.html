@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% load tags %}
+{% block title %}Daily Levels{% endblock title %}
+{% block content %}
+
+<div class="row">
+	<p class="lead">API documentation</p>
+	<hr>
+	<p>Keep in mind that this is very unfinished and that breaking changes are bound to happen.</p>
+</div>
+
+<div class="row">
+	<b>GET /api/v1/counts/</b>
+	<p>Returns the statistics returned on the homepage.</p>
+</div>
+
+<div class="row">
+	<b>GET /api/v1/level/{level_id}/</b>
+	<p>Returns informations about the level and its level records. Do note that for some fields it is not consistent between records whether they return Null for their default values or the actual values themselves.</p>
+</div>
+{% endblock %}
