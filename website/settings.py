@@ -103,14 +103,10 @@ WSGI_APPLICATION = 'website.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQL_DATABASE','gdhistory'),
-        'USER': os.getenv('MYSQL_USER','gdhistory'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD','password'),
-        'HOST': os.getenv('MYSQL_HOST','127.0.0.1'),
-        'PORT': os.getenv('MYSQL_PORT','3306'),
+        'ENGINE': 'django.db.backends.postgresql',
         'OPTIONS': {
-            'charset': 'utf8mb4',
+            'service': 'my_service',
+            'passfile': '.my_pgpass',
         },
     }
 }
