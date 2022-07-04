@@ -12,6 +12,6 @@ class Command(BaseCommand):
 		print("Processing save files")
 		for file in save_files:
 			#TODO: handle failures properly
-			try:
-				history.ccUtils.process_save_file(file.pk)
-			except Exception as e: print(e)
+			history.ccUtils.process_save_file(file.pk)
+			#try:
+			#except Exception as e: print(e)
