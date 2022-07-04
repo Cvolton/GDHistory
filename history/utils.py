@@ -135,6 +135,8 @@ def create_song_record_from_data(data, song_object, record_type, *args, **kwargs
 		return record
 
 def get_user_object(user_id):
+	if user_id is None: return None
+
 	from .models import GDUser
 	try:
 		user_object = GDUser.objects.get(online_id=user_id)
@@ -144,6 +146,8 @@ def get_user_object(user_id):
 	return user_object
 
 def create_user_record(user_object, account_id, username, date, server_response, save_file, record_type):
+	if user_object is None: return None
+
 	if username == "": return
 	from .models import GDUserRecord, ServerResponse, SaveFile, LevelRecord
 
