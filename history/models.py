@@ -86,6 +86,12 @@ class GDUser(models.Model):
 
 	def update_with_record(self, record):
 		should_save = False
+		if is_naive(self.username_created):
+			self.username_created = make_aware(self.username_created)
+
+		if is_naive(record.cache_created):
+			record.cache_created = make_aware(record.cache_created)
+
 		if record.username is None or record.username == '-' or record.username == '' or record.cache_created is None:
 			print("Null username")
 			return
