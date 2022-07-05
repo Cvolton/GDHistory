@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext as _
 from django.utils import timezone
+from django.utils.timezone import make_aware, is_naive
 
 from django.db.models import Min, Max, Q
 from django.db.models.functions import Coalesce
