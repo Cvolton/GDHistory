@@ -6,6 +6,7 @@ import base64
 from w3lib.html import replace_entities
 
 from django.utils import timezone
+from django.utils.timezone import make_aware, is_naive
 
 class DecodeResult:
 	def __init__(self, encoded, text):
@@ -171,6 +172,12 @@ def create_user_record(user_object, account_id, username, date, server_response,
 	parsed_cache = record.cache_created
 	if isinstance(date, str): parsed_date = timezone.datetime.fromisoformat(date)
 	if isinstance(record.cache_created, str): parsed_cache = timezone.datetime.fromisoformat(record.cache_created)
+
+	if parsed_date is not None and is_naive(parsed_date):
+		parsed_date = make_aware(parsed_date)
+
+	if parsed_cache is not None and is_naive(parsed_cache):
+		parsed_cache = make_aware(parsed_cache)
 
 	if date is not None and ((record.cache_created is not None and parsed_date < parsed_cache) or record.cache_created is None):
 		record.cache_created = parsed_date
