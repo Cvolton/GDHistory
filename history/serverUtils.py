@@ -251,7 +251,13 @@ def process_get(response_json):
 	return True
 
 def import_json(file):
-	response_json = json.load(file)
+	response_json = None
+	try:
+		response_json = json.load(file)
+	except Exception as e:
+		print(e)
+		return None
+
 	#Avoid importing invalid data from CloudFlare
 	if response_json["raw_output"][:5] == '<html' or response_json["raw_output"][:5] == 'error':
 		return None
