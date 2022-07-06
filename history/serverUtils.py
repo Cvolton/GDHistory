@@ -272,7 +272,13 @@ def process_special(response_json):
 		return process_cutoffs(response_json)
 
 def import_json(file):
-	response_json = json.load(file)
+	response_json = None
+	try:
+		response_json = json.load(file)
+	except Exception as e:
+		print(e)
+		return None
+
 	#Avoid importing invalid data from CloudFlare
 	if response_json["endpoint"] == "GDHistory-Special":
 		return process_special(response_json)
