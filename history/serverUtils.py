@@ -279,6 +279,8 @@ def import_json(file):
 		print(e)
 		return None
 
+	if "endpoint" not in response_json: return None
+
 	#Avoid importing invalid data from CloudFlare
 	if response_json["endpoint"] == "GDHistory-Special":
 		return process_special(response_json)
