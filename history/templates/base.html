@@ -36,6 +36,9 @@
                   <a class="nav-link {% if request.path == '/daily/' %} active {% endif %} " aria-current="page" href="{% url 'daily' %}">Daily</a>
                 </li>
                 <li class="nav-item">
+                  <a class="nav-link {% if request.path == '/date_estimator/' %} active {% endif %} " aria-current="page" href="{% url 'date_estimator' %}">Date Estimator</a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link {% if request.path == '/api/' %} active {% endif %} " aria-current="page" href="{% url 'api' %}">API</a>
                 </li>
                 {%if user.is_authenticated %}
