@@ -414,6 +414,15 @@ class LevelDateEstimation(models.Model):
 
 		self.save()
 
+	def get_serialized_base(self):
+		response = {
+			'created': self.created,
+			'relative_upload_date': self.relative_upload_date,
+			'estimation': self.estimation,
+			'online_id': self.level.online_id
+		}
+		return response
+
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
 	requires_base64 = models.BooleanField(default=False)

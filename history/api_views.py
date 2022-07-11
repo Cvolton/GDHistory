@@ -7,7 +7,7 @@ from django.core.cache import cache
 
 from datetime import datetime
 
-from .models import LevelRecord
+from .models import LevelRecord, LevelDateEstimation
 from . import ccUtils, serverUtils, tasks, utils
 
 import math
@@ -44,5 +44,16 @@ def level_info(request, online_id=None):
 	if len(response['records']) == 0:
 		utils.get_level_object(online_id)
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
+
+	return JsonResponse(response)
+
+def level_date_estimation(request, online_id):
+	low = LevelDateEstimation.objects.prefetch_related('level').filter(level__online_id__lte=online_id).order_by('-level__online_id')[:1]
+	high = LevelDateEstimation.objects.prefetch_related('level').filter(level__online_id__gte=online_id).order_by('level__online_id')[:1]
+
+	response = {
+		'low': low[0].get_serialized_base() if len(low) > 0 else None,
+		'high': high[0].get_serialized_base()  if len(high) > 0 else None
+	}
 
 	return JsonResponse(response)
