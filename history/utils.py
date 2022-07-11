@@ -7,6 +7,7 @@ from w3lib.html import replace_entities
 
 from django.utils import timezone
 from django.utils.timezone import make_aware, is_naive
+from django.core.cache import cache
 
 class DecodeResult:
 	def __init__(self, encoded, text):
@@ -193,3 +194,16 @@ def get_level_object(level_id):
 		level_object = Level(online_id=level_id)
 		level_object.save()
 	return level_object
+
+def recalculate_counts():
+	from .models import Level, Song, SaveFile, ServerResponse, LevelString
+
+	counts = {
+		'level_count': Level.objects.filter(cache_search_available=True).count(),
+		'song_count': Song.objects.count(),
+		'save_count': SaveFile.objects.count(),
+		'request_count': ServerResponse.objects.count(),
+		'level_string_count': LevelString.objects.count(),
+	}
+	cache.set('counts', counts)
+	return counts

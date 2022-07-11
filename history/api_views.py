@@ -3,25 +3,20 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Count, Min, Max, Q
 from django.db.models.functions import Coalesce
+from django.core.cache import cache
 
 from datetime import datetime
 
-from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString, HistoryUser
-from .forms import UploadFileForm, SearchForm
+from .models import LevelRecord
 from . import ccUtils, serverUtils, tasks, utils
 
 import math
 import plistlib
 
 def index_counts(request):
-
-	counts = {
-		'level_count': Level.objects.filter(cache_search_available=True).count(),
-		'song_count': Song.objects.count(),
-		'save_count': SaveFile.objects.count(),
-		'request_count': ServerResponse.objects.count(),
-		'level_string_count': LevelString.objects.count(),
-	}
+	counts = cache.get('counts')
+	if counts is None:
+		counts = utils.recalculate_counts()
 
 	return JsonResponse(counts)
 
