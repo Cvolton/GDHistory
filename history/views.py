@@ -284,3 +284,6 @@ def my_submissions(request, show_all=None):
 
 def api_documentation(request):
 	return render(request, 'api.html')
+
+def date_estimator(request):
+	return render(request, 'date_estimator.html')

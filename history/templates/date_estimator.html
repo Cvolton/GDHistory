@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock title %}
+{% block content %}
+
+<div class="alert alert-info" role="alert">
+	Estimated dates may not be accurate due to uncertainities with how RobTop's server handles leap years.
+</div>
+
+<div class="row">
+	<div class="col mb-3">
+		<div class="card">
+			<div class="card-header lead">
+				Level ID date estimator
+			</div>
+			<div class="card-body">
+				<form id="estimator">
+					<div class="mb-3">
+						<label for="file" class="form-label">Level ID</label>
+						<input class="form-control" type="text" id="online_id" name="online_id">
+					</div>
+					<button type="submit" class="btn btn-primary">Estimate</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col mb-3">
+		<div class="card">
+			<div class="card-header lead">
+				Results
+			</div>
+			<div class="card-body" id="result-card">
+				<span id="result-pane"></span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	const form  = document.getElementById('estimator');
+
+	form.addEventListener('submit', (event) => {
+	    event.preventDefault();
+	    online_id = form.elements['online_id'];
+	    $.getJSON(`/api/v1/date/level/${online_id.value}`, function(result) {
+	    	$('#result-pane').remove();
+	    	result_string = "";
+	    	if(result["low"])
+	    			result_string += `<p><b>Level ID: ${result["low"]["online_id"]}</b>
+					<br>Estimated date: ${result["low"]["estimation"]}</p>`;
+
+			if(result["high"])
+	    			result_string += `<p><b>Level ID: ${result["high"]["online_id"]}</b>
+					<br>Estimated date: ${result["high"]["estimation"]}</p>`;
+
+			if(result_string == "") result_string = "<p>An error has occured while loading estimations.</p>";
+
+			$('#result-card').append(`
+				<span id="result-pane">
+					<p>Closest available estimations:</p>
+					${result_string}
+				</span>`);
+		});
+	});
+
+	
+</script>
+{% endblock %}
