@@ -391,6 +391,29 @@ class Level(models.Model):
 		}
 		return response
 
+class LevelDateEstimation(models.Model):
+	level = models.ForeignKey(
+		Level,
+		on_delete=models.CASCADE,
+		db_index=True,
+	)
+
+	submitted = models.DateTimeField(default=timezone.now, db_index=True)
+
+	created = models.DateTimeField(db_index=True)
+	relative_upload_date = models.CharField(blank=True, null=True, max_length=255)
+
+	estimation = models.DateTimeField(blank=True, null=True, db_index=True)
+
+	def calculate(self):
+		if "year" in self.relative_upload_date:
+			years = int(self.relative_upload_date.split(' ')[0])
+			self.estimation = self.created.replace(year=self.created.year - years)
+		else:
+			return
+
+		self.save()
+
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
 	requires_base64 = models.BooleanField(default=False)

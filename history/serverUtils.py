@@ -1,10 +1,11 @@
 from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text, get_level_object
-from .models import ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType
+from .models import ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType, LevelDateEstimation
 
 from .constants import XORKeys, MiscConstants
 
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import make_aware, is_naive
+from django.utils import timezone
 
 from datetime import datetime
 from time import sleep
@@ -250,9 +251,32 @@ def process_get(response_json):
 
 	return True
 
+def process_cutoffs(response_json):
+	for level in response_json["dates"]:
+		level_object = get_level_object(level)
+
+		content = response_json["dates"][level]
+
+		estimation = LevelDateEstimation(
+			created = timezone.datetime.fromisoformat(content["estimation_created"]),
+			relative_upload_date = content["timestamp"],
+			level = level_object
+		)
+
+		estimation.calculate()
+
+	return True
+
+def process_special(response_json):
+	if response_json["task"] == 'find_cutoffs':
+		return process_cutoffs(response_json)
+
 def import_json(file):
 	response_json = json.load(file)
 	#Avoid importing invalid data from CloudFlare
+	if response_json["endpoint"] == "GDHistory-Special":
+		return process_special(response_json)
+
 	if response_json["raw_output"][:5] == '<html' or response_json["raw_output"][:5] == 'error':
 		return None
 
