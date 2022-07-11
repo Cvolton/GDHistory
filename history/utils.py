@@ -205,5 +205,5 @@ def recalculate_counts():
 		'request_count': ServerResponse.objects.count(),
 		'level_string_count': LevelString.objects.count(),
 	}
-	cache.set('counts', counts)
+	cache.set('counts', counts, None)
 	return counts
