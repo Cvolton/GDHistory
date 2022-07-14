@@ -250,6 +250,7 @@ def process_get(response_json):
 		record.server_response.add(response_object)
 		song_object.revalidate_cache()
 
+	response_object.generate_date_estimation()
 	return True
 
 def process_cutoffs(response_json):

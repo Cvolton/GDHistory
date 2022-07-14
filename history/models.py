@@ -69,7 +69,10 @@ class ServerResponse(models.Model):
 
 		print(f"Generating date estimate from {self.created}")
 
-		level_object = utils.get_level_object(self.levelrecord_set.prefetch_related('level').order_by('-level__online_id')[0].level.online_id)
+		record_set = self.levelrecord_set.prefetch_related('level').order_by('-level__online_id')[:1]
+		if record_set.count() < 1: return
+		
+		level_object = utils.get_level_object(record_set[0].level.online_id)
 
 		estimation = LevelDateEstimation(server_response=self, created=self.created, estimation=self.created, level=level_object)
 		estimation.save()
