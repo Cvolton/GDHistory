@@ -65,6 +65,7 @@ class ServerResponse(models.Model):
 		if not self.endpoint.startswith("getGJLevels"): return
 		if self.get_type != 4 or (self.get_page is not None and self.get_page != 0): return
 		if LevelDateEstimation.objects.filter(server_response=self).count() > 0: return
+		if "star" in self.unprocessed_post_parameters and self.unprocessed_post_parameters["star"] != 0: return
 
 		print(f"Generating date estimate from {self.created}")
 
