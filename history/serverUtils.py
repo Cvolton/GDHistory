@@ -20,6 +20,7 @@ def create_request(response_json):
 		return False
 
 	response_object = ServerResponse(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"], created=response_json["created"])
+	response_object.assign_get()
 	response_object.save()
 
 	#f = open(f"{data_path}/ServerResponse/{response_object.pk}", "w")
