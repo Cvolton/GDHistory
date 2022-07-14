@@ -51,6 +51,16 @@ class ServerResponse(models.Model):
 	unprocessed_post_parameters = models.JSONField()
 	endpoint = models.CharField(max_length=32)
 
+	get_type = models.IntegerField(blank=True, null=True, db_index=True)
+	get_page = models.IntegerField(blank=True, null=True, db_index=True)
+
+	def assign_get(self):
+		if not self.endpoint.startswith("getGJLevels"): return
+
+		get_type = self.unprocessed_post_parameters["type"] if "type" in self.unprocessed_post_parameters else None
+		get_page = self.unprocessed_post_parameters["page"] if "page" in self.unprocessed_post_parameters else None
+		self.save()
+
 	class Meta:
 		indexes = [
 			models.Index(fields=['created', 'endpoint'])
