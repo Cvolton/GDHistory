@@ -66,11 +66,11 @@ class ServerResponse(models.Model):
 		if self.get_type != 4 or (self.get_page is not None and self.get_page != 0): return
 		if LevelDateEstimation.objects.filter(server_response=self).count() > 0: return
 
-		print("Generating date estimate from {self.created}")
+		print(f"Generating date estimate from {self.created}")
 
 		level_object = utils.get_level_object(self.levelrecord_set.prefetch_related('level').order_by('-level__online_id')[0].level.online_id)
 
-		estimation = LevelDateEstimation(server_response=self, created=self.created, level=level_object)
+		estimation = LevelDateEstimation(server_response=self, created=self.created, estimation=self.created, level=level_object)
 		estimation.save()
 
 
