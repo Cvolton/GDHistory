@@ -57,8 +57,8 @@ class ServerResponse(models.Model):
 	def assign_get(self):
 		if not self.endpoint.startswith("getGJLevels"): return
 
-		get_type = self.unprocessed_post_parameters["type"] if "type" in self.unprocessed_post_parameters else None
-		get_page = self.unprocessed_post_parameters["page"] if "page" in self.unprocessed_post_parameters else None
+		self.get_type = self.unprocessed_post_parameters["type"] if "type" in self.unprocessed_post_parameters else None
+		self.get_page = self.unprocessed_post_parameters["page"] if "page" in self.unprocessed_post_parameters else None
 		self.save()
 
 	class Meta:
