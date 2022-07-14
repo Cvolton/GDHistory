@@ -61,6 +61,19 @@ class ServerResponse(models.Model):
 		self.get_page = self.unprocessed_post_parameters["page"] if "page" in self.unprocessed_post_parameters else None
 		self.save()
 
+	def generate_date_estimation(self):
+		if not self.endpoint.startswith("getGJLevels"): return
+		if self.get_type != 4 or (self.get_page is not None and self.get_page != 0): return
+		if LevelDateEstimation.objects.filter(server_response=self).count() > 0: return
+
+		print("Generating date estimate from {self.created}")
+
+		level_object = utils.get_level_object(self.levelrecord_set.prefetch_related('level').order_by('-level__online_id')[0].level.online_id)
+
+		estimation = LevelDateEstimation(server_response=self, created=self.created, level=level_object)
+		estimation.save()
+
+
 	class Meta:
 		indexes = [
 			models.Index(fields=['created', 'endpoint'])
@@ -409,6 +422,13 @@ class LevelDateEstimation(models.Model):
 	level = models.ForeignKey(
 		Level,
 		on_delete=models.CASCADE,
+		db_index=True,
+	)
+
+	server_response = models.ForeignKey(
+		ServerResponse,
+		on_delete=models.CASCADE,
+		blank=True, null=True,
 		db_index=True,
 	)
 
