@@ -14,7 +14,7 @@ class Command(BaseCommand):
 		batch_size = 2500
 		batch_count = math.ceil(responses_count/batch_size)
 		for i in range(0,batch_count):
-			responses_small = responses[0:batch_size]
+			responses_small = responses[i*batch_size:(i+1)*batch_size]
 			for response in responses_small:
 				print(f"{i} / {batch_count} - {response.pk}")
 				response.assign_get()
