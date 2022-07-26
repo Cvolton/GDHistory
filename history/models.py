@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext as _
 from django.utils import timezone
-from django.utils.timezone import make_aware, is_naive
+from django.utils.timezone import make_aware, is_naive, timedelta
 
 from django.db.models import Min, Max, Q
 from django.db.models.functions import Coalesce
@@ -444,9 +444,10 @@ class LevelDateEstimation(models.Model):
 	estimation = models.DateTimeField(blank=True, null=True, db_index=True)
 
 	def calculate(self):
-		if "year" in self.relative_upload_date:
+		if self.relative_upload_date is not None and "year" in self.relative_upload_date:
 			years = int(self.relative_upload_date.split(' ')[0])
-			self.estimation = self.created.replace(year=self.created.year - years)
+			self.estimation = self.created - timedelta(days=365)
+			#self.estimation = self.created.replace(year=self.created.year - years)
 		else:
 			return
 
