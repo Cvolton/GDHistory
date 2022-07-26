@@ -446,7 +446,7 @@ class LevelDateEstimation(models.Model):
 	def calculate(self):
 		if self.relative_upload_date is not None and "year" in self.relative_upload_date:
 			years = int(self.relative_upload_date.split(' ')[0])
-			self.estimation = self.created - timedelta(days=365)
+			self.estimation = self.created - timedelta(days=365*years)
 			#self.estimation = self.created.replace(year=self.created.year - years)
 		else:
 			return
