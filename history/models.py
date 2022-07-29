@@ -114,6 +114,9 @@ class GDUser(models.Model):
 
 	def update_with_record(self, record):
 		should_save = False
+		if record is None:
+			return
+
 		if self.cache_username_created is not None and is_naive(self.cache_username_created):
 			self.cache_username_created = make_aware(self.cache_username_created)
 
