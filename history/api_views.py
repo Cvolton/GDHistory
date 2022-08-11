@@ -48,8 +48,8 @@ def level_info(request, online_id=None):
 	return JsonResponse(response)
 
 def level_date_estimation(request, online_id):
-	low = LevelDateEstimation.objects.prefetch_related('level').filter(level__online_id__lte=online_id).order_by('-level__online_id')[:1]
-	high = LevelDateEstimation.objects.prefetch_related('level').filter(level__online_id__gte=online_id).order_by('level__online_id')[:1]
+	low = LevelDateEstimation.objects.prefetch_related('level').filter(level__online_id__lte=online_id).order_by('-level__online_id', 'estimation')[:1]
+	high = LevelDateEstimation.objects.prefetch_related('level').filter(level__online_id__gte=online_id).order_by('level__online_id', 'estimation')[:1]
 
 	response = {
 		'low': low[0].get_serialized_base() if len(low) > 0 else None,
