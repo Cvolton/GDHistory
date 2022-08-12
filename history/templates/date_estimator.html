@@ -40,6 +40,12 @@
 
 	form.addEventListener('submit', (event) => {
 	    event.preventDefault();
+	    $('#result-pane').remove();
+	    $('#result-card').append(`
+			<span id="result-pane">
+				<p>Loading...</p>
+			</span>`);
+
 	    online_id = form.elements['online_id'];
 	    $.getJSON(`/api/v1/date/level/${online_id.value}`, function(result) {
 	    	$('#result-pane').remove();
