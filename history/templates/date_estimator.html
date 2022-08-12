@@ -65,6 +65,13 @@
 					<p>Closest available estimations:</p>
 					${result_string}
 				</span>`);
+		})
+		.fail(function() { 
+	    	$('#result-pane').remove();
+	    	$('#result-card').append(`
+				<span id="result-pane">
+					<p>Estimations failed to load.</p>
+				</span>`);
 		});
 	});
 
