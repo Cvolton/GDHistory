@@ -591,8 +591,10 @@ class LevelRecord(models.Model):
 	#also levelstring stored on the side
 	#and raw server response for download type records stored on the side
 
-	def get_encoded_description(self):
-		return self.description if self.description_encoded is True else utils.encode_base64_text(self.description)
+	def get_encoded_description(self, double_base64 = False):
+		description = self.description if self.description_encoded is True else utils.encode_base64_text(self.description)
+		if double_base64: description = utils.encode_base64_text(description)
+		return description
 
 	def create_user(self):
 

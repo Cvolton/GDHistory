@@ -166,12 +166,12 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 		record.create_user()
 		return record
 
-def create_data_from_level_record(record):
+def create_data_from_level_record(record, double_base64 = False):
 	data = {
 		'kCEK': 4,
 		'k1': record.level.online_id,
 		'k2': record.level_name,
-		'k3': record.get_encoded_description(),
+		'k3': record.get_encoded_description(double_base64),
 		'k4': record.level_string.load_file_content() if record.level_string is not None else None,
 		'k5': record.username,
 		'k6': record.user_id,

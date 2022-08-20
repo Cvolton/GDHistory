@@ -256,7 +256,7 @@ def download_record(request, record_id=None, online_id=None):
 	except: return render(request, 'error.html', {'error': 'Record not found in our database'})
 	if record.level.is_public is not True:
 		return render(request, 'error.html', {'error': 'You do not have the rights to download this record'})
-	data = ccUtils.create_data_from_level_record(record)
+	data = ccUtils.create_data_from_level_record(record, True) #gdshare b64s the b64d desc already, so this is required
 	if 'k4' not in data:
 		return render(request, 'error.html', {'error': 'This record does not contain any level data. If you have reached this page using a link claiming that the data is available, please report this bug immediately.'})
 
