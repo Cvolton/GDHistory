@@ -294,6 +294,8 @@ class Level(models.Model):
 			models.Index(fields=['cache_search_available', 'cache_level_string_available']),
 			models.Index(fields=['cache_search_available', 'is_deleted']),
 			models.Index(fields=['cache_search_available', 'is_deleted', 'cache_level_string_available']),
+
+			models.Index(fields=['cache_level_string_available', 'is_deleted']),
 		]
 
 	def set_public(self, public):
