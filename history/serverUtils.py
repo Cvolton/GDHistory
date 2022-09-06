@@ -253,7 +253,7 @@ def process_get(response_json):
 		song_object = get_song_object(item[1])
 		record = create_song_record_from_data(item, song_object, SongRecord.RecordType.LEVEL_INFO, decode_link=True)
 		record.server_response.add(response_object)
-		song_object.revalidate_cache()
+		song_object.update_with_record(record)
 
 	print(f":: {datetime.now().time()} : Generating date estimation")
 	response_object.generate_date_estimation()

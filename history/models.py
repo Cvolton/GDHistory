@@ -184,6 +184,32 @@ class Song(models.Model):
 
 	cache_song_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_artist_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
+	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
+
+	def update_with_record(self, record):
+		if self.cache_submitted is None:
+			self.revalidate_cache()
+			return
+		record_date = None
+		if self.cache_submitted is not None and is_naive(self.cache_submitted):
+			self.cache_submitted = make_aware(self.cache_submitted)
+
+		save_files = record.save_file.order_by('-created')[:1]
+		server_responses = record.server_response.order_by('-created')[:1]
+		if len(server_responses) > 0:
+			server_response = server_responses[0]
+			if server_response is not None and server_response.created is not None: 
+				record_date = make_aware(server_response.created) if is_naive(server_response.created) else server_response.created
+		elif len(save_files) > 0:
+			save_file = save_files[0]
+			if save_file is not None and save_file.created is not None: 
+				record_date = make_aware(save_file.created) if is_naive(save_file.created) else save_file.created
+
+		if record_date is not None and record_date > self.cache_submitted:
+			self.cache_song_name = record.song_name
+			self.cache_artist_name = record.artist_name
+			self.cache_submitted = record_date
+			self.save()
 
 	def revalidate_cache(self):
 		best_record = self.songrecord_set.annotate(newest_created=Max('save_file__created'), real_date=Coalesce('newest_created', 'server_response__created')).exclude(real_date=None, song_name=None).order_by('-real_date')[:1]
@@ -196,6 +222,7 @@ class Song(models.Model):
 		best_record = best_record[0]
 		self.cache_song_name = best_record.song_name
 		self.cache_artist_name = best_record.artist_name
+		self.cache_submitted = best_record.real_date
 		self.save()
 
 	def get_serialized_base(self):
