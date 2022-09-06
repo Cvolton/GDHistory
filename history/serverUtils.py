@@ -209,6 +209,8 @@ def process_download(response_json):
 	return True
 
 def process_get(response_json):
+	print(f":: {datetime.now().time()} : Starting process_get")
+
 	response_object = create_request(response_json)
 	response = response_json["raw_output"]
 	if response_object is False:
@@ -223,6 +225,8 @@ def process_get(response_json):
 	user_dict = create_user_dict(request_info[1])
 
 	song_array = create_song_array(request_info[2])
+
+	print(f":: {datetime.now().time()} : Iterating through levels")
 
 	for item in request_info[0].split('|'):
 		level_info = response_to_dict(item, ':')
@@ -244,12 +248,14 @@ def process_get(response_json):
 		record.create_user()
 		level_object.update_with_record(record, response_object.created)
 
+	print(f":: {datetime.now().time()} : Iterating through songs")
 	for item in song_array:
 		song_object = get_song_object(item[1])
 		record = create_song_record_from_data(item, song_object, SongRecord.RecordType.LEVEL_INFO, decode_link=True)
 		record.server_response.add(response_object)
 		song_object.revalidate_cache()
 
+	print(f":: {datetime.now().time()} : Generating date estimation")
 	response_object.generate_date_estimation()
 	return True
 

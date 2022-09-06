@@ -180,7 +180,7 @@ class GDUserRecord(models.Model):
 		return response
 
 class Song(models.Model):
-	online_id = models.IntegerField(unique=True)
+	online_id = models.IntegerField(unique=True, db_index=True)
 
 	cache_song_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_artist_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
