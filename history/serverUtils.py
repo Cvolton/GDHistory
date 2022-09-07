@@ -228,17 +228,17 @@ def process_get(response_json):
 	print(f":: {datetime.now().time()} : Iterating through levels")
 
 	for item in request_info[0].split('|'):
-		print(f"::: {datetime.now().time()} : Level")
+		#print(f"::: {datetime.now().time()} : Level")
 		level_info = response_to_dict(item, ':')
-		print(f":::: {datetime.now().time()} : Geting level object")
+		#print(f":::: {datetime.now().time()} : Geting level object")
 		level_object = get_level_object(level_info[1])
-		print(f":::: {datetime.now().time()} : Setting level as public")
+		#print(f":::: {datetime.now().time()} : Setting level as public")
 		level_object.set_public(True)
 
 		#print("among")
 		#print(level_info)
 
-		print(f":::: {datetime.now().time()} : Creating record")
+		#print(f":::: {datetime.now().time()} : Creating record")
 		record = create_level_record_from_data(level_info, level_object, LevelRecordType.GET, response_object)
 		record.cache_is_public = True
 
@@ -247,23 +247,23 @@ def process_get(response_json):
 			record.username = record.username if 1 not in user_record is None else user_record[1]
 			record.account_id = record.account_id if 2 not in user_record is None else user_record[2]
 			
-		print(f":::: {datetime.now().time()} : Saving record")
+		#print(f":::: {datetime.now().time()} : Saving record")
 		record.save()
-		print(f":::: {datetime.now().time()} : Creating user")
+		#print(f":::: {datetime.now().time()} : Creating user")
 		record.create_user()
-		print(f":::: {datetime.now().time()} : Updating with record")
+		#print(f":::: {datetime.now().time()} : Updating with record")
 		level_object.update_with_record(record, response_object.created)
 
 	print(f":: {datetime.now().time()} : Iterating through songs")
 	for item in song_array:
-		print(f"::: {datetime.now().time()} : Song")
-		print(f":::: {datetime.now().time()} : Geting song object")
+		#print(f"::: {datetime.now().time()} : Song")
+		#print(f":::: {datetime.now().time()} : Geting song object")
 		song_object = get_song_object(item[1])
-		print(f":::: {datetime.now().time()} : Geting song record")
+		#print(f":::: {datetime.now().time()} : Geting song record")
 		record = create_song_record_from_data(item, song_object, SongRecord.RecordType.LEVEL_INFO, decode_link=True)
-		print(f":::: {datetime.now().time()} : Adding key")
+		#print(f":::: {datetime.now().time()} : Adding key")
 		record.server_response.add(response_object)
-		print(f":::: {datetime.now().time()} : Updating with record")
+		#print(f":::: {datetime.now().time()} : Updating with record")
 		song_object.update_with_record(record)
 
 	print(f":: {datetime.now().time()} : Generating date estimation")
