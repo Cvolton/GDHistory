@@ -187,6 +187,11 @@ class Song(models.Model):
 	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
 
 	def update_with_record(self, record):
+		if record.song_name != self.cache_song_name or record.artist_name != self.cache_artist_name:
+			self.revalidate_cache()
+
+	"""		This implementation would require a date cache to be built in SongRecord, something not currently worth doing since the data almost never changes
+	def update_with_record(self, record):
 		if self.cache_submitted is None:
 			self.revalidate_cache()
 			return
@@ -209,7 +214,7 @@ class Song(models.Model):
 			self.cache_song_name = record.song_name
 			self.cache_artist_name = record.artist_name
 			self.cache_submitted = record_date
-			self.save()
+			self.save()"""
 
 	def revalidate_cache(self):
 		best_record = self.songrecord_set.annotate(newest_created=Max('save_file__created'), real_date=Coalesce('newest_created', 'server_response__created')).exclude(real_date=None, song_name=None).order_by('-real_date')[:1]

@@ -250,9 +250,14 @@ def process_get(response_json):
 
 	print(f":: {datetime.now().time()} : Iterating through songs")
 	for item in song_array:
+		print(f"::: {datetime.now().time()} : Song")
+		print(f":::: {datetime.now().time()} : Geting song object")
 		song_object = get_song_object(item[1])
+		print(f":::: {datetime.now().time()} : Geting song record")
 		record = create_song_record_from_data(item, song_object, SongRecord.RecordType.LEVEL_INFO, decode_link=True)
+		print(f":::: {datetime.now().time()} : Adding key")
 		record.server_response.add(response_object)
+		print(f":::: {datetime.now().time()} : Updating with record")
 		song_object.update_with_record(record)
 
 	print(f":: {datetime.now().time()} : Generating date estimation")
