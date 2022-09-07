@@ -153,7 +153,6 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			unprocessed_data = level_data,
 			server_response = server_response
 		)
-		record.save()
 		return record
 
 def process_download(response_json):
@@ -229,13 +228,17 @@ def process_get(response_json):
 	print(f":: {datetime.now().time()} : Iterating through levels")
 
 	for item in request_info[0].split('|'):
+		print(f"::: {datetime.now().time()} : Level")
 		level_info = response_to_dict(item, ':')
+		print(f":::: {datetime.now().time()} : Geting level object")
 		level_object = get_level_object(level_info[1])
+		print(f":::: {datetime.now().time()} : Setting level as public")
 		level_object.set_public(True)
 
 		#print("among")
 		#print(level_info)
 
+		print(f":::: {datetime.now().time()} : Creating record")
 		record = create_level_record_from_data(level_info, level_object, LevelRecordType.GET, response_object)
 		record.cache_is_public = True
 
@@ -244,8 +247,11 @@ def process_get(response_json):
 			record.username = record.username if 1 not in user_record is None else user_record[1]
 			record.account_id = record.account_id if 2 not in user_record is None else user_record[2]
 			
+		print(f":::: {datetime.now().time()} : Saving record")
 		record.save()
+		print(f":::: {datetime.now().time()} : Creating user")
 		record.create_user()
+		print(f":::: {datetime.now().time()} : Updating with record")
 		level_object.update_with_record(record, response_object.created)
 
 	print(f":: {datetime.now().time()} : Iterating through songs")

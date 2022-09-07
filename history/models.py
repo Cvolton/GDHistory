@@ -113,6 +113,11 @@ class GDUser(models.Model):
 			print(":((( User record not found")
 
 	def update_with_record(self, record):
+		if self.cache_username != record.username:
+			self.revalidate_cache()
+
+	"""Implementation removed because usernames don't change most of the time therefore it's better to just revalidate cache every once in a while
+	def update_with_record(self, record):
 		should_save = False
 		if record is None:
 			return
@@ -140,7 +145,7 @@ class GDUser(models.Model):
 			should_save = True
 
 		if should_save:
-			self.save()
+			self.save()"""
 			
 
 class GDUserRecord(models.Model):
