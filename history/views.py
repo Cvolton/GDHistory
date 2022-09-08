@@ -124,13 +124,25 @@ def search(request):
 			levels = levels.filter(is_deleted=True)
 			query += f" (deleted only)"
 
+		if 'undeleted' in form.cleaned_data and form.cleaned_data['undeleted'] is True:
+			levels = levels.exclude(is_deleted=True)
+			query += f" (undeleted only)"
+
 		if 'playable' in form.cleaned_data and form.cleaned_data['playable'] is True:
 			levels = levels.filter(cache_level_string_available=True)
 			query += f" (playable only)"
 
+		if 'unplayable' in form.cleaned_data and form.cleaned_data['unplayable'] is True:
+			levels = levels.exclude(cache_level_string_available=True)
+			query += f" (unplayable only)"
+
 		if 'rated' in form.cleaned_data and form.cleaned_data['rated'] is True:
 			levels = levels.filter(cache_stars__gt=0)
 			query += f" (rated only)"
+
+		if 'unrated' in form.cleaned_data and form.cleaned_data['unrated'] is True:
+			levels = levels.exclude(cache_stars__gt=0)
+			query += f" (unrated only)"
 
 		if 'difficulty' in form.cleaned_data and form.cleaned_data['difficulty'] is not None:
 			if form.cleaned_data['difficulty'] >= 7: #level is demon

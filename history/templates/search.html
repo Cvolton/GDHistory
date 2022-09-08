@@ -64,6 +64,18 @@ tr:hover, tr:focus-within {
 							<input type="checkbox" class="form-check-input" id="ratedCheck" {% if filters|get_item:"rated" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'rated' %}' ">
 							<label class="form-check-label" for="ratedCheck">Star only</label>
 						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="unratedCheck" {% if filters|get_item:"unrated" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'unrated' %}' ">
+							<label class="form-check-label" for="unratedCheck">No Star</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="undeletedCheck" {% if filters|get_item:"undeleted" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'undeleted' %}' ">
+							<label class="form-check-label" for="undeletedCheck">Not Deleted</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="unplayableCheck" {% if filters|get_item:"unplayable" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'unplayable' %}' ">
+							<label class="form-check-label" for="unplayableCheck">Not Playable</label>
+						</div>
 					</p>
 				</div>
 				<a data-bs-toggle="collapse" href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
