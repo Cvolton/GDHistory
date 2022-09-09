@@ -156,6 +156,8 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 		return record
 
 def process_download(response_json):
+	print(f":: {datetime.now().time()} : Starting process_download")
+
 	online_id = response_json["unprocessed_post_parameters"]["levelID"]
 	level_object = get_level_object(online_id)
 
