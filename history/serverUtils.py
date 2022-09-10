@@ -15,9 +15,12 @@ import json
 def create_request(response_json):
 	data_path = get_data_path()
 
-	response_count = ServerResponse.objects.filter(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"], created=response_json["created"]).count()
+	response_objects = ServerResponse.objects.filter(created=response_json["created"])
+	response_count = response_objects[:1].count()
 	if response_count > 0:
-		return False
+		response_count = response_objects.filter(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"])[:1].count()
+		if response_count > 0:
+			return False
 
 	response_object = ServerResponse(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"], created=response_json["created"])
 	response_object.assign_get()
