@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		data_path = history.utils.get_data_path()
-		levels = Level.objects.exclude(is_public=True, is_deleted=True).prefetch_related('levelrecord_set')
+		levels = Level.objects.exclude( Q(is_public=True) | Q(is_deleted=True) ).prefetch_related('levelrecord_set')
 		level_count = levels.count()
 		levels_to_export = []
 		batch_size = 2500
