@@ -310,6 +310,8 @@ class Level(models.Model):
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 	class Meta:
 		indexes = [
+			#models.Index(fields=['-cache_downloads']),
+
 			#models.Index(fields=['cache_search_available', 'online_id']),
 			#models.Index(fields=['cache_search_available', 'cache_level_name']),
 			#models.Index(fields=['cache_search_available', 'cache_submitted']),
@@ -330,9 +332,17 @@ class Level(models.Model):
 			models.Index(fields=['cache_search_available', 'cache_auto', 'cache_demon', 'cache_main_difficulty']),
 			models.Index(fields=['cache_search_available', 'cache_demon', 'cache_demon_type']),
 
-			models.Index(fields=['cache_search_available', 'cache_level_string_available']),
-			models.Index(fields=['cache_search_available', 'is_deleted']),
-			models.Index(fields=['cache_search_available', 'is_deleted', 'cache_level_string_available']),
+			models.Index(fields=['cache_search_available', 'cache_demon', 'cache_downloads'], name='demon_downloads'),
+			models.Index(fields=['cache_search_available', 'cache_demon', 'cache_likes'], name='demon_likes'),
+			models.Index(fields=['cache_search_available', 'cache_auto', 'cache_downloads'], name='auto_downloads'),
+			models.Index(fields=['cache_search_available', 'cache_auto', 'cache_likes'], name='auto_likes'),
+
+			models.Index(fields=['cache_search_available', 'cache_level_string_available'], name='playable'),
+			models.Index(fields=['cache_search_available', 'is_deleted'], name='deleted'),
+			models.Index(fields=['cache_search_available', 'is_deleted', 'cache_level_string_available'], name='deleted_playable'),
+
+			models.Index(fields=['cache_search_available', 'is_deleted', 'cache_stars'], name='deleted_staronly'),
+			models.Index(fields=['cache_search_available', 'is_deleted', 'cache_level_string_available', 'cache_stars'], name='deleted_playable_staronly'),
 
 			models.Index(fields=['cache_level_string_available', 'is_deleted']),
 		]
@@ -375,7 +385,7 @@ class Level(models.Model):
 		changed = False
 		check_level_string = False
 
-		if record.downloads is not None and record_date is not None and (self.cache_downloads is None or int(record.downloads) > self.cache_downloads):
+		if record.downloads is not None and record_date is not None and (self.cache_downloads is None or int(record.downloads) >= self.cache_downloads):
 			changed = True
 			self.cache_level_name = record.level_name
 			self.cache_submitted = record_date
