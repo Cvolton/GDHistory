@@ -329,8 +329,10 @@ class Level(models.Model):
 
 			models.Index(fields=['cache_search_available', 'cache_level_name']),
 			models.Index(fields=['cache_search_available', 'cache_user_id']),
-			models.Index(fields=['cache_search_available', 'cache_auto', 'cache_demon', 'cache_main_difficulty']),
+			models.Index(fields=['cache_search_available', 'cache_auto', 'cache_demon', 'cache_main_difficulty'], name='auto_demon_diff'),
 			models.Index(fields=['cache_search_available', 'cache_demon', 'cache_demon_type']),
+
+			models.Index(fields=['cache_search_available', 'cache_main_difficulty'], name='diff'),
 
 			models.Index(fields=['cache_search_available', 'cache_demon', 'cache_downloads'], name='demon_downloads'),
 			models.Index(fields=['cache_search_available', 'cache_demon', 'cache_likes'], name='demon_likes'),
