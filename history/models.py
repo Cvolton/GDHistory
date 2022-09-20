@@ -309,7 +309,7 @@ class Level(models.Model):
 
 	cache_max_stars = models.IntegerField(db_index=True, default=0)
 	cache_filter_difficulty = models.IntegerField(default=0, db_index=True)
-	cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
+	#cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
 	cache_length = models.IntegerField(default=0, db_index=True)
 	cache_featured = models.IntegerField(default=0, db_index=True)
 	cache_max_featured = models.IntegerField(default=0, db_index=True)
@@ -438,6 +438,16 @@ class Level(models.Model):
 			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.cache_level_name is not None)
 			self.save()
 
+	def recalculate_maximums(self):
+		maximums = self.levelrecord_set.aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'))
+		self.cache_max_stars = maximums['stars__max'] or 0
+		#self.cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
+		self.cache_max_featured = maximums['feature_score__max'] or 0
+		self.cache_max_epic = maximums['epic__max'] or 0
+		self.cache_max_two_player = maximums['two_player__max'] or 0
+		self.cache_max_original = maximums['original__max'] or 0
+		print("set maximums, not saved")
+
 	def revalidate_cache(self):
 		best_record = self.levelrecord_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) ).order_by('-downloads', '-oldest_created')[:1]
 		if len(best_record) < 1:
@@ -465,6 +475,9 @@ class Level(models.Model):
 
 		#needs updating field
 		self.verify_needs_updating()
+		self.recalculate_maximums()
+
+		self.cache_needs_revalidation = False
 
 		self.save()
 
@@ -640,7 +653,7 @@ class LevelRecord(models.Model):
 	requested_stars = models.IntegerField(blank=True, null=True) #k66
 	extra_string = models.TextField(blank=True, null=True) #k67 #also known as the capacity string
 	daily_id = models.IntegerField(blank=True, null=True, db_index=True) #k74
-	epic = models.BooleanField(blank=True, null=True) #k75
+	epic = models.IntegerField(blank=True, null=True) #k75
 	demon_type = models.IntegerField(blank=True, null=True) #k76
 	seconds_spent_editing = models.IntegerField(blank=True, null=True) #k80
 	seconds_spent_editing_copies = models.IntegerField(blank=True, null=True) #k81
