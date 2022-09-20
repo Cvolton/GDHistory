@@ -7,7 +7,7 @@ class Command(BaseCommand):
 	help = 'Revalidates level cache'
 
 	def handle(self, *args, **options):
-		levels = Level.objects.all().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
+		levels = Level.objects.objects(cache_needs_revalidation=True).prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
 		level_count = levels.count()
 		for i in range(0,level_count):
 			level = levels[i:i+1]
