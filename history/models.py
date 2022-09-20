@@ -307,6 +307,22 @@ class Level(models.Model):
 	cache_search_available = models.BooleanField(default=False, db_index=True)
 	cache_main_difficulty = models.IntegerField(default=0, db_index=True)
 
+	cache_max_stars = models.IntegerField(db_index=True, default=0)
+	cache_filter_difficulty = models.IntegerField(default=0, db_index=True)
+	cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
+	cache_length = models.IntegerField(default=0, db_index=True)
+	cache_featured = models.IntegerField(default=0, db_index=True)
+	cache_max_featured = models.IntegerField(default=0, db_index=True)
+	cache_epic = models.IntegerField(default=0, db_index=True)
+	cache_max_epic = models.IntegerField(default=0, db_index=True)
+	cache_two_player = models.BooleanField(db_index=True, default=False)
+	cache_max_two_player = models.BooleanField(db_index=True, default=False)
+	cache_original = models.IntegerField(default=0, db_index=True)
+	cache_max_original = models.IntegerField(default=0, db_index=True)
+
+	cache_needs_revalidation = models.BooleanField(db_index=True, default=False)
+
+
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 	class Meta:
 		indexes = [
