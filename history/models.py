@@ -403,6 +403,22 @@ class Level(models.Model):
 		changed = False
 		check_level_string = False
 
+		if record.stars is not None and record.stars > self.cache_max_stars: 
+			self.cache_max_stars = record.stars
+			changed = True
+		if record.feature_score is not None and record.feature_score > self.cache_max_featured:
+			self.cache_max_featured = record.feature_score
+			changed = True
+		if record.epic is not None and record.epic > self.cache_max_epic:
+			self.cache_max_epic = record.epic
+			changed = True
+		if record.two_player is not None and record.two_player > self.cache_max_two_player:
+			self.cache_max_two_player = record.two_player
+			changed = True
+		if record.original is not None and record.original > self.cache_max_original:
+			self.cache_max_original = record.original
+			changed = True
+
 		if record.downloads is not None and record_date is not None and (self.cache_downloads is None or int(record.downloads) >= self.cache_downloads):
 			changed = True
 			self.cache_level_name = record.level_name
