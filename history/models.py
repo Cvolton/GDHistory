@@ -420,6 +420,12 @@ class Level(models.Model):
 			self.cache_blank_name = (self.cache_level_name is None)
 			check_level_string = True
 
+			self.cache_length = record.length or 0
+			self.cache_featured = record.feature_score or 0
+			self.cache_epic = record.epic or 0
+			self.cache_two_player = record.two_player or 0
+			self.cache_original = record.original or 0
+
 			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-':
 				self.cache_username = record.real_user_record.username
 
