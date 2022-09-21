@@ -359,6 +359,7 @@ class Level(models.Model):
 			models.Index(fields=['cache_search_available', 'is_deleted'], name='deleted'),
 			models.Index(fields=['cache_search_available', 'is_deleted', 'cache_level_string_available'], name='deleted_playable'),
 
+			models.Index(fields=['cache_search_available', 'cache_stars', 'cache_max_stars'], name='wasrated_staronly'),
 			models.Index(fields=['cache_search_available', 'is_deleted', 'cache_stars'], name='deleted_staronly'),
 			models.Index(fields=['cache_search_available', 'is_deleted', 'cache_level_string_available', 'cache_stars'], name='deleted_playable_staronly'),
 

@@ -143,7 +143,7 @@ def search(request):
 			query += f" (rated only)"
 
 		if 'unrated' in form.cleaned_data and form.cleaned_data['unrated'] is True:
-			levels = levels.exclude(cache_stars__gt=0)
+			levels = levels.filter(cache_stars=0)
 			query += f" (unrated only)"
 
 		if 'wasrated' in form.cleaned_data and form.cleaned_data['wasrated'] is True:
@@ -151,7 +151,7 @@ def search(request):
 			query += f" (was rated)"
 
 		if 'wasnotrated' in form.cleaned_data and form.cleaned_data['wasnotrated'] is True:
-			levels = levels.exclude(cache_max_stars__gt=0)
+			levels = levels.filter(cache_max_stars=0)
 			query += f" (was not rated)"
 
 		if 'featured' in form.cleaned_data and form.cleaned_data['featured'] is True:
