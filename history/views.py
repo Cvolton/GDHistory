@@ -88,6 +88,8 @@ def search(request):
 	form = SearchForm(request.GET or None)
 
 	if request.method == 'GET':
+		needs_revalidation = Level.objects.filter(cache_needs_revalidation=True)[:1].count()
+
 		if not form.is_valid():
 			form.cleaned_data = {'p': 1, 'q': ''}
 
@@ -143,6 +145,22 @@ def search(request):
 		if 'unrated' in form.cleaned_data and form.cleaned_data['unrated'] is True:
 			levels = levels.exclude(cache_stars__gt=0)
 			query += f" (unrated only)"
+
+		if 'wasrated' in form.cleaned_data and form.cleaned_data['wasrated'] is True:
+			levels = levels.filter(cache_max_stars__gt=0)
+			query += f" (was rated)"
+
+		if 'wasnotrated' in form.cleaned_data and form.cleaned_data['wasnotrated'] is True:
+			levels = levels.exclude(cache_max_stars__gt=0)
+			query += f" (was not rated)"
+
+		if 'featured' in form.cleaned_data and form.cleaned_data['featured'] is True:
+			levels = levels.filter(cache_featured__gt=0)
+			query += f" (featured)"
+
+		if 'unfeatured' in form.cleaned_data and form.cleaned_data['unfeatured'] is True:
+			levels = levels.exclude(cache_featured__gt=0)
+			query += f" (not featured)"
 
 		if 'difficulty' in form.cleaned_data and form.cleaned_data['difficulty'] is not None:
 			if form.cleaned_data['difficulty'] >= 7: #level is demon
@@ -220,6 +238,7 @@ def search(request):
 			'page_buttons': page_buttons,
 			'minimum_page_button': minimum_page_button,
 			'maximum_page_button': maximum_page_button,
+			'needs_revalidation': needs_revalidation
 		}
 		return render(request, 'search.html', context)
 	else:

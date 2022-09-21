@@ -23,6 +23,11 @@ tr:hover, tr:focus-within {
 }
 </style>
 <div class="row">
+	{% if needs_revalidation %}
+	  <div class="alert alert-info" role="alert">
+	    Search revalidation in process, search results may be incomplete
+	  </div>
+	{% endif %}
 	<p class="lead">{% if query %}Showing results for {{ query }}{% else %}Showing all levels{% endif %}</p>
 </div>
 <div class="row">
@@ -75,6 +80,22 @@ tr:hover, tr:focus-within {
 						<div class="form-check form-check-inline">
 							<input type="checkbox" class="form-check-input" id="unplayableCheck" {% if filters|get_item:"unplayable" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'unplayable' %}' ">
 							<label class="form-check-label" for="unplayableCheck">Not Playable</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="wasratedCheck" {% if filters|get_item:"wasrated" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'wasrated' %}' ">
+							<label class="form-check-label" for="wasratedCheck">Was rated</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="wasnotratedCheck" {% if filters|get_item:"wasnotrated" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'wasnotrated' %}' ">
+							<label class="form-check-label" for="wasnotratedCheck">Was never rated</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="featuredCheck" {% if filters|get_item:"featured" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'featured' %}' ">
+							<label class="form-check-label" for="featuredCheck">Featured</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="unfeaturedCheck" {% if filters|get_item:"unfeatured" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'unfeatured' %}' ">
+							<label class="form-check-label" for="unfeaturedCheck">Not featured</label>
 						</div>
 					</p>
 				</div>

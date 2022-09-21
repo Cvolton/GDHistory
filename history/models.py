@@ -450,12 +450,12 @@ class Level(models.Model):
 				else:
 					self.cache_filter_difficulty = self.cache_main_difficulty + 1
 			else:
-				if self.cache_demon_type < 3: #hard demon
+				if int(self.cache_demon_type) < 3: #hard demon
 					self.cache_filter_difficulty = 10
-				elif self.cache_demon_type < 5: #easy medium
-					self.cache_filter_difficulty = 8 - 3 + self.cache_demon_type
+				elif int(self.cache_demon_type) < 5: #easy medium
+					self.cache_filter_difficulty = 8 - 3 + int(self.cache_demon_type)
 				else:
-					self.cache_filter_difficulty = 11 - 5 + self.cache_demon_type
+					self.cache_filter_difficulty = 11 - 5 + int(self.cache_demon_type)
 
 
 			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-':
