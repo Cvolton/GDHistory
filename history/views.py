@@ -206,7 +206,7 @@ def search(request):
 
 			if order in allowed_sorts:
 				primary_parameter = f"{'-' if reverse_sort else ''}{allowed_sorts[order]}"
-				if order not in unique_sorts:
+				if order not in unique_sorts and reverse_sort:
 					levels = levels.order_by(primary_parameter, "-cache_downloads")
 				else: 
 					levels = levels.order_by(primary_parameter)
