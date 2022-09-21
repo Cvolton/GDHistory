@@ -403,19 +403,19 @@ class Level(models.Model):
 		changed = False
 		check_level_string = False
 
-		if record.stars is not None and record.stars > self.cache_max_stars: 
+		if record.stars is not None and int(record.stars) > self.cache_max_stars: 
 			self.cache_max_stars = record.stars
 			changed = True
-		if record.feature_score is not None and record.feature_score > self.cache_max_featured:
+		if record.feature_score is not None and int(record.feature_score) > self.cache_max_featured:
 			self.cache_max_featured = record.feature_score
 			changed = True
-		if record.epic is not None and record.epic > self.cache_max_epic:
+		if record.epic is not None and int(record.epic) > self.cache_max_epic:
 			self.cache_max_epic = record.epic
 			changed = True
-		if record.two_player is not None and record.two_player > self.cache_max_two_player:
+		if record.two_player is not None and int(record.two_player) > self.cache_max_two_player:
 			self.cache_max_two_player = record.two_player
 			changed = True
-		if record.original is not None and record.original > self.cache_max_original:
+		if record.original is not None and int(record.original) > self.cache_max_original:
 			self.cache_max_original = record.original
 			changed = True
 
@@ -487,6 +487,9 @@ class Level(models.Model):
 		print("set maximums, not saved")
 
 	def revalidate_cache(self):
+		self.cache_needs_revalidation = False
+		self.recalculate_maximums()
+
 		best_record = self.levelrecord_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) ).order_by('-downloads', '-oldest_created')[:1]
 		if len(best_record) < 1:
 			self.cache_level_name = None
@@ -513,9 +516,6 @@ class Level(models.Model):
 
 		#needs updating field
 		self.verify_needs_updating()
-		self.recalculate_maximums()
-
-		self.cache_needs_revalidation = False
 
 		self.save()
 
