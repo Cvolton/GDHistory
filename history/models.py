@@ -403,10 +403,13 @@ class Level(models.Model):
 			self.cache_level_string_available = False
 		self.save()
 	def assign_username(self):
-		user_object = GDUser.objects.get(online_id=self.cache_user_id)
-		self.cache_username = user_object.cache_non_player_username
-		print(user_object.cache_username)
-		print("assigned username")
+		try:
+			user_object = GDUser.objects.get(online_id=self.cache_user_id)
+			self.cache_username = user_object.cache_non_player_username
+			print(user_object.cache_username)
+			print("assigned username")
+		except:
+			print("couldnt assign username")
 
 	def update_with_record(self, record, record_date):
 		changed = False
