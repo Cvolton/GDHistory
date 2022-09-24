@@ -94,7 +94,7 @@ class GDUser(models.Model):
 	cache_non_player_username_created = models.DateTimeField(blank = True, null=True, db_index=True)
 
 	def revalidate_cache(self):
-		username_record_set = self.gduserrecord_set.exclude( Q(username='-') | Q(username=None) ).order_by('-cache_created')
+		username_record_set = self.gduserrecord_set.exclude( Q(username='-') | Q(username=None) | Q(username='Unknown') ).order_by('-cache_created')
 		username_record = username_record_set[:1]
 		if len(username_record) > 0:
 			self.cache_username = username_record[0].username
@@ -109,6 +109,8 @@ class GDUser(models.Model):
 				self.cache_non_player_username = non_player_username_record[0].username
 				self.cache_non_player_username_created = non_player_username_record[0].cache_created
 				print("Setting non-player username from user record")
+
+			self.save()
 		else:
 			print(":((( User record not found")
 
@@ -400,6 +402,12 @@ class Level(models.Model):
 			self.cache_needs_updating = True
 			self.cache_level_string_available = False
 		self.save()
+	def assign_username(self):
+		user_object = GDUser.objects.get(online_id=self.cache_user_id)
+		self.cache_username = user_object.cache_non_player_username
+		print(user_object.cache_username)
+		print("assigned username")
+
 	def update_with_record(self, record, record_date):
 		changed = False
 		check_level_string = False
@@ -473,6 +481,10 @@ class Level(models.Model):
 		if check_level_string:
 			self.verify_needs_updating()
 
+		if self.cache_username is None:
+			self.assign_username()
+			changed = True
+
 		if changed:
 			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.cache_level_name is not None)
 			self.save()
@@ -505,7 +517,7 @@ class Level(models.Model):
 			self.update_with_record(best_record_set[0], None)
 
 		#set username
-		best_record = best_record[0]
+		"""best_record = best_record[0]
 		self.cache_username = best_record.username
 		if best_record.username is None or best_record.username == '-':
 			user_record = GDUser.objects.filter(online_id=self.cache_user_id)[:1]
@@ -513,7 +525,7 @@ class Level(models.Model):
 				self.cache_username = user_record[0].cache_username
 				print("Setting username from user record")
 			else:
-				print(":(((( Unable to set username")
+				print(":(((( Unable to set username")"""
 
 		#needs updating field
 		self.verify_needs_updating()
