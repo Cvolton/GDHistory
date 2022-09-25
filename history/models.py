@@ -18,6 +18,7 @@ class LevelRecordType(models.TextChoices):
 		GLM_16 = 'glm_16', _('GLM_16')
 		DOWNLOAD = 'download', _('downloadGJLevel')
 		GET = 'get', _('getGJLevels')
+		MANUAL = 'manual', _('manual')
 
 class HistoryUser(models.Model):
     user = models.OneToOneField(
@@ -27,6 +28,22 @@ class HistoryUser(models.Model):
     )
     def __str__(self):
         return self.user.username
+
+class ManualSubmission(models.Model):
+	author = models.ForeignKey(
+		HistoryUser,
+		on_delete=models.CASCADE,
+		db_index=True,
+	)
+	submitted = models.DateTimeField(default=timezone.now)
+	created = models.DateTimeField(default=timezone.now, db_index=True)
+	comment = models.CharField(max_length=255)
+	parent = models.ForeignKey(
+		"ManualSubmission",
+		on_delete=models.CASCADE,
+		blank=True, null=True,
+		db_index=True,
+	)
 
 class SaveFile(models.Model):
 	author = models.ForeignKey(
@@ -171,6 +188,13 @@ class GDUserRecord(models.Model):
 
 	server_response = models.ForeignKey(
 		ServerResponse,
+		on_delete=models.CASCADE,
+		blank=True, null=True,
+		db_index=True,
+	)
+
+	manual_submission = models.ForeignKey(
+		ManualSubmission,
 		on_delete=models.CASCADE,
 		blank=True, null=True,
 		db_index=True,
@@ -648,6 +672,13 @@ class LevelRecord(models.Model):
 
 	server_response = models.ForeignKey(
 		ServerResponse,
+		on_delete=models.CASCADE,
+		blank=True, null=True,
+		db_index=True,
+	)
+
+	manual_submission = models.ForeignKey(
+		ManualSubmission,
 		on_delete=models.CASCADE,
 		blank=True, null=True,
 		db_index=True,
