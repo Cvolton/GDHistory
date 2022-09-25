@@ -19,4 +19,5 @@ class SearchForm(forms.Form):
 	wasnotrated = forms.BooleanField(label='Was not rated', required=False)
 	featured = forms.BooleanField(label='Featured', required=False)
 	unfeatured = forms.BooleanField(label='Not featured', required=False)
+	original = forms.IntegerField(label='Original', required=False)
 	s = forms.CharField(label='Sort', required=False)

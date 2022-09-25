@@ -162,6 +162,11 @@ def search(request):
 			levels = levels.exclude(cache_featured__gt=0)
 			query += f" (not featured)"
 
+		if 'original' in form.cleaned_data and form.cleaned_data['original'] is not None:
+			original_id = form.cleaned_data['original']
+			levels = levels.filter( Q(cache_original=original_id) | Q(cache_max_original=original_id) )
+			query += f" (original {original_id})"
+
 		if 'difficulty' in form.cleaned_data and form.cleaned_data['difficulty'] is not None:
 			if form.cleaned_data['difficulty'] >= 7: #level is demon
 				levels = levels.filter(cache_demon=True)
