@@ -144,25 +144,3 @@ def upload_submission_data(data, user, parent=None):
 			upload_submission_data(child, user, submission)
 
 	return submission.pk
-
-def process_submission(submission_id):
-	print(f"Processing save file {save_id}")
-
-	data_path = get_data_path()
-	save_file = SaveFile.objects.get(pk=save_id)
-
-	with open(f"{data_path}/SaveFile/{save_id}", "rb") as game_manager_file:
-		game_manager = plistlib.load(game_manager_file)
-
-	if 'GLM_03' in game_manager:
-		process_levels_in_glm(game_manager['GLM_03'], LevelRecordType.GLM_03, save_file)
-	if 'GLM_10' in game_manager:
-		process_levels_in_glm(game_manager['GLM_10'], LevelRecordType.GLM_10, save_file)
-	if 'GLM_16' in game_manager:
-		process_levels_in_glm(game_manager['GLM_16'], LevelRecordType.GLM_16, save_file)
-	if 'MDLM_001' in game_manager:
-		process_songs_in_mdlm(game_manager['MDLM_001'], save_file)
-
-	save_file.is_processed = True
-	save_file.save()
-	print(f"Finished processing save file {save_id}")
