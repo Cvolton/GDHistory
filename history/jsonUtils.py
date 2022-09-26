@@ -50,6 +50,8 @@ def create_level_record_from_data(data, level_object, record_type, submission):
 			demon_type = assign_key_no_pop(data, 'demon_type'),
 			seconds_spent_editing = assign_key_no_pop(data, 'seconds_spent_editing'),
 			seconds_spent_editing_copies = assign_key_no_pop(data, 'seconds_spent_editing_copies'),
+			relative_upload_date = assign_key_no_pop(data, 'relative_upload_date'),
+			relative_update_date = assign_key_no_pop(data, 'relative_update_date'),
 			original = assign_key_no_pop(data, 'original'),
 			manual_submission = submission,
 			record_type = record_type,
@@ -88,11 +90,13 @@ def create_level_record_from_data(data, level_object, record_type, submission):
 			demon_type = assign_key(data, 'demon_type'),
 			seconds_spent_editing = assign_key(data, 'seconds_spent_editing'),
 			seconds_spent_editing_copies = assign_key(data, 'seconds_spent_editing_copies'),
+			relative_upload_date = assign_key(data, 'relative_upload_date'),
+			relative_update_date = assign_key(data, 'relative_update_date'),
 			original = assign_key(data, 'original'),
 			record_type = record_type,
 			manual_submission = submission,
 			unprocessed_data = {},
-			song = get_song_object(assign_key_no_pop(data, 'custom_song'))
+			song = get_song_object(assign_key(data, 'custom_song'))
 		)
 		record.save()
 		record.create_user()
