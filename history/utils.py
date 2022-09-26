@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.utils.timezone import make_aware, is_naive
 from django.core.cache import cache
 
+from .constants import MiscConstants
+
 class DecodeResult:
 	def __init__(self, encoded, text):
 		self.encoded = encoded
@@ -196,7 +198,7 @@ def get_level_object(level_id):
 	return level_object
 
 def recalculate_counts():
-	from .models import Level, Song, SaveFile, ServerResponse, LevelString
+	from .models import Level, Song, SaveFile, ServerResponse, LevelString, LevelRecord
 
 	counts = {
 		'level_count': Level.objects.filter(cache_search_available=True).count(),
@@ -204,6 +206,7 @@ def recalculate_counts():
 		'save_count': SaveFile.objects.count(),
 		'request_count': ServerResponse.objects.count(),
 		'level_string_count': LevelString.objects.count(),
+		'rg_count': LevelRecord.objects.filter(level__online_id=MiscConstants.ELEMENT_111_RG).count(),
 	}
 	cache.set('counts', counts, None)
 	return counts

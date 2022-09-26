@@ -7,6 +7,7 @@ class XORKeys:
 class MiscConstants:
 	FIRST_2_1_LEVEL = 28294638 #This constant is not entirely accurate - This level ID points to the original collab part for "Master of the World" by Viprin and Terron, which is the first rated 2.1 level.
 	UNLISTED_EXPLOIT_FIX_TIME = make_aware(datetime.fromtimestamp(1637719800)) #2021-11-24 02:10:00+00:00
+	ELEMENT_111_RG = 498620
 
 class SongNames:
 	PRACTICE = [
