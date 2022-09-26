@@ -39,7 +39,6 @@ def create_level_record_from_data(data, level_object, record_type, submission):
 			auto = assign_key_no_pop(data, 'auto'),
 			password = assign_key_no_pop(data, 'password'),
 			two_player = assign_key_no_pop(data, 'two_player'),
-			song = assign_key_no_pop(data, 'song'),
 			objects_count = assign_key_no_pop(data, 'objects_count'),
 			account_id = assign_key_no_pop(data, 'account_id'),
 			coins = assign_key_no_pop(data, 'coins'),
@@ -53,7 +52,8 @@ def create_level_record_from_data(data, level_object, record_type, submission):
 			seconds_spent_editing_copies = assign_key_no_pop(data, 'seconds_spent_editing_copies'),
 			original = assign_key_no_pop(data, 'original'),
 			manual_submission = submission,
-			record_type = record_type
+			record_type = record_type,
+			song = get_song_object(assign_key_no_pop(data, 'custom_song'))
 		)
 	except:
 		record = LevelRecord(level=level_object,
@@ -77,7 +77,6 @@ def create_level_record_from_data(data, level_object, record_type, submission):
 			auto = assign_key(data, 'auto'),
 			password = assign_key(data, 'password'),
 			two_player = assign_key(data, 'two_player'),
-			song = assign_key(data, 'song'),
 			objects_count = assign_key(data, 'objects_count'),
 			account_id = assign_key(data, 'account_id'),
 			coins = assign_key(data, 'coins'),
@@ -92,7 +91,8 @@ def create_level_record_from_data(data, level_object, record_type, submission):
 			original = assign_key(data, 'original'),
 			record_type = record_type,
 			manual_submission = submission,
-			unprocessed_data = {}
+			unprocessed_data = {},
+			song = get_song_object(assign_key_no_pop(data, 'custom_song'))
 		)
 		record.save()
 		record.create_user()
