@@ -73,6 +73,7 @@
 			<b>Coins:</b> {% display_number first_record.coins %} {% if first_record.coins_verified %}(Verified){% endif %}<br>
 			{% if first_record.requested_stars %}<b>Requested Stars:</b> {{ first_record.requested_stars }}<br>{% endif %}
 			{% if first_record.original %}<b>Original:</b> {{ first_record.original }}<br>{% endif %}
+			<b>Feature Score:</b> {{ first_record.feature_score }}<br>
 		</div>
 		<a data-bs-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">
 			More info
