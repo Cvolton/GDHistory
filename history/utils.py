@@ -52,7 +52,7 @@ def assign_key_no_pop(data, key):
 		value = value.replace('@@c2@@','Â')
 		value = value.replace('@@squared@@','²')
 		value = value.replace('@@ce@@','Î')"""
-		for i in range(128,255):
+		for i in range(128,256):
 			try: #TODO: deal with out of range characters in a sensible manner
 				value = value.replace('@@char'+str(i)+'@@', i.to_bytes(1, byteorder='big').decode('windows-1252'))
 			except:

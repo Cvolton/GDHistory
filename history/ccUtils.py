@@ -84,7 +84,7 @@ def plist_to_robtop_plist(game_manager_bytes):
 def remove_invalid_characters(game_manager_bytes):
 	game_manager_bytes = game_manager_bytes.replace(b'&',b'@@amp@@')
 	game_manager_bytes = game_manager_bytes.replace(b'#',b'@@hash@@')
-	for i in range(128,255):
+	for i in range(128,256):
 		print(f"working {i}")
 		game_manager_bytes = game_manager_bytes.replace(i.to_bytes(1, byteorder='big'), b'@@char'+str(i).encode('windows-1252')+b'@@')
 	return game_manager_bytes
