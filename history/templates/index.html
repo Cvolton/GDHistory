@@ -93,7 +93,7 @@
 		$('#save-count').append(counts.save_count);
 		$('#request-count').append(counts.request_count);
 		$('#level-string-count').append(counts.level_string_count);
-		$('#rg-count').append(counts.rg_count);
+		$('#rg-count').append(`<a data-toggle="tooltip" title="Total records (including no data): ${counts.rg_total}">${counts.rg_count}</a>`);
 	});
 </script>
 {% endblock %}

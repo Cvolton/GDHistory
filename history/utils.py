@@ -206,7 +206,8 @@ def recalculate_counts():
 		'save_count': SaveFile.objects.count(),
 		'request_count': ServerResponse.objects.count(),
 		'level_string_count': LevelString.objects.count(),
-		'rg_count': LevelRecord.objects.filter(level__online_id=MiscConstants.ELEMENT_111_RG).count(),
+		'rg_count': LevelRecord.objects.filter(level__online_id=MiscConstants.ELEMENT_111_RG).exclude(level_version=None, game_version=None, level_name=None, downloads=None).count(),
+		'rg_total': LevelRecord.objects.filter(level__online_id=MiscConstants.ELEMENT_111_RG).count(),
 	}
 	cache.set('counts', counts, None)
 	return counts
