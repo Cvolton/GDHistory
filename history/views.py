@@ -39,6 +39,7 @@ def view_level(request, online_id=None, record_id=None):
 	first_record = None
 
 	records = {}
+	distinct_records = []
 	level_strings = {}
 	level_string_count = 0
 	for record in level_records:
@@ -51,6 +52,7 @@ def view_level(request, online_id=None, record_id=None):
 		if record.level_string is not None and record.level_string.pk not in level_strings:
 			level_string_count += 1
 			level_strings[record.level_string.pk] = True
+			distinct_records.append(record)
 
 		print(f"{record.pk} {record_id}")
 		if str(record.pk) == str(record_id):
@@ -70,6 +72,10 @@ def view_level(request, online_id=None, record_id=None):
 	years = []
 	for i in range(min(records), max(records)+1):
 		years.append(i)
+
+	if distinct_records:
+		years.insert(0, -1)
+		records[-1] = distinct_records
 
 	context = {'level_records': records, 'record_id': record_id, 'first_record': first_record, 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count}
 

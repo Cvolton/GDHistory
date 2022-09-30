@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% include "level_record.html" %}
 {% load mathfilters %}
 {% load tags %}
 {% block title %}{{ first_record.level_name }}{% endblock title %}
+
 {% block content %}
 <style>
 	.round-border {
@@ -86,7 +88,7 @@
 	<ul class="nav nav-tabs" id="myTab" role="tablist">
 		{% for year in years %}
 		<li class="nav-item" role="presentation">
-		<button class="nav-link {% if year not in level_records %}disabled{% endif %} {% if forloop.last %}active{% endif %}" id="y{{year}}-tab" data-bs-toggle="tab" data-bs-target="#y{{year}}" type="button" role="tab" aria-controls="y{{year}}" aria-selected="{% if forloop.last %}true{% endif %}">{{year}}</button>
+		<button class="nav-link {% if year not in level_records %}disabled{% endif %} {% if forloop.last %}active{% endif %}" id="y{{year}}-tab" data-bs-toggle="tab" data-bs-target="#y{{year}}" type="button" role="tab" aria-controls="y{{year}}" aria-selected="{% if forloop.last %}true{% endif %}">{% if year == -1 %}Saved Versions{% else %}{{year}}{% endif %}</button>
 		</li>
 		{% endfor %}
 	</ul>
