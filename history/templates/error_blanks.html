@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% block title %}Error{% endblock title %}
+{% block content %}
+<div class="alert alert-warning" role="alert">
+	<a href="?blanks=true">Blank records</a> for this level are available.
+</div>
+{% endblock %}

@@ -21,3 +21,6 @@ class SearchForm(forms.Form):
 	unfeatured = forms.BooleanField(label='Not featured', required=False)
 	original = forms.IntegerField(label='Original', required=False)
 	s = forms.CharField(label='Sort', required=False)
+
+class LevelForm(forms.Form):
+	blanks = forms.BooleanField(label='Show blanks', required=False)

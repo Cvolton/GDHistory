@@ -7,7 +7,7 @@ from django.db.models.functions import Coalesce
 from datetime import datetime
 
 from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString, HistoryUser
-from .forms import UploadFileForm, SearchForm
+from .forms import UploadFileForm, SearchForm, LevelForm
 from . import ccUtils, serverUtils, tasks, utils
 
 import math
@@ -26,12 +26,19 @@ def index(request):
 	return render(request, 'index.html', context)
 
 def view_level(request, online_id=None, record_id=None):
+	form = LevelForm(request.GET or None)
+
 	all_levels = LevelRecord.objects.filter(level__is_public=True)
 	#TODO: improve this
 	if request.user.is_authenticated and request.user.is_superuser:
 		all_levels = LevelRecord.objects.all()
 
-	level_records = all_levels.filter(level__online_id=online_id).exclude(level_version=None, game_version=None, level_name=None, downloads=None).prefetch_related('manual_submission').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created', 'manual_submission__created')).order_by('-real_date')
+	level_records_unfiltered = all_levels.filter(level__online_id=online_id).prefetch_related('manual_submission').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created', 'manual_submission__created')).order_by('-real_date')
+
+	if request.method == 'GET' and form.is_valid() and form.cleaned_data['blanks']:
+		level_records = level_records_unfiltered
+	else:
+		level_records = level_records_unfiltered.exclude(level_version=None, game_version=None, level_name=None, downloads=None)
 
 	#tasks.download_level_task.delay(online_id)
 
@@ -61,7 +68,10 @@ def view_level(request, online_id=None, record_id=None):
 
 	if len(records) == 0:
 		utils.get_level_object(online_id)
-		return render(request, 'error.html', {'error': 'Level not found in our database'})
+		if level_records_unfiltered.count() > 0:
+			return render(request, 'error_blanks.html')
+		else:
+			return render(request, 'error.html', {'error': 'Level not found in our database'})
 
 	if first_record is None:
 		first_record = level_records[0]
