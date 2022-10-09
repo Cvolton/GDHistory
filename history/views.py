@@ -119,7 +119,7 @@ def search(request):
 		start_offset = (page-1)*results_per_page
 		end_offset = page*results_per_page
 
-		levels = Level.objects.filter(cache_search_available=True)
+		levels = Level.objects.all()
 		#levels = Level.objects.filter(hide_from_search=False, is_public=True, cache_blank_name=False)
 
 		if query != '':
@@ -201,6 +201,8 @@ def search(request):
 				levels = levels.filter(cache_main_difficulty=main_difficulty, cache_demon=False, cache_auto=False)
 
 			query += f" (difficulty filter)"
+
+		levels = levels.filter(cache_search_available=True)
 
 		level_count = levels[:end_offset+41].count()
 		levels = levels.order_by('-cache_downloads')
