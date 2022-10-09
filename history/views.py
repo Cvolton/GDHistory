@@ -289,7 +289,7 @@ def daily(request):
 			elif record.cache_daily_id < 385: records[2017].append(record)
 			elif record.cache_daily_id < 752: records[2018].append(record) #estimated - 2019 start: Code by Anubis + 5
 			elif record.cache_daily_id < 1124: records[2019].append(record) #estimated - Both Suiteki and True Damage are off by 18 on this list: https://geometry-dash.fandom.com/es/wiki/Daily_Level/Niveles_1101_-_1200, therefore Overdoze's ID should be 1106+1
-			elif record.cache_daily_id < 1492: records[2020].append(record) #estimated - unable to determine if off by 20 or 21 from said list, assuming 20
+			elif record.cache_daily_id < 1493: records[2020].append(record) #estimated - unable to determine if off by 20 or 21 from said list, assuming 20; this was wrong, it's 21
 			elif record.cache_daily_id < 1858: records[2021].append(record)
 			else: records[2022].append(record)
 		else: records["Weekly"].append(record)	
