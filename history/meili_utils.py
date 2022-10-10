@@ -64,9 +64,14 @@ def index_levels():
 	for i in range(0,math.ceil(level_count / batch_size)):
 		level_list = searchable_levels[i*batch_size:(i+1)*batch_size]
 		levels_to_update = []
+		lists_to_send = []
 		for j,level in enumerate(level_list):
 			print(f"{j+(i*batch_size)} / {level_count} - Updating {level.online_id}")
 			level_dict = level.get_serialized_base_json()
 			levels_to_update.append(level_dict)
+			if len(lists_to_send) > 25000:
+				levels_to_update.append(lists_to_send)
+				lists_to_send = []
 		index.add_documents(levels_to_update)
-
+		for levels_to_update in lists_to_send:
+			index.add_documents(levels_to_update)
