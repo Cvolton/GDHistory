@@ -1,7 +1,8 @@
 import meilisearch
 import math
+import os
 
-client = meilisearch.Client('http://127.0.0.1:7700', 'testkey') #TODO: move key to env variable
+client = meilisearch.Client('http://127.0.0.1:7700', os.getenv('MEILI_KEY','ABCabc123'))
 
 def get_level_index():
 	index = client.index('levels')
