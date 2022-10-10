@@ -608,6 +608,7 @@ class Level(models.Model):
 		from . import meili_utils
 		meili_utils.get_level_index()
 		if self.cache_search_available:
+			index = meili_utils.get_level_index()
 			index.add_documents([self.get_serialized_base_json()])
 		else:
 			pass
