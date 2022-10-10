@@ -605,14 +605,14 @@ class Level(models.Model):
 		return level_dict
 
 	def save(self, *args, **kwargs):
-		import meili_utils
+		from . import meili_utils
 		meili_utils.get_level_index()
 		if self.cache_search_available:
 			index.add_documents([self.get_serialized_base_json()])
 		else:
 			pass
 
-		super(GeeksModel, self).save(*args, **kwargs)
+		super(Level, self).save(*args, **kwargs)
 
 class LevelDateEstimation(models.Model):
 	level = models.ForeignKey(
