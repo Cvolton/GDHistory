@@ -1,6 +1,7 @@
 import meilisearch
 import math
 import os
+import time
 
 client = meilisearch.Client('http://127.0.0.1:7700', os.getenv('MEILI_KEY','ABCabc123'))
 
@@ -69,7 +70,7 @@ def index_levels():
 			print(f"{j+(i*batch_size)} / {level_count} - Updating {level.online_id}")
 			level_dict = level.get_serialized_base_json()
 			levels_to_update.append(level_dict)
-			if len(levels_to_update) > 25000:
+			if len(levels_to_update) > 10000:
 				lists_to_send.append(levels_to_update)
 				levels_to_update = []
 		index.add_documents(levels_to_update)
