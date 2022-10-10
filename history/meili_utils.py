@@ -69,7 +69,7 @@ def index_levels():
 			print(f"{j+(i*batch_size)} / {level_count} - Updating {level.online_id}")
 			level_dict = level.get_serialized_base_json()
 			levels_to_update.append(level_dict)
-			if len(lists_to_send) > 25000:
+			if len(lists_to_send) > 2500:
 				lists_to_send.append(levels_to_update)
 				levels_to_update = []
 		index.add_documents(levels_to_update)
