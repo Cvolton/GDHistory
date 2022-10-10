@@ -8,7 +8,7 @@ from datetime import datetime
 
 from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString, HistoryUser
 from .forms import UploadFileForm, SearchForm, LevelForm
-from . import ccUtils, serverUtils, tasks, utils
+from . import ccUtils, serverUtils, tasks, utils, meili_utils
 
 import math
 import plistlib
@@ -106,6 +106,8 @@ def search(request):
 	if request.method == 'GET':
 		needs_revalidation = Level.objects.filter(cache_needs_revalidation=True)[:1].count()
 
+		index = meili_utils.get_level_index()
+
 		if not form.is_valid():
 			form.cleaned_data = {'p': 1, 'q': ''}
 
@@ -119,15 +121,24 @@ def search(request):
 		start_offset = (page-1)*results_per_page
 		end_offset = page*results_per_page
 
-		levels = Level.objects.all()
-		#levels = Level.objects.filter(hide_from_search=False, is_public=True, cache_blank_name=False)
+		level_results = index.search(query, {
+			'limit': results_per_page,
+			'offset': start_offset
+			})['hits']
+		level_count = 69
 
-		if query != '':
+		print(level_results)
+
+		#levels = Level.objects.all()
+		#levels = Level.objects.filter(hide_from_search=False, is_public=True, cache_blank_name=False)"""
+
+		"""if query != '':
 			#query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
 			query_filter = Q(cache_level_name__istartswith=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__istartswith=query)
-			levels = levels.filter(query_filter)
+			levels = levels.filter(query_filter)"""
 
 		#TODO: better implement admin search filters
+		"""
 		if request.user.is_authenticated and query == 'admin:private' and request.user.is_superuser:
 			levels = Level.objects.exclude(is_public=True)
 
@@ -201,8 +212,9 @@ def search(request):
 				levels = levels.filter(cache_main_difficulty=main_difficulty, cache_demon=False, cache_auto=False)
 
 			query += f" (difficulty filter)"
+		"""
 
-		levels = levels.filter(cache_search_available=True)
+		"""levels = levels.filter(cache_search_available=True)
 
 		level_count = levels[:end_offset+41].count()
 		levels = levels.order_by('-cache_downloads')
@@ -239,7 +251,7 @@ def search(request):
 
 		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})
-
+		"""
 		minimum_page_button = page-3
 		if minimum_page_button < 1:
 			minimum_page_button = 1

@@ -5,11 +5,38 @@ client = meilisearch.Client('http://127.0.0.1:7700', 'testkey') #TODO: move key 
 
 def get_level_index():
 	index = client.index('levels')
+	return index
 
 def index_levels():
 	from .models import Level
 
+	index = get_level_index()
+
 	index.update_settings({'distinctAttribute': 'online_id'})
+
+	index.update_filterable_attributes([
+		'online_id',
+		'comment',
+		'is_deleted',
+		'cache_level_name',
+		'cache_submitted',
+		'cache_downloads',
+		'cache_likes',
+		'cache_rating_sum',
+		'cache_rating',
+		'cache_demon',
+		'cache_auto',
+		'cache_demon_type',
+		'cache_stars',
+		'cache_username',
+		'cache_level_string_available',
+		'cache_user_id',
+		'cache_daily_id',
+		'cache_needs_updating',
+		'cache_available_versions',
+		'cache_search_available',
+		'cache_main_difficulty',
+	])
 
 	searchable_levels = Level.objects.filter(cache_search_available=True)
 
