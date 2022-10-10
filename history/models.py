@@ -561,13 +561,16 @@ class Level(models.Model):
 		self.save()
 
 	def get_serialized_base(self):
+		if isinstance(self.cache_submitted, str): submitted_date = timezone.datetime.fromisoformat(self.cache_submitted)
+		else: submitted_date = self.cache_submitted
+
 		response = {
 			'online_id': self.online_id,
 			'comment': self.comment,
 			'is_deleted': self.is_deleted,
 			'cache_level_name': self.cache_level_name,
 			'cache_submitted': self.cache_submitted,
-			'cache_submitted_timestamp': self.cache_submitted.timestamp(),
+			'cache_submitted_timestamp': submitted_date.timestamp(),
 			'cache_downloads': self.cache_downloads,
 			'cache_likes': self.cache_likes,
 			'cache_rating_sum': self.cache_rating_sum,
