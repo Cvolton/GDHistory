@@ -58,7 +58,7 @@ def index_levels():
 
 	searchable_levels = Level.objects.filter(cache_search_available=True)
 
-	batch_size = 2500
+	batch_size = 25000
 
 	level_count = searchable_levels.count()
 	for i in range(0,math.ceil(level_count / batch_size)):
