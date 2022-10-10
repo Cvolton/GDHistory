@@ -3,10 +3,13 @@ import math
 
 client = meilisearch.Client('http://127.0.0.1:7700', 'testkey') #TODO: move key to env variable
 
+def get_level_index():
+	index = client.index('levels')
+
 def index_levels():
 	from .models import Level
 
-	index = client.index('levels')
+	index.update_settings({'distinctAttribute': 'online_id'})
 
 	searchable_levels = Level.objects.filter(cache_search_available=True)
 
@@ -18,8 +21,7 @@ def index_levels():
 		levels_to_update = []
 		for j,level in enumerate(level_list):
 			print(f"{j+(i*batch_size)} / {level_count} - Updating {level.online_id}")
-			level_dict = level.get_serialized_base()
-			level_dict['cache_submitted'] = str(level_dict['cache_submitted'])
+			level_dict = level.get_serialized_base_json()
 			levels_to_update.append(level_dict)
 		index.add_documents(levels_to_update)
 

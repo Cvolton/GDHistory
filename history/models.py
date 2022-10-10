@@ -586,6 +586,21 @@ class Level(models.Model):
 		}
 		return response
 
+	def get_serialized_base_json(self):
+		level_dict = self.get_serialized_base()
+		level_dict['cache_submitted'] = str(level_dict['cache_submitted'])
+		return level_dict
+
+	def save(self, *args, **kwargs):
+		import meili_utils
+		meili_utils.get_level_index()
+		if self.cache_search_available:
+			index.add_documents([self.get_serialized_base_json()])
+		else:
+			pass
+
+		super(GeeksModel, self).save(*args, **kwargs)
+
 class LevelDateEstimation(models.Model):
 	level = models.ForeignKey(
 		Level,
