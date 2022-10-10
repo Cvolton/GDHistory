@@ -583,6 +583,18 @@ class Level(models.Model):
 			'cache_available_versions': self.cache_available_versions,
 			'cache_search_available': self.cache_search_available,
 			'cache_main_difficulty': self.cache_main_difficulty,
+			'cache_max_stars': self.cache_max_stars,
+			'cache_filter_difficulty': self.cache_filter_difficulty,
+			'cache_length': self.cache_length,
+			'cache_featured': self.cache_featured,
+			'cache_max_featured': self.cache_max_featured,
+			'cache_epic': self.cache_epic,
+			'cache_max_epic': self.cache_max_epic,
+			'cache_two_player': self.cache_two_player,
+			'cache_max_two_player': self.cache_max_two_player,
+			'cache_original': self.cache_original,
+			'cache_max_original': self.cache_max_original,
+			'cache_needs_revalidation': self.cache_needs_revalidation,
 		}
 		return response
 

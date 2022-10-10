@@ -14,7 +14,7 @@ def index_levels():
 
 	index.update_settings({'distinctAttribute': 'online_id'})
 
-	index.update_filterable_attributes([
+	attribute_list = [
 		'online_id',
 		'comment',
 		'is_deleted',
@@ -36,7 +36,23 @@ def index_levels():
 		'cache_available_versions',
 		'cache_search_available',
 		'cache_main_difficulty',
-	])
+		'cache_max_stars',
+		'cache_filter_difficulty',
+		'cache_length',
+		'cache_featured',
+		'cache_max_featured',
+		'cache_epic',
+		'cache_max_epic',
+		'cache_two_player',
+		'cache_max_two_player',
+		'cache_original',
+		'cache_max_original',
+		'cache_needs_revalidation',
+	]
+
+	index.update_filterable_attributes(attribute_list)
+	index.update_sortable_attributes(attribute_list)
+	index.update_pagination_settings({'maxTotalHits': 2147483647})
 
 	searchable_levels = Level.objects.filter(cache_search_available=True)
 

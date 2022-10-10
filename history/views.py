@@ -121,103 +121,68 @@ def search(request):
 		start_offset = (page-1)*results_per_page
 		end_offset = page*results_per_page
 
-		level_results = index.search(query, {
-			'limit': results_per_page,
-			'offset': start_offset
-			})['hits']
-		level_count = 69
+		visible_query = query
 
-		print(level_results)
+		filters = []
 
-		#levels = Level.objects.all()
-		#levels = Level.objects.filter(hide_from_search=False, is_public=True, cache_blank_name=False)"""
-
-		"""if query != '':
-			#query_filter = Q(cache_level_name__icontains=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__icontains=query)
-			query_filter = Q(cache_level_name__istartswith=query) | Q(online_id=query) if query.isnumeric() else Q(cache_level_name__istartswith=query)
-			levels = levels.filter(query_filter)"""
-
-		#TODO: better implement admin search filters
-		"""
-		if request.user.is_authenticated and query == 'admin:private' and request.user.is_superuser:
-			levels = Level.objects.exclude(is_public=True)
-
-		if request.user.is_authenticated and query == 'admin:hidden' and request.user.is_superuser:
-			levels = Level.objects.exclude(cache_search_available=True)
 
 		if 'userID' in form.cleaned_data and form.cleaned_data['userID'] is not None:
-			levels = levels.filter(cache_user_id=form.cleaned_data['userID'])
-			query += f" (userID {form.cleaned_data['userID']})"
+			filters.append(f"cache_user_id = {form.cleaned_data['userID']}")
+			visible_query += f" (userID {form.cleaned_data['userID']})"
 
 		if 'deleted' in form.cleaned_data and form.cleaned_data['deleted'] is True:
-			levels = levels.filter(is_deleted=True)
-			query += f" (deleted only)"
+			filters.append("is_deleted = true")
+			visible_query += f" (deleted only)"
 
 		if 'undeleted' in form.cleaned_data and form.cleaned_data['undeleted'] is True:
-			levels = levels.exclude(is_deleted=True)
-			query += f" (undeleted only)"
+			filters.append("is_deleted != true")
+			visible_query += f" (undeleted only)"
 
 		if 'playable' in form.cleaned_data and form.cleaned_data['playable'] is True:
-			levels = levels.filter(cache_level_string_available=True)
-			query += f" (playable only)"
+			filters.append("cache_level_string_available = true")
+			visible_query += f" (playable only)"
 
 		if 'unplayable' in form.cleaned_data and form.cleaned_data['unplayable'] is True:
-			levels = levels.exclude(cache_level_string_available=True)
-			query += f" (unplayable only)"
+			filters.append("cache_level_string_available != true")
+			visible_query += f" (unplayable only)"
 
 		if 'rated' in form.cleaned_data and form.cleaned_data['rated'] is True:
-			levels = levels.filter(cache_stars__gt=0)
-			query += f" (rated only)"
+			filters.append("cache_stars > 0")
+			visible_query += f" (rated only)"
 
 		if 'unrated' in form.cleaned_data and form.cleaned_data['unrated'] is True:
-			levels = levels.filter(cache_stars=0)
-			query += f" (unrated only)"
+			filters.append("cache_stars = 0")
+			visible_query += f" (unrated only)"
 
 		if 'wasrated' in form.cleaned_data and form.cleaned_data['wasrated'] is True:
-			levels = levels.filter(cache_max_stars__gt=0)
-			query += f" (was rated)"
+			filters.append("cache_max_stars > 0")
+			visible_query += f" (was rated)"
 
 		if 'wasnotrated' in form.cleaned_data and form.cleaned_data['wasnotrated'] is True:
-			levels = levels.filter(cache_max_stars=0)
-			query += f" (was not rated)"
+			filters.append("cache_max_stars = 0")
+			visible_query += f" (was not rated)"
 
 		if 'featured' in form.cleaned_data and form.cleaned_data['featured'] is True:
-			levels = levels.filter(cache_featured__gt=0)
-			query += f" (featured)"
+			filters.append("cache_featured > 0")
+			visible_query += f" (featured)"
 
 		if 'unfeatured' in form.cleaned_data and form.cleaned_data['unfeatured'] is True:
-			levels = levels.exclude(cache_featured__gt=0)
-			query += f" (not featured)"
+			filters.append("cache_featured = 0")
+			visible_query += f" (not featured)"
 
 		if 'original' in form.cleaned_data and form.cleaned_data['original'] is not None:
 			original_id = form.cleaned_data['original']
-			levels = levels.filter( Q(cache_original=original_id) | Q(cache_max_original=original_id) )
-			query += f" (original {original_id})"
+			filters.append(f"(cache_original = {original_id} OR cache_max_original = {original_id})")
+			visible_query += f" (original {original_id})"
 
 		if 'difficulty' in form.cleaned_data and form.cleaned_data['difficulty'] is not None:
-			if form.cleaned_data['difficulty'] >= 7: #level is demon
-				levels = levels.filter(cache_demon=True)
-				demon_difficulty = form.cleaned_data['difficulty'] - 7
-				if demon_difficulty == 3:
-					levels = levels.filter(cache_demon_type__lte=2)
-				elif demon_difficulty != 0:
-					if demon_difficulty > 3:
-						demon_difficulty = demon_difficulty - 1
-					demon_difficulty = demon_difficulty + 2
-					levels = levels.filter(cache_demon_type=demon_difficulty)
-			elif form.cleaned_data['difficulty'] == 1:
-				levels = levels.filter(cache_auto=True)
-			else:
-				main_difficulty = form.cleaned_data['difficulty'] - 1 if form.cleaned_data['difficulty'] > 0 else 0
-				levels = levels.filter(cache_main_difficulty=main_difficulty, cache_demon=False, cache_auto=False)
+			visible_query += f" (difficulty filter)"
+			if form.cleaned_data['difficulty'] == 7: #demon filter
+				filters.append(f"(cache_filter_difficulty > 7)")
+			else: #other filters
+				filters.append(f"(cache_filter_difficulty = {form.cleaned_data['difficulty']})")
 
-			query += f" (difficulty filter)"
-		"""
-
-		"""levels = levels.filter(cache_search_available=True)
-
-		level_count = levels[:end_offset+41].count()
-		levels = levels.order_by('-cache_downloads')
+		sort = ['cache_downloads:desc']
 		if 's' in form.cleaned_data:
 			reverse_sort = False
 			order = form.cleaned_data['s']
@@ -239,19 +204,28 @@ def search(request):
 
 			unique_sorts = ['id', 'likes']
 
-			if order in allowed_sorts:
-				primary_parameter = f"{'-' if reverse_sort else ''}{allowed_sorts[order]}"
-				if order not in unique_sorts and reverse_sort:
-					levels = levels.order_by(primary_parameter, "-cache_downloads")
-				else: 
-					levels = levels.order_by(primary_parameter)
+			order_marker = f"{':desc' if reverse_sort else ':asc'}"
 
-		level_results = levels[start_offset:end_offset]
+			if order == 'difficulty':
+				sort = [f"cache_stars{order_marker}", f"cache_filter_difficulty{order_marker}", "cache_downloads:desc"]
+			elif order in allowed_sorts:
+				primary_parameter = f"{allowed_sorts[order]}{order_marker}"
+				sort = [primary_parameter, "cache_downloads:desc"]
 
+		#level_results = levels[start_offset:end_offset]
+
+		search_result = index.search(query, {
+			'limit': results_per_page,
+			'offset': start_offset,
+			'sort': sort,
+			'filter': " AND ".join(filters)
+			})
+		level_results = search_result['hits']
+		level_count = search_result['estimatedTotalHits']
 
 		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})
-		"""
+
 		minimum_page_button = page-3
 		if minimum_page_button < 1:
 			minimum_page_button = 1
@@ -263,7 +237,7 @@ def search(request):
 		page_buttons = range(minimum_page_button, maximum_page_button+1)
 
 		context = {
-			'query': query,
+			'query': visible_query,
 			'level_records': level_results,
 			'count': level_count,
 			'page': page,
