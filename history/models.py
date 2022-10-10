@@ -567,6 +567,7 @@ class Level(models.Model):
 			'is_deleted': self.is_deleted,
 			'cache_level_name': self.cache_level_name,
 			'cache_submitted': self.cache_submitted,
+			'cache_submitted_timestamp': self.cache_submitted.timestamp(),
 			'cache_downloads': self.cache_downloads,
 			'cache_likes': self.cache_likes,
 			'cache_rating_sum': self.cache_rating_sum,

@@ -193,7 +193,7 @@ def search(request):
 			allowed_sorts = {
 				'id': 'online_id',
 				'name': 'cache_level_name',
-				'last_seen': 'cache_submitted',
+				'last_seen': 'cache_submitted_timestamp',
 				'downloads': 'cache_downloads',
 				'likes': 'cache_likes',
 				'difficulty': 'cache_stars', #TODO: sort demons

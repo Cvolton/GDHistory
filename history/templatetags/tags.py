@@ -2,10 +2,16 @@ import datetime
 import base64
 from django import template
 from django.utils.safestring import mark_safe
+from django.utils.timezone import make_aware
 
 from history.constants import MiscConstants, SongNames
 
 register = template.Library()
+
+@register.simple_tag
+def timestamp_to_printable_date(timestamp):
+	date_time = make_aware(datetime.datetime.fromtimestamp(timestamp))
+	return date_time.strftime("%b %d, %Y")
 
 @register.simple_tag
 def print_filters(filters):

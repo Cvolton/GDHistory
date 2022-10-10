@@ -20,6 +20,7 @@ def index_levels():
 		'is_deleted',
 		'cache_level_name',
 		'cache_submitted',
+		'cache_submitted_timestamp',
 		'cache_downloads',
 		'cache_likes',
 		'cache_rating_sum',
