@@ -167,8 +167,12 @@ def search(request):
 			visible_query += f" (featured)"
 
 		if 'unfeatured' in form.cleaned_data and form.cleaned_data['unfeatured'] is True:
-			filters.append("cache_featured = 0")
+			filters.append("cache_featured <= 0")
 			visible_query += f" (not featured)"
+
+		if 'negativefeatured' in form.cleaned_data and form.cleaned_data['negativefeatured'] is True:
+			filters.append("cache_featured < 0")
+			visible_query += f" (negative featured)"
 
 		if 'original' in form.cleaned_data and form.cleaned_data['original'] is not None:
 			original_id = form.cleaned_data['original']

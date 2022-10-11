@@ -97,6 +97,10 @@ tr:hover, tr:focus-within {
 							<input type="checkbox" class="form-check-input" id="unfeaturedCheck" {% if filters|get_item:"unfeatured" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'unfeatured' %}' ">
 							<label class="form-check-label" for="unfeaturedCheck">Not featured</label>
 						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="negativefeaturedCheck" {% if filters|get_item:"featured" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'negativefeatured' %}' ">
+							<label class="form-check-label" for="negativefeaturedCheck">Negative featured value</label>
+						</div>
 					</p>
 				</div>
 				<a data-bs-toggle="collapse" href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
