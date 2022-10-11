@@ -85,7 +85,7 @@ def index_queue():
 
 	levels_to_update = Level.objects.filter(cache_needs_search_update=True)
 
-	level_dicts = []
+	level_dicts = {}
 	for i,level in enumerate(levels_to_update):
 		dict_index = math.floor(i / 10000)
 		if dict_index not in level_dicts:
@@ -97,7 +97,7 @@ def index_queue():
 		print("queue empty")
 		return
 
-	for level_list in level_dicts:
-		index.add_documents(level_list)
+	for i in level_dicts:
+		index.add_documents(level_dicts[i])
 
 	Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
