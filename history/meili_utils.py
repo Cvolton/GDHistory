@@ -87,13 +87,17 @@ def index_queue():
 
 	level_dicts = []
 	for i,level in enumerate(levels_to_update):
-		level_dicts.append(level.get_serialized_base_json())
+		dict_index = math.floor(i / 10000)
+		if dict_index not in level_dicts:
+			level_dicts[dict_index] = []
+		level_dicts[dict_index].append(level.get_serialized_base_json())
 		level.cache_needs_search_update = False
 
 	if len(level_dicts) == 0:
 		print("queue empty")
 		return
 
-	index.add_documents(level_dicts)
+	for level_list in level_dicts:
+		index.add_documents(level_list)
 
 	Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
