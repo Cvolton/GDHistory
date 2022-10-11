@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.utils.timezone import make_aware, is_naive, timedelta
+from django.core.cache import cache
 
 from django.db.models import Min, Max, Q
 from django.db.models.functions import Coalesce
@@ -347,6 +348,7 @@ class Level(models.Model):
 	cache_max_original = models.IntegerField(default=0, db_index=True)
 
 	cache_needs_revalidation = models.BooleanField(db_index=True, default=False)
+	cache_needs_search_update = models.BooleanField(db_index=True, default=False)
 
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
@@ -608,11 +610,8 @@ class Level(models.Model):
 		return level_dict
 
 	def save(self, *args, **kwargs):
-		from . import meili_utils
-		meili_utils.get_level_index()
 		if self.cache_search_available:
-			index = meili_utils.get_level_index()
-			index.add_documents([self.get_serialized_base_json()])
+			self.cache_needs_search_update = True
 		else:
 			pass
 

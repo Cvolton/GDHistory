@@ -3,6 +3,8 @@ import math
 import os
 import time
 
+from django.core.cache import cache
+
 client = meilisearch.Client('http://127.0.0.1:7700', os.getenv('MEILI_KEY','ABCabc123'))
 
 def get_level_index():
@@ -76,3 +78,22 @@ def index_levels():
 		index.add_documents(levels_to_update)
 		for levels_to_update in lists_to_send:
 			index.add_documents(levels_to_update)
+
+def index_queue():
+	from .models import Level
+	index = get_level_index()
+
+	levels_to_update = Level.objects.filter(cache_needs_search_update=True)
+
+	level_dicts = []
+	for i,level in enumerate(levels_to_update):
+		level_dicts.append(level.get_serialized_base_json())
+		level.cache_needs_search_update = False
+
+	if len(level_dicts) == 0:
+		print("queue empty")
+		return
+
+	index.add_documents(level_dicts)
+
+	Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)

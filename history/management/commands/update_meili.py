@@ -7,6 +7,6 @@ class Command(BaseCommand):
 	help = 'updates meilisearch stuff'
 
 	def handle(self, *args, **options):
-		history.meili_utils.index_levels()
+		history.meili_utils.index_queue()
 
 		print("Done")
