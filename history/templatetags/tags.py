@@ -2,6 +2,7 @@ import datetime
 import base64
 from django import template
 from django.utils.safestring import mark_safe
+from django.utils.http import urlencode
 from django.utils.timezone import make_aware
 
 from history.constants import MiscConstants, SongNames
@@ -15,11 +16,11 @@ def timestamp_to_printable_date(timestamp):
 
 @register.simple_tag
 def print_filters(filters):
-	string = ""
+	new_dict = {}
 	for filter_string in filters:
 		if filters[filter_string]:
-			string += f"&{filter_string}={filters[filter_string]}"
-	return string
+			new_dict[filter_string] = filters[filter_string]
+	return f"&{urlencode(new_dict)}"
 
 @register.simple_tag
 def print_filters_toggled(filters, to_toggle):
