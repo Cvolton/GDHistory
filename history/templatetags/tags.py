@@ -20,7 +20,7 @@ def print_filters(filters):
 	for filter_string in filters:
 		if filters[filter_string]:
 			new_dict[filter_string] = filters[filter_string]
-	return f"&{urlencode(new_dict)}"
+	return mark_safe(f"&{urlencode(new_dict)}")
 
 @register.simple_tag
 def print_filters_toggled(filters, to_toggle):
