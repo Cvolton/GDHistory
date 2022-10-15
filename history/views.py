@@ -61,7 +61,6 @@ def view_level(request, online_id=None, record_id=None):
 			level_strings[record.level_string.pk] = True
 			distinct_records.append(record)
 
-		print(f"{record.pk} {record_id}")
 		if str(record.pk) == str(record_id):
 			record_belongs = True
 			first_record = record

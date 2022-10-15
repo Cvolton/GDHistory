@@ -677,7 +677,6 @@ class LevelString(models.Model):
 			return None
 		with open(directory, 'rb') as f:
 			content = f.read()
-			print(content)
 
 		if self.requires_base64:
 			content = base64.b64encode(content, altchars=b'-_')

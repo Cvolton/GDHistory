@@ -19,7 +19,6 @@ def get_game_manager_bytes(game_manager_file):
 
 def try_decrypt_mac_save(game_manager_bytes):
 	if game_manager_bytes.startswith(b"\x15\xFE\xCC\xE5\x46\x71\x80\x51\xFE"):
-		print("mac")
 		AES_KEY = (
 		    b"\x69\x70\x75\x39\x54\x55\x76\x35\x34\x79\x76\x5d\x69\x73\x46\x4d"
 		    b"\x68\x35\x40\x3b\x74\x2e\x35\x77\x33\x34\x45\x32\x52\x79\x40\x7b"
@@ -27,12 +26,10 @@ def try_decrypt_mac_save(game_manager_bytes):
 		CIPHER = AES.new(AES_KEY, AES.MODE_ECB)
 		game_manager_bytes_decrypted = bytearray(CIPHER.decrypt(game_manager_bytes))
 		while game_manager_bytes_decrypted[-1:] != b">":
-			print(game_manager_bytes_decrypted[-1:])
 			game_manager_bytes_decrypted = game_manager_bytes_decrypted[:-1]
 
 		return game_manager_bytes_decrypted
 	else:
-		print("not mac")
 		return game_manager_bytes
 
 def xor_game_manager_if_needed(game_manager_bytes):
@@ -324,5 +321,4 @@ def process_save_file(save_id):
 def consolidate_plist(plist_content):
 	test = plist_content.split(b'\n')[3:-2]
 	#test = test[:-2]
-	print(test)
 	return b"".join(test)
