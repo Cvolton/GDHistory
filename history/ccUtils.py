@@ -1,5 +1,6 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString, LevelRecordType
-from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text, encode_base64_text, get_level_object
+from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text, encode_base64_text, get_level_object, recalculate_counts
+from . import maintenance_utils, meili_utils
 
 from celery import shared_task
 
@@ -294,8 +295,12 @@ def process_save_file(save_id):
 	data_path = get_data_path()
 	save_file = SaveFile.objects.get(pk=save_id)
 
-	with open(f"{data_path}/SaveFile/{save_id}", "rb") as game_manager_file:
-		game_manager = plistlib.load(game_manager_file)
+	try:
+		with open(f"{data_path}/SaveFile/{save_id}", "rb") as game_manager_file:
+			game_manager = plistlib.load(game_manager_file)
+	except:
+		print("Error while opening save file")
+		return
 
 	if 'GLM_03' in game_manager:
 		process_levels_in_glm(game_manager['GLM_03'], LevelRecordType.GLM_03, save_file)
@@ -309,6 +314,12 @@ def process_save_file(save_id):
 	save_file.is_processed = True
 	save_file.save()
 	print(f"Finished processing save file {save_id}")
+
+	maintenance_utils.update_is_public()
+	maintenance_utils.update_cached_fields()
+	meili_utils.index_queue()
+	recalculate_counts()
+	print(f"Finished maintenance for {save_id}")
 
 def consolidate_plist(plist_content):
 	test = plist_content.split(b'\n')[3:-2]
