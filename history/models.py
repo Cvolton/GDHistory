@@ -611,10 +611,7 @@ class Level(models.Model):
 		return level_dict
 
 	def save(self, *args, **kwargs):
-		if self.cache_search_available:
-			self.cache_needs_search_update = True
-		else:
-			pass
+		self.cache_needs_search_update = True
 
 		super(Level, self).save(*args, **kwargs)
 
