@@ -79,11 +79,11 @@ def index_levels():
 		for levels_to_update in lists_to_send:
 			index.add_documents(levels_to_update)
 
-def index_queue():
+def index_queue_positive():
 	from .models import Level
 	index = get_level_index()
 
-	levels_to_update = Level.objects.filter(cache_needs_search_update=True)
+	levels_to_update = Level.objects.filter(cache_needs_search_update=True, cache_search_available=True)
 
 	level_dicts = {}
 	for i,level in enumerate(levels_to_update):
@@ -101,3 +101,25 @@ def index_queue():
 		index.add_documents(level_dicts[i])
 
 	Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
+
+def index_queue_negative():
+	from .models import Level
+	index = get_level_index()
+	levels_to_delete = []
+	levels_to_update = Level.objects.filter(cache_needs_search_update=True, cache_search_available=False)
+	for level in levels_to_update:
+		levels_to_delete.append(level.online_id)
+		level.cache_needs_search_update = False
+
+	Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
+
+	if len(levels_to_delete) == 0:
+		print("queue empty")
+		return
+
+	index.delete_documents(levels_to_delete)
+
+def index_queue():
+	index_queue_positive()
+	index_queue_negative()
+	

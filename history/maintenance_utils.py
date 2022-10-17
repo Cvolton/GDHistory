@@ -35,10 +35,11 @@ def do_none_updating(records):
 		record.cache_downloads = record.cache_downloads if record.cache_downloads is not None else 0
 		record.cache_likes = record.cache_likes if record.cache_likes is not None else 0
 		record.cache_stars = record.cache_stars if record.cache_stars is not None else 0
+		record.cache_needs_search_update = True
 		#record.save()
 		i += 1
 
-	Level.objects.bulk_update(records, ['cache_stars', 'cache_likes', 'cache_downloads'], batch_size=1000)
+	Level.objects.bulk_update(records, ['cache_stars', 'cache_likes', 'cache_downloads', 'cache_needs_search_update'], batch_size=1000)
 
 def do_search_cache_updating(records, status):
 	record_count = records.count()
@@ -46,10 +47,11 @@ def do_search_cache_updating(records, status):
 	for record in records:
 		print(f"{i} / {record_count} - Updating {record.online_id}")
 		record.cache_search_available = status
+		record.cache_needs_search_update = True
 		#record.save()
 		i += 1
 
-	Level.objects.bulk_update(records, ['cache_search_available'], batch_size=1000)
+	Level.objects.bulk_update(records, ['cache_search_available', 'cache_needs_search_update'], batch_size=1000)
 
 def update_cached_fields():
 	do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=False).exclude(level__is_public=False))
