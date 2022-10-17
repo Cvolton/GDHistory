@@ -303,7 +303,11 @@ def download_record(request, record_id=None, online_id=None):
 	if 'k4' not in data:
 		return render(request, 'error.html', {'error': 'This record does not contain any level data. If you have reached this page using a link claiming that the data is available, please report this bug immediately.'})
 
-	data = plistlib.dumps(data)
+	try:
+		data = plistlib.dumps(data)
+	except ValueError:
+		return render(request, 'error.html', {'error': 'This record contains data not supported by the GDHistory .gmd exporter.'})
+
 	data = ccUtils.consolidate_plist(data)
 	data = ccUtils.plist_to_robtop_plist(data)
 	response = HttpResponse(data)

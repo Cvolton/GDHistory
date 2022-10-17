@@ -66,7 +66,7 @@ def get_data_path():
 def create_level_string(level_string):
 	from .models import LevelString
 
-	level_string = level_string.encode('windows-1252')
+	level_string = level_string.encode('windows-1252', errors='xmlcharrefreplace')
 	sha256 = hashlib.sha256(level_string).hexdigest()
 	try:
 		return LevelString.objects.get(sha256=sha256)

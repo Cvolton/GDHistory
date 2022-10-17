@@ -41,7 +41,11 @@ def response_to_dict(response, separator):
 	last_key = 0
 	for item in response.split(separator):
 		if i % 2 == 0:
-			last_key = int(item)
+			try:
+				last_key = int(item)
+			except ValueError: #the most likely cause of this is a : in the levelstring, therefore we want to include this there as well
+				i -= 1
+				result[last_key] += f"{separator}{item}"
 		else:
 			result[last_key] = item
 		i += 1
