@@ -73,8 +73,12 @@ def create_level_string(level_string):
 	except:
 		requires_base64 = False
 		if level_string[:2] == b'eJ' or level_string[:2] == b'H4':
-			level_string = base64.b64decode(level_string, altchars='-_')
-			requires_base64 = True
+			try:
+				level_string = base64.b64decode(level_string, altchars='-_')
+				requires_base64 = True
+			except:
+				#unable to decode, store levelstring as is
+				print("unable to decode levelstring")
 
 		record = LevelString(sha256=sha256, requires_base64=requires_base64)
 		record.save()
