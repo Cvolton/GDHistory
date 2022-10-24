@@ -4,6 +4,11 @@
 {% load tags %}
 {% block title %}{{ first_record.level_name }}{% endblock title %}
 
+{% block description %}By {% if first_record.real_user_record %}{{ first_record.real_user_record.username }}{% else %}Unknown{% endif %} - {% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}*)
+{{ first_record.downloads }} downloads | {% if first_record.dislikes %}{{ first_record.likes|sub:first_record.dislikes }}{% else %}{{ first_record.likes }}{% endif %} likes
+{{ records_count }} records | {{ level_string_count }} versions
+{% endblock description %}
+
 {% block content %}
 <style>
 	.round-border {
@@ -36,7 +41,7 @@
 				</tr>
 				<tr>
 					<th>Likes</th>
-					<td class="align-right">{{ first_record.likes }}</td>
+					<td class="align-right">{% if first_record.dislikes %}{{ first_record.likes|sub:first_record.dislikes }}{% else %}{{ first_record.likes }}{% endif %}</td>
 				</tr>
 				<tr>
 					<th>Difficulty</th>
