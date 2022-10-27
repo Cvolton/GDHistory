@@ -439,7 +439,7 @@ class Level(models.Model):
 		except:
 			print("couldnt assign username")
 
-	def update_with_record(self, record, record_date):
+	def update_with_record(self, record, record_date, force=False):
 		changed = False
 		check_level_string = False
 
@@ -459,7 +459,7 @@ class Level(models.Model):
 			self.cache_max_original = record.original
 			changed = True
 
-		if record.downloads is not None and record_date is not None and (self.cache_downloads is None or int(record.downloads) >= self.cache_downloads):
+		if force or (record.downloads is not None and record_date is not None and (self.cache_downloads == 0 or int(record.downloads) >= self.cache_downloads)):
 			changed = True
 			self.cache_level_name = record.level_name
 			self.cache_submitted = record_date
@@ -540,7 +540,7 @@ class Level(models.Model):
 			self.save()
 			return
 
-		self.update_with_record(best_record[0], best_record[0].real_date)
+		self.update_with_record(best_record[0], best_record[0].real_date, True)
 
 		best_daily_record = self.levelrecord_set.exclude( Q(daily_id = 0) | Q(daily_id = None) ).order_by('-daily_id')
 		best_record_set = best_daily_record[:1]
