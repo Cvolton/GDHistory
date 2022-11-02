@@ -25,5 +25,5 @@ class Command(BaseCommand):
 			if history.jsonUtils.upload_submission(f, HistoryUser.objects.get(user__username="Cvolton")) is not None:
 				os.rename(export_path, f"{imports_root}/ManualSubmission-Processed/{filename}")
 
-		history.utils.recalculate_counts()
+		history.utils.recalculate_everything()
 		print("Done")

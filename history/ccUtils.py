@@ -1,5 +1,5 @@
 from .models import SaveFile, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString, LevelRecordType
-from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text, encode_base64_text, get_level_object, recalculate_counts
+from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text, encode_base64_text, get_level_object, recalculate_everything
 from . import maintenance_utils, meili_utils
 
 from celery import shared_task
@@ -315,7 +315,7 @@ def process_save_file(save_id):
 	maintenance_utils.update_is_public()
 	maintenance_utils.update_cached_fields()
 	meili_utils.index_queue()
-	recalculate_counts()
+	recalculate_everything()
 	print(f"Finished maintenance for {save_id}")
 
 def consolidate_plist(plist_content):
