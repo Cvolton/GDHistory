@@ -635,6 +635,7 @@ class LevelDateEstimation(models.Model):
 	relative_upload_date = models.CharField(blank=True, null=True, max_length=255)
 
 	estimation = models.DateTimeField(blank=True, null=True, db_index=True)
+	cache_online_id = models.IntegerField(blank=True, null=True, db_index=True) #I regret the database design decision that led to this
 
 	def calculate(self):
 		if self.relative_upload_date is not None and "year" in self.relative_upload_date:
@@ -654,6 +655,11 @@ class LevelDateEstimation(models.Model):
 			'online_id': self.level.online_id
 		}
 		return response
+
+	def save(self, *args, **kwargs):
+		self.cache_online_id = self.level.online_id
+
+		super(LevelDateEstimation, self).save(*args, **kwargs)
 
 class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)

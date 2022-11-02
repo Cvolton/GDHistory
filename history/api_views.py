@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.db.models import Count, Min, Max, Q
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
@@ -48,12 +48,12 @@ def level_info(request, online_id=None):
 	return JsonResponse(response)
 
 def level_date_estimation(request, online_id):
-	low = LevelDateEstimation.objects.prefetch_related('level').filter(level__online_id__lte=online_id).order_by('-level__online_id', 'estimation')[:1]
-	high = LevelDateEstimation.objects.prefetch_related('level').filter(level__online_id__gte=online_id).order_by('level__online_id', 'estimation')[:1]
+	low = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__lte=online_id).order_by('-cache_online_id', 'estimation')[:1]
+	high = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__gte=online_id).order_by('cache_online_id', 'estimation')[:1]
 
 	response = {
 		'low': low[0].get_serialized_base() if len(low) > 0 else None,
 		'high': high[0].get_serialized_base()  if len(high) > 0 else None
 	}
-
+	
 	return JsonResponse(response)

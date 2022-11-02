@@ -1,4 +1,4 @@
-from history.models import LevelRecord, LevelRecordType, Level
+from history.models import LevelRecord, LevelRecordType, Level, LevelDateEstimation
 from history.constants import MiscConstants
 
 from django.db.models import Q
@@ -62,3 +62,10 @@ def update_cached_fields():
 
 	do_search_cache_updating(Level.objects.filter(is_public=True, hide_from_search=False).exclude(cache_level_name=None).exclude(cache_search_available=True), True)
 	do_search_cache_updating(Level.objects.filter( Q(is_public=False) | Q( hide_from_search=True) | Q(cache_level_name=None) ).exclude(cache_search_available=False), False)
+
+def fix_date_estimation():
+	to_fix = LevelDateEstimation.objects.filter(cache_online_id=None)
+	total = len(to_fix)
+	for i,estimation in enumerate(to_fix):
+		print(f"fixing {i}/{total}")
+		estimation.save()
