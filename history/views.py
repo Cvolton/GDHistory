@@ -28,7 +28,7 @@ def index(request):
 def view_level(request, online_id=None, record_id=None):
 	form = LevelForm(request.GET or None)
 
-	all_levels = LevelRecord.objects.filter(level__is_public=True)
+	all_levels = LevelRecord.objects.filter( Q(level__is_public=True) | Q(level__online_id__lt=utils.get_level_id_within_window()) )
 	#TODO: improve this
 	if request.user.is_authenticated and request.user.is_superuser:
 		all_levels = LevelRecord.objects.all()

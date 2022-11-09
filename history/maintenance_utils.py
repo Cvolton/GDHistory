@@ -1,8 +1,10 @@
 from history.models import LevelRecord, LevelRecordType, Level, LevelDateEstimation
 from history.constants import MiscConstants
+from history.utils import get_level_id_within_window
 
 from django.db.models import Q
 from django.db import connection
+from django.utils import timezone
 
 def update_is_public():
 	user_whitelist = [21297937, 16, 11094602, 20417551]
@@ -60,8 +62,10 @@ def update_cached_fields():
 
 	do_none_updating(Level.objects.filter( Q(cache_downloads=None) | Q(cache_likes=None) | Q(cache_stars=None) ))
 
-	do_search_cache_updating(Level.objects.filter(is_public=True, hide_from_search=False).exclude(cache_level_name=None).exclude(cache_search_available=True), True)
-	do_search_cache_updating(Level.objects.filter( Q(is_public=False) | Q( hide_from_search=True) | Q(cache_level_name=None) ).exclude(cache_search_available=False), False)
+	estimated_id = get_level_id_within_window()
+
+	do_search_cache_updating(Level.objects.filter( Q(is_public=True) | Q(online_id__lt=estimated_id) , hide_from_search=False).exclude(cache_level_name=None).exclude(cache_search_available=True), True)
+	do_search_cache_updating(Level.objects.filter( Q(is_public=False, online_id__gte=estimated_id) | Q( hide_from_search=True) | Q(cache_level_name=None) ).exclude(cache_search_available=False), False)
 
 def fix_date_estimation():
 	to_fix = LevelDateEstimation.objects.filter(cache_online_id=None)

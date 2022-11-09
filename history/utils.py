@@ -256,3 +256,15 @@ def get_daily_records():
 def recalculate_everything():
 	recalculate_counts()
 	recalculate_daily_records()
+
+def get_level_id_within_window():
+	two_years_ago = timezone.now() - timezone.timedelta(days=365*2)
+	print(two_years_ago)
+	return get_level_id_before(two_years_ago)
+
+def get_level_id_before(last_date):
+	from history.models import LevelDateEstimation
+	time_estimation = LevelDateEstimation.objects.filter(estimation__lt=last_date).order_by('-estimation')[:1][0]
+	estimated_id = time_estimation.cache_online_id
+	print(estimated_id)
+	return estimated_id
