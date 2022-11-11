@@ -56,9 +56,9 @@ def view_level(request, online_id=None, record_id=None):
 			records[record.real_date.year] = []
 		records[record.real_date.year].append(record)
 
-		if record.level_string is not None and record.level_string.pk not in level_strings:
+		if record.level_string is not None and record.level_string.get_decompressed_sha256() not in level_strings:
 			level_string_count += 1
-			level_strings[record.level_string.pk] = True
+			level_strings[record.level_string.get_decompressed_sha256()] = True
 			distinct_records.append(record)
 
 		if str(record.pk) == str(record_id):

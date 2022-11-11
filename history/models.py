@@ -665,6 +665,8 @@ class LevelString(models.Model):
 	sha256 = models.CharField(max_length=64, db_index=True)
 	requires_base64 = models.BooleanField(default=False)
 
+	decompressed_sha256 = models.CharField(max_length=64, db_index=True, blank=True, null=True)
+
 	def get_file_path(self):
 		data_path = utils.get_data_path()
 		directory = f"{data_path}/LevelString/{self.sha256[:2]}"
@@ -686,6 +688,39 @@ class LevelString(models.Model):
 
 		content = content.decode('windows-1252')
 		return content
+
+	def calculate_decompressed_string(self):
+		import base64, zlib
+		content = self.load_file_content()
+
+		if content.startswith('kS'):
+			return content.encode('windows-1252')
+		
+		try:
+			if content.startswith('H4sIA'):
+				content = base64.urlsafe_b64decode(content)
+				return zlib.decompress(content, wbits = zlib.MAX_WBITS | 16)
+			
+			if content.startswith('eJ'):
+				content = base64.urlsafe_b64decode(content)
+				return zlib.decompress(content, wbits = zlib.MAX_WBITS)
+		except:
+			print("error while decompressing")
+
+		return None
+
+	def calculate_decompressed_sha256(self):
+		import hashlib
+		content = self.calculate_decompressed_string()
+		if content is None: return None
+		return hashlib.sha256(content).hexdigest()
+
+	def get_decompressed_sha256(self):
+		if not self.decompressed_sha256:
+			self.decompressed_sha256 = self.calculate_decompressed_sha256()
+			if self.decompressed_sha256: self.save()
+		
+		return self.decompressed_sha256
 
 
 class LevelRecord(models.Model):
