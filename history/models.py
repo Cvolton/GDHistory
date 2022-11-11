@@ -410,7 +410,7 @@ class Level(models.Model):
 
 			level_strings = {}
 			for record in data_record:
-				level_strings[record.level_string.pk] = True
+				level_strings[record.level_string.get_decompressed_sha256()] = True
 			self.cache_available_versions = len(level_strings)
 			self.cache_level_string_available = True
 
