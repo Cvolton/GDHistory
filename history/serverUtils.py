@@ -55,7 +55,7 @@ def create_user_dict(response):
 	user_dict = {}
 	for item in response.split('|'):
 		user_info = item.split(':')
-		user_dict[user_info[0]] = user_info
+		user_dict[int(user_info[0])] = user_info
 	return user_dict
 
 def create_song_array(response):
@@ -125,7 +125,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			description = description,
 			description_encoded = description_encoded,
 			#username = not included,
-			user_id = assign_key(level_data, 6),
+			user_id = int(assign_key(level_data, 6)),
 			official_song = assign_key(level_data, 12),
 			rating = assign_key(level_data, 8),
 			rating_sum = assign_key(level_data, 9),
@@ -180,14 +180,14 @@ def process_download(response_json):
 		return True
 
 	request_info = response.split('#')
-	if len(request_info) < 3:
+	if len(request_info) < 3 and not response_json.get('no_hash', False):
 		return False
 
 	level_info = response_to_dict(request_info[0], ':')
 	if online_id < 0:
 		level_object = get_level_object(level_info[1])
 
-	record = create_level_record_from_data(level_info, level_object, LevelRecordType.DOWNLOAD, response_object)
+	record = create_level_record_from_data(level_info, level_object, LevelRecordType.DOWNLOAD, response_object, legacy_description=response_json.get('legacy_description', False))
 
 	time_created = parse_datetime(response_json["created"])
 	if is_naive(time_created):
@@ -221,18 +221,20 @@ def process_get(response_json):
 
 	response_object = create_request(response_json)
 	response = response_json["raw_output"]
+	no_song = response_json.get('no_song', False)
 	if response_object is False:
 		return None
 	if response == "-1" or response == "":
 		return False
 
 	request_info = response.split('#')
-	if len(request_info) < 4:
+	if (len(request_info) < 4 and not no_song) or len(request_info) < 3:
 		return False
 
 	user_dict = create_user_dict(request_info[1])
 
-	song_array = create_song_array(request_info[2])
+	if not no_song: song_array = create_song_array(request_info[2])
+	else: song_array = []
 
 	print(f":: {datetime.now().time()} : Iterating through levels")
 
@@ -248,13 +250,13 @@ def process_get(response_json):
 		#print(level_info)
 
 		#print(f":::: {datetime.now().time()} : Creating record")
-		record = create_level_record_from_data(level_info, level_object, LevelRecordType.GET, response_object)
+		record = create_level_record_from_data(level_info, level_object, LevelRecordType.GET, response_object, legacy_description=response_json.get('legacy_description', False))
 		record.cache_is_public = True
 
 		if record.user_id in user_dict:
 			user_record = user_dict[record.user_id]
-			record.username = record.username if 1 not in user_record is None else user_record[1]
-			record.account_id = record.account_id if 2 not in user_record is None else user_record[2]
+			record.username = record.username if len(user_record) < 2 else user_record[1]
+			record.account_id = record.account_id if len(user_record) < 3 else user_record[2]
 			
 		#print(f":::: {datetime.now().time()} : Saving record")
 		record.save()
@@ -316,8 +318,8 @@ def import_json(file):
 	if response_json["raw_output"][:5] == '<html' or response_json["raw_output"][:5] == '<!DOC' or response_json["raw_output"][:5] == 'error':
 		return None
 
-	if response_json["endpoint"] == "getGJLevels21":
+	if response_json["endpoint"].startswith("getGJLevels"):
 		return process_get(response_json)
-	if response_json["endpoint"] == "downloadGJLevel22":
+	if response_json["endpoint"].startswith("downloadGJLevel"):
 		return process_download(response_json)
 
