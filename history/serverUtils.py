@@ -55,7 +55,7 @@ def create_user_dict(response):
 	user_dict = {}
 	for item in response.split('|'):
 		user_info = item.split(':')
-		user_dict[int(user_info[0])] = user_info
+		if user_info[0]: user_dict[int(user_info[0])] = user_info
 	return user_dict
 
 def create_song_array(response):
