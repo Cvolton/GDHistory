@@ -858,6 +858,7 @@ class LevelRecord(models.Model):
 		del response['cache_user_record_id']
 		del response['level_id']
 		del response['server_response_id']
+		del response['manual_submission_id']
 		del response['submitted']
 		del response['song_id']
 		del response['level_string_id']
@@ -868,6 +869,6 @@ class LevelRecord(models.Model):
 
 	def get_serialized_full(self):
 		response = self.get_serialized_base()
-		response['real_user_record'] = self.real_user_record.get_serialized_base()
+		response['real_user_record'] = None if self.real_user_record is None else self.real_user_record.get_serialized_base()
 		response['song'] = None if self.song is None else self.song.get_serialized_base()
 		return response
