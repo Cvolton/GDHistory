@@ -14,4 +14,4 @@ class Command(BaseCommand):
 			new_level = Level.objects.filter(online_id__lt=estimation.level.online_id, is_deleted=False).order_by('-online_id')[:1][0]
 			print(f"old id: {estimation.level.online_id}, new id: {new_level.online_id}")
 			estimation.level = new_level
-			estimation.save()
+			#estimation.save()
