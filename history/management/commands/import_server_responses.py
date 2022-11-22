@@ -18,7 +18,7 @@ class Command(BaseCommand):
 		for i, filename in enumerate(files):
 			export_path = f"{directory}/{filename}"
 			if not os.path.exists(export_path):
-				print("Save file {export_path} not found")
+				print(f"File {export_path} not found")
 				continue
 			print(f"{i} / {file_count} - Processing {filename}")
 			f = open(export_path, "rb")
