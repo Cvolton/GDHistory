@@ -634,6 +634,8 @@ class LevelDateEstimation(models.Model):
 	created = models.DateTimeField(db_index=True)
 	relative_upload_date = models.CharField(blank=True, null=True, max_length=255)
 
+	is_offset = models.BooleanField(default=False)
+
 	estimation = models.DateTimeField(blank=True, null=True, db_index=True)
 	cache_online_id = models.IntegerField(blank=True, null=True, db_index=True) #I regret the database design decision that led to this
 
