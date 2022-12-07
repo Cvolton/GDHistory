@@ -16,7 +16,7 @@
 	}
 </style>
 <div class="row">
-	<p class="lead">Showing data for level {{ online_id }}{% if record_id %}, as seen on {{ first_record.oldest_created|date:"N j, Y" }}{% endif %}</p>
+	<p class="lead">Showing data for level {{ online_id }}{% if record_id %}, as seen on {{ first_record.real_date|date:"N j, Y" }}{% endif %}</p>
 	{% if first_record.level.comment %}
 	  <div class="alert alert-info" role="alert">
 	    {{ first_record.level.comment }}
