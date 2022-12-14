@@ -12,6 +12,7 @@ from . import ccUtils, serverUtils, tasks, utils, meili_utils
 
 import math
 import plistlib
+import meilisearch
 
 def index(request):
 	all_levels = LevelRecord.objects.prefetch_related('level').exclude(level_name=None)
@@ -217,14 +218,17 @@ def search(request):
 
 		#level_results = levels[start_offset:end_offset]
 
-		search_result = index.search(query, {
-			'limit': results_per_page,
-			'offset': start_offset,
-			'sort': sort,
-			'filter': " AND ".join(filters)
-			})
-		level_results = search_result['hits']
-		level_count = search_result['estimatedTotalHits']
+		try:
+			search_result = index.search(query, {
+				'limit': results_per_page,
+				'offset': start_offset,
+				'sort': sort,
+				'filter': " AND ".join(filters)
+				})
+			level_results = search_result['hits']
+			level_count = search_result['estimatedTotalHits']
+		except meilisearch.errors.MeiliSearchCommunicationError:
+			return render(request, 'error.html', {'error': 'Unable to connect to the search system. Please report this if the issue persists.'})
 
 		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})
