@@ -405,12 +405,20 @@ class Level(models.Model):
 	def verify_needs_updating(self):
 		data_record = self.levelrecord_set.exclude( Q(level_name=None) | Q(level_string=None) ).order_by('-downloads')
 		self.cache_needs_updating = False
-		if len(data_record) > 0:
+		if len(data_record[:1]) > 0:
+			level_string_set = self.levelrecord_set.values('level_string').distinct()
 			best_record = self.levelrecord_set.exclude( Q(level_name=None) ).order_by('-downloads')[:1][0]
+			print(level_string_set)
 
 			level_strings = {}
-			for record in data_record:
-				level_strings[record.level_string.get_decompressed_sha256()] = True
+			level_string_ids = []
+			for record in level_string_set:
+				level_string_ids.append(record['level_string'])
+
+			level_strings_data = LevelString.objects.filter(pk__in=level_string_ids)
+			for record in level_strings_data:
+				level_strings[record.get_decompressed_sha256()] = True
+				
 			self.cache_available_versions = len(level_strings)
 			self.cache_level_string_available = True
 
