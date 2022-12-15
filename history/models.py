@@ -802,7 +802,7 @@ class LevelRecord(models.Model):
 	feature_score = models.IntegerField(blank=True, null=True) #k27
 	auto = models.BooleanField(blank=True, null=True, db_index=True) #k33
 	password = models.IntegerField(blank=True, null=True) #k41
-	two_player = models.BooleanField(blank=True, null=True) #k43
+	two_player = models.IntegerField(blank=True, null=True) #k43
 	objects_count = models.IntegerField(blank=True, null=True) #k48
 	account_id = models.IntegerField(blank=True, null=True) #k60
 	coins = models.IntegerField(blank=True, null=True) #k64
