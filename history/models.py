@@ -433,7 +433,7 @@ class Level(models.Model):
 	def assign_username(self):
 		try:
 			user_object = GDUser.objects.get(online_id=self.cache_user_id)
-			self.cache_username = user_object.cache_non_player_username
+			self.cache_username = user_object.cache_non_player_username if user_object.cache_non_player_username is not None else user_object.cache_username
 			print(user_object.cache_username)
 			print("assigned username")
 		except:
