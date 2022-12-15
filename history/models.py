@@ -400,7 +400,7 @@ class Level(models.Model):
 		self.is_public = public
 		#self.save()
 
-		self.levelrecord_set.update(cache_is_public=True)
+		#self.levelrecord_set.update(cache_is_public=True)
 
 	def verify_needs_updating(self):
 		data_record = self.levelrecord_set.exclude( Q(level_name=None) | Q(level_string=None) ).order_by('-downloads')
