@@ -212,7 +212,9 @@ def process_download(response_json):
 
 	record.save()
 	record.create_user()
-	level_object.update_with_record(record, response_object.created)
+	level_object.cache_needs_revalidation = True
+	level_object.save()
+	#level_object.update_with_record(record, response_object.created)
 
 	return True
 
@@ -263,7 +265,9 @@ def process_get(response_json):
 		#print(f":::: {datetime.now().time()} : Creating user")
 		record.create_user()
 		#print(f":::: {datetime.now().time()} : Updating with record")
-		level_object.update_with_record(record, response_object.created)
+		#level_object.update_with_record(record, response_object.created)
+		level_object.cache_needs_revalidation = True
+		level_object.save()
 
 	print(f":: {datetime.now().time()} : Iterating through songs")
 	for item in song_array:

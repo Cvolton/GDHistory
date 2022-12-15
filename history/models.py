@@ -398,7 +398,7 @@ class Level(models.Model):
 
 	def set_public(self, public):
 		self.is_public = public
-		self.save()
+		#self.save()
 
 		self.levelrecord_set.update(cache_is_public=True)
 
