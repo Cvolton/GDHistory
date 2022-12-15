@@ -10,6 +10,15 @@ from history.constants import MiscConstants, SongNames
 register = template.Library()
 
 @register.simple_tag
+def user_record_to_username(record):
+	if record.username:
+		return record.username
+	elif record.user.cache_non_player_username:
+		return record.user.cache_non_player_username
+	else:
+		return record.user.cache_username
+
+@register.simple_tag
 def timestamp_to_printable_date(timestamp):
 	date_time = make_aware(datetime.datetime.fromtimestamp(timestamp))
 	return date_time.strftime("%b %d, %Y")

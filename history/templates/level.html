@@ -4,7 +4,7 @@
 {% load tags %}
 {% block title %}{{ first_record.level_name }}{% endblock title %}
 
-{% block description %}By {% if first_record.real_user_record %}{{ first_record.real_user_record.username }}{% else %}Unknown{% endif %} - {% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}*)
+{% block description %}By {% if first_record.real_user_record %}{% user_record_to_username first_record.real_user_record %}{% else %}Unknown{% endif %} - {% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}*)
 {{ first_record.downloads }} downloads | {% if first_record.dislikes %}{{ first_record.likes|sub:first_record.dislikes }}{% else %}{{ first_record.likes }}{% endif %} likes
 {{ records_count }} records | {{ level_string_count }} versions
 {% endblock description %}
@@ -33,7 +33,7 @@
 				</tr>
 				<tr>
 					<th>Author</th>
-					<td class="align-right">{% if first_record.real_user_record %}<a href="{% url 'search' %}?userID={{ first_record.real_user_record.user.online_id }}">{{ first_record.real_user_record.username }}</a>{% else %}Unknown{% endif %}</td>
+					<td class="align-right">{% if first_record.real_user_record %}<a href="{% url 'search' %}?userID={{ first_record.real_user_record.user.online_id }}">{% user_record_to_username first_record.real_user_record %}</a>{% else %}Unknown{% endif %}</td>
 				</tr>
 				<tr>
 					<th>Downloads</th>
@@ -129,7 +129,19 @@ Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{
 Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({% display_number record.stars %}*)</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="Epic"> 🔥</a>{% endif %}</td>
 						<!--<td>{{ record.stars }}</td>-->
 						<td>{{ record.level_version }}</td>
-						<td>{% if record.real_user_record and record.real_user_record.username %}{{ record.real_user_record.username }}{% else %}<a data-toggle="tooltip" title="Some sources do not provide the creator's username.">-</a>{% endif %}{% if record.real_user_record and record.real_user_record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}</td>
+						<td>{% if record.real_user_record and record.real_user_record.username %}
+								{{ record.real_user_record.username }}
+							{% elif record.username and not record.real_user_record %}
+								{{ record.username }} 
+									<a data-toggle="tooltip" title="This record does not have a user ID assigned.">❌</a>
+							{% else %}
+									<a data-toggle="tooltip" title="This record does not provide the creator's username. If one is shown, it comes from other records in the GDHistory system.">-
+										{% if record.real_user_record and record.real_user_record.user.cache_username %}
+											<small> ({% user_record_to_username record.real_user_record %})</small>
+										{% endif %}
+									</a>
+							{% endif %}
+							{% if record.real_user_record and record.real_user_record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}</td>
 						<td>{% game_version record.game_version %}</td>
 						<td>{% if record.level_string %}✅{%if record.level.is_public %} <a href="{% url 'download_record' online_id record.pk %}">(.gmd)</a>{% endif %}{% else %}❌{% endif %}</td>
 						<!--<td><a class="btn btn-primary" href="{% url 'level' online_id record.pk %}" role="button">Details</a></td>-->
