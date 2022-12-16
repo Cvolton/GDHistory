@@ -265,7 +265,7 @@ def process_get(response_json):
 		#print(f":::: {datetime.now().time()} : Saving record")
 		record.save()
 		#print(f":::: {datetime.now().time()} : Creating user")
-		record.create_user()
+		#record.create_user()
 		#print(f":::: {datetime.now().time()} : Updating with record")
 		#level_object.update_with_record(record, response_object.created)
 		level_object.cache_needs_revalidation = True
