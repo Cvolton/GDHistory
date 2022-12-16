@@ -13,6 +13,7 @@ import requests
 import json
 
 def create_request(response_json):
+	print(f":: {datetime.now().time()} : Creating request")
 	data_path = get_data_path()
 
 	response_objects = ServerResponse.objects.filter(created=response_json["created"])
@@ -29,6 +30,7 @@ def create_request(response_json):
 	#f = open(f"{data_path}/ServerResponse/{response_object.pk}", "w")
 	#f.write(response_json["raw_output"])
 	#f.close()
+	print(f":: {datetime.now().time()} : Request created")
 
 	return response_object
 
