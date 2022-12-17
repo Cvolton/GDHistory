@@ -9,12 +9,9 @@ class Command(BaseCommand):
 	def handle(self, *args, **options):
 		levels = Level.objects.filter(cache_needs_revalidation=True).prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
 		level_count = levels.count()
-		batch_size = 2500
 		for i in range(0,level_count):
-			print("Fetching batch")
-			level = levels[0:batch_size]
-			for j,level in enumerate(levels):
-				print(f"{(i*batch_size)+j} / {level_count} - Updating {level.online_id}")
-				level.revalidate_cache()
+			level = levels[0:1]
+			print(f"{(i*batch_size)+j} / {level_count} - Updating {level.online_id}")
+			level.revalidate_cache()
 
 		print("Done")
