@@ -11,7 +11,7 @@ class Command(BaseCommand):
 		level_count = levels.count()
 		for i in range(0,level_count):
 			level = levels[0:1]
-			print(f"{(i*batch_size)+j} / {level_count} - Updating {level.online_id}")
+			print(f"{i} / {level_count} - Updating {level.online_id}")
 			level.revalidate_cache()
 
 		print("Done")
