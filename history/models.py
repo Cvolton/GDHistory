@@ -342,8 +342,8 @@ class Level(models.Model):
 	cache_max_featured = models.IntegerField(default=0, db_index=True)
 	cache_epic = models.IntegerField(default=0, db_index=True)
 	cache_max_epic = models.IntegerField(default=0, db_index=True)
-	cache_two_player = models.BooleanField(db_index=True, default=False)
-	cache_max_two_player = models.BooleanField(db_index=True, default=False)
+	cache_two_player = models.IntegerField(db_index=True, default=False)
+	cache_max_two_player = models.IntegerField(db_index=True, default=False)
 	cache_original = models.IntegerField(default=0, db_index=True)
 	cache_max_original = models.IntegerField(default=0, db_index=True)
 
