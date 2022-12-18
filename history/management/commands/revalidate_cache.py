@@ -18,6 +18,6 @@ class Command(BaseCommand):
 		print("pass 1")
 		self.recalculate_levels(levels.filter(cache_submitted=None))
 		print("pass 2")
-		self.recalculate_levels(levels.order_by('cache_submitted'))
+		self.recalculate_levels(levels)
 
 		print("Done")
