@@ -215,6 +215,7 @@ def process_download(response_json):
 	record.save()
 	record.create_user()
 	level_object.cache_needs_revalidation = True
+	level_object.cache_needs_updating = False
 	level_object.save()
 	#level_object.update_with_record(record, response_object.created)
 
