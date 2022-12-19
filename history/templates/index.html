@@ -18,6 +18,10 @@
 							<td><span id="level-count"></span></td>
 						</tr>
 						<tr>
+							<td>Creators in our database:</td>
+							<td><span id="gduser-count"></span></td>
+						</tr>
+						<tr>
 							<td>Songs in our database:</td>
 							<td><span id="song-count"></span></td>
 						</tr>
@@ -32,10 +36,6 @@
 						<tr>
 							<td>Stored level strings:</td>
 							<td><span id="level-string-count"></span></td>
-						</tr>
-						<tr>
-							<td>Element 111 RG records:</td>
-							<td><span id="rg-count"></span></td>
 						</tr>
 					</tbody>
 				</table>
@@ -93,7 +93,8 @@
 		$('#save-count').append(counts.save_count);
 		$('#request-count').append(counts.request_count);
 		$('#level-string-count').append(counts.level_string_count);
-		$('#rg-count').append(`<a data-toggle="tooltip" title="Total RG records (including no data): ${counts.rg_total}">${counts.rg_count}</a>`);
+		$('#gduser-count').append(counts.gduser_count);
+		//$('#rg-count').append(`<a data-toggle="tooltip" title="Total RG records (including no data): ${counts.rg_total}">${counts.rg_count}</a>`);
 	});
 </script>
 {% endblock %}

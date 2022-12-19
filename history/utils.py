@@ -202,7 +202,7 @@ def get_level_object(level_id):
 	return level_object
 
 def recalculate_counts():
-	from .models import Level, Song, SaveFile, ServerResponse, LevelString, LevelRecord
+	from .models import Level, Song, SaveFile, ServerResponse, LevelString, LevelRecord, GDUser
 
 	counts = {
 		'level_count': Level.objects.filter(cache_search_available=True).count(),
@@ -210,6 +210,7 @@ def recalculate_counts():
 		'save_count': SaveFile.objects.count(),
 		'request_count': ServerResponse.objects.count(),
 		'level_string_count': LevelString.objects.count(),
+		'gduser_count': GDUser.objects.count(),
 		'rg_count': LevelRecord.objects.filter(level__online_id=MiscConstants.ELEMENT_111_RG).exclude(level_version=None, game_version=None, level_name=None, downloads=None).count(),
 		'rg_total': LevelRecord.objects.filter(level__online_id=MiscConstants.ELEMENT_111_RG).count(),
 	}
