@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock title %}
 {% block content %}
+<style>
+	.right {
+		text-align: right;
+	}
+	.right > span {
+		margin-right: 2em;
+	}
+</style>
 <div class="row">
 	<p class="lead">Welcome</p>
 </div>
@@ -15,27 +23,27 @@
 					<tbody>
 						<tr>
 							<td>Levels in our database:</td>
-							<td><span id="level-count"></span></td>
+							<td class="right"><span id="level-count"></span></td>
 						</tr>
 						<tr>
 							<td>Creators in our database:</td>
-							<td><span id="gduser-count"></span></td>
+							<td class="right"><span id="gduser-count"></span></td>
 						</tr>
 						<tr>
 							<td>Songs in our database:</td>
-							<td><span id="song-count"></span></td>
+							<td class="right"><span id="song-count"></span></td>
 						</tr>
 						<tr>
 							<td>Submitted save files:</td>
-							<td><span id="save-count"></span></td>
+							<td  class="right"><span id="save-count"></span></td>
 						</tr>
 						<tr>
 							<td>Processed server requests:</td>
-							<td><span id="request-count"></span></td>
+							<td class="right"><span id="request-count"></span></td>
 						</tr>
 						<tr>
 							<td>Stored level strings:</td>
-							<td><span id="level-string-count"></span></td>
+							<td class="right"><span id="level-string-count"></span></td>
 						</tr>
 					</tbody>
 				</table>
@@ -87,13 +95,17 @@
 </div>
 
 <script type="text/javascript">
+	function numberWithCommas(x) {
+	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+
 	$.getJSON('/api/v1/counts', function(counts) {
-		$('#level-count').append(counts.level_count);
-		$('#song-count').append(counts.song_count);
-		$('#save-count').append(counts.save_count);
-		$('#request-count').append(counts.request_count);
-		$('#level-string-count').append(counts.level_string_count);
-		$('#gduser-count').append(counts.gduser_count);
+		$('#level-count').append(numberWithCommas(counts.level_count));
+		$('#song-count').append(numberWithCommas(counts.song_count));
+		$('#save-count').append(numberWithCommas(counts.save_count));
+		$('#request-count').append(numberWithCommas(counts.request_count));
+		$('#level-string-count').append(numberWithCommas(counts.level_string_count));
+		$('#gduser-count').append(numberWithCommas(counts.gduser_count));
 		//$('#rg-count').append(`<a data-toggle="tooltip" title="Total RG records (including no data): ${counts.rg_total}">${counts.rg_count}</a>`);
 	});
 </script>
