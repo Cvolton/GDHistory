@@ -14,7 +14,7 @@ class Command(BaseCommand):
 			level.revalidate_cache()
 
 	def handle(self, *args, **options):
-		levels = Level.objects.filter(cache_needs_revalidation=True).prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
+		levels = Level.objects.filter(cache_needs_revalidation=True)#.prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
 		#print("pass 1")
 		#self.recalculate_levels(levels.filter(cache_submitted=None))
 		#print("pass 2")
