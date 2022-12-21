@@ -15,8 +15,10 @@ def user_record_to_username(record):
 		return record.username
 	elif record.user.cache_non_player_username:
 		return record.user.cache_non_player_username
-	else:
+	elif record.user.cache_username:
 		return record.user.cache_username
+	else:
+		return "Unknown"
 
 @register.simple_tag
 def timestamp_to_printable_date(timestamp):
