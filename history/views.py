@@ -100,6 +100,10 @@ def upload(request):
 	else:
 		return render(request, 'upload.html')
 
+def debug(request, online_id):
+	Level.objects.get(online_id=online_id).revalidate_cache()
+	return render(request, 'error.html', {'error': 'good'})
+
 def search(request):
 	form = SearchForm(request.GET or None)
 

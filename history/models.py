@@ -403,10 +403,10 @@ class Level(models.Model):
 		#self.levelrecord_set.update(cache_is_public=True)
 
 	def verify_needs_updating(self):
-		data_record = self.levelrecord_set.exclude( Q(level_name=None) | Q(level_string=None) ).order_by('-downloads')
+		data_record = self.levelrecord_set.exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
-			best_record = self.levelrecord_set.exclude( Q(level_name=None) ).order_by('-downloads')[:1][0]
+			best_record = self.levelrecord_set.exclude( Q(level_name=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')[:1][0]
 
 			level_strings = {}
 			for record in data_record:
@@ -429,7 +429,7 @@ class Level(models.Model):
 		else:
 			self.cache_needs_updating = True
 			self.cache_level_string_available = False
-		self.save()
+		#self.save()
 	def assign_username(self):
 		try:
 			user_object = GDUser.objects.get(online_id=self.cache_user_id)
@@ -509,7 +509,7 @@ class Level(models.Model):
 			changed = True
 			check_level_string = True
 
-		if check_level_string:
+		if check_level_string and not force:
 			self.verify_needs_updating()
 
 		if self.cache_username is None:
@@ -540,12 +540,14 @@ class Level(models.Model):
 			self.save()
 			return
 
-		self.update_with_record(best_record[0], best_record[0].real_date, True)
+		self.verify_needs_updating()
 
 		best_daily_record = self.levelrecord_set.exclude( Q(daily_id = 0) | Q(daily_id = None) ).order_by('-daily_id')
 		best_record_set = best_daily_record[:1]
 		if len(best_record_set) > 0:
-			self.update_with_record(best_record_set[0], None)
+			self.cache_daily_id = best_record_set[0].daily_id
+
+		self.update_with_record(best_record[0], best_record[0].real_date, True)
 
 		#set username
 		"""best_record = best_record[0]
@@ -559,9 +561,8 @@ class Level(models.Model):
 				print(":(((( Unable to set username")"""
 
 		#needs updating field
-		self.verify_needs_updating()
 
-		self.save()
+		#self.save()
 
 	def get_serialized_base(self):
 		if isinstance(self.cache_submitted, str): submitted_date = timezone.datetime.fromisoformat(self.cache_submitted)
