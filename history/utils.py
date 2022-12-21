@@ -156,7 +156,6 @@ def get_user_object(user_id):
 def create_user_record(user_object, account_id, username, date, server_response, save_file, record_type):
 	if user_object is None: return None
 
-	if username == "": return
 	from .models import GDUserRecord, ServerResponse, SaveFile, LevelRecord
 
 	try:
