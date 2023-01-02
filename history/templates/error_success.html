@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% block title %}Error{% endblock title %}
+{% block content %}
+<div class="alert alert-success" role="alert">
+{{ error }}
+</div>
+{% endblock %}

@@ -96,7 +96,7 @@ def upload(request):
 	form = UploadFileForm(request.POST or None, request.FILES or None)
 	if request.method == 'POST' and form.is_valid():
 		ccUtils.upload_save_file(request.FILES['file'], datetime.strptime(form.cleaned_data['time'], '%Y-%m-%d'), request.user)
-		return HttpResponse("good")
+		return render(request, 'error_success.html', {'error': 'good'})
 	else:
 		return render(request, 'upload.html')
 
