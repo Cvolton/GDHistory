@@ -530,7 +530,7 @@ class Level(models.Model):
 		self.cache_max_epic = maximums['epic__max'] or 0
 		self.cache_max_two_player = maximums['two_player__max'] or 0
 		self.cache_max_original = maximums['original__max'] or 0
-		self.cache_daily_id = maximums['daily_id'] or 0
+		self.cache_daily_id = maximums['daily_id__max'] or 0
 		print("set maximums, not saved")
 
 	def revalidate_cache(self):
