@@ -25,5 +25,5 @@ class Command(BaseCommand):
 			if history.serverUtils.import_json(f) is not None:
 				os.rename(export_path, f"{imports_root}/ServerResponse-Processed/{filename}")
 
-		history.utils.recalculate_counts()
+		history.utils.recalculate_everything()
 		print("Done")

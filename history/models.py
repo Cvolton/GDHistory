@@ -518,16 +518,19 @@ class Level(models.Model):
 
 		if changed:
 			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.cache_level_name is not None)
+		
+		if changed or force:
 			self.save()
 
 	def recalculate_maximums(self):
-		maximums = self.levelrecord_set.aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'))
+		maximums = self.levelrecord_set.aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'))
 		self.cache_max_stars = maximums['stars__max'] or 0
 		#self.cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
 		self.cache_max_featured = maximums['feature_score__max'] or 0
 		self.cache_max_epic = maximums['epic__max'] or 0
 		self.cache_max_two_player = maximums['two_player__max'] or 0
 		self.cache_max_original = maximums['original__max'] or 0
+		self.cache_daily_id = maximums['daily_id'] or 0
 		print("set maximums, not saved")
 
 	def revalidate_cache(self):
@@ -541,11 +544,6 @@ class Level(models.Model):
 			return
 
 		self.verify_needs_updating()
-
-		best_daily_record = self.levelrecord_set.exclude( Q(daily_id = 0) | Q(daily_id = None) ).order_by('-daily_id')
-		best_record_set = best_daily_record[:1]
-		if len(best_record_set) > 0:
-			self.cache_daily_id = best_record_set[0].daily_id
 
 		self.update_with_record(best_record[0], best_record[0].real_date, True)
 
