@@ -63,6 +63,16 @@ class SaveFile(models.Model):
 	binary_version = models.IntegerField(blank=True, null=True)
 	#also raw save file with password stripped out stored on the side in a file
 
+	cache_levels_count = models.IntegerField(blank=True, null=True)
+
+	def get_count(self):
+		if self.cache_levels_count: return self.cache_levels_count
+		count = self.levelrecord_set.count()
+		if self.is_processed:
+			self.cache_levels_count = count
+			self.save()
+		return count
+
 class ServerResponse(models.Model):
 
 	created = models.DateTimeField(default=timezone.now, db_index=True)
