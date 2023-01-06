@@ -548,7 +548,7 @@ class Level(models.Model):
 		record_strings = set()
 		for record in self.levelrecord_set.filter(cache_is_dupe=False):
 			#name, rating_sum, ratings, demon, auto, stars, version, real_user_record, game_version, levelstring
-			current_record_string = f"{record.level_name}, {record.rating}, {record.rating_sum}, {record.auto}, {record.demon}, {record.stars}, {record.level_version}, {record.real_user_record}, {record.game_version}, {record.level_string}"
+			current_record_string = f"{record.level_name}, {record.rating}, {record.rating_sum}, {record.auto}, {record.demon}, {record.stars}, {record.level_version}, {record.real_user_record.get_serialized_base() if record.real_user_record else record.username}, {record.game_version}, {record.level_string}, {record.coins}, {record.description}, {record.song}, {record.official_song}, {record.feature_score}, {record.epic}, {record.password}"
 			if current_record_string in record_strings:
 				record.cache_is_dupe = True
 				record.save()

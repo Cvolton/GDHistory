@@ -25,3 +25,4 @@ class SearchForm(forms.Form):
 
 class LevelForm(forms.Form):
 	blanks = forms.BooleanField(label='Show blanks', required=False)
+	dupes = forms.BooleanField(label='Show dupes', required=False)

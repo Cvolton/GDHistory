@@ -29,7 +29,7 @@ def index(request):
 def view_level(request, online_id=None, record_id=None):
 	form = LevelForm(request.GET or None)
 
-	all_levels = LevelRecord.objects.filter( Q(level__is_public=True) | Q(level__online_id__lt=utils.get_level_id_within_window()), cache_is_dupe=False )
+	all_levels = LevelRecord.objects.filter( Q(level__is_public=True) | Q(level__online_id__lt=utils.get_level_id_within_window()) )
 	#TODO: improve this
 	if request.user.is_authenticated and request.user.is_superuser:
 		all_levels = LevelRecord.objects.all()
@@ -40,6 +40,15 @@ def view_level(request, online_id=None, record_id=None):
 		level_records = level_records_unfiltered
 	else:
 		level_records = level_records_unfiltered.exclude(level_version=None, game_version=None, level_name=None, downloads=None)
+
+	if request.method == 'GET' and form.is_valid() and form.cleaned_data['dupes']:
+		dupes_shown = True
+		level_records = level_records_unfiltered
+		dupes_present = True
+	else:
+		dupes_shown = False
+		level_records = level_records_unfiltered.filter(cache_is_dupe=False)
+		dupes_present = level_records_unfiltered.filter(cache_is_dupe=True)[:1].count()
 
 	#tasks.download_level_task.delay(online_id)
 
@@ -87,7 +96,7 @@ def view_level(request, online_id=None, record_id=None):
 		years.insert(0, -1)
 		records[-1] = distinct_records
 
-	context = {'level_records': records, 'record_id': record_id, 'first_record': first_record, 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count}
+	context = {'level_records': records, 'record_id': record_id, 'first_record': first_record, 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count, 'dupes_shown': dupes_shown, 'dupes_present': dupes_present}
 
 	return render(request, 'level.html', context)
 
