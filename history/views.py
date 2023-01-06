@@ -43,12 +43,12 @@ def view_level(request, online_id=None, record_id=None):
 
 	if request.method == 'GET' and form.is_valid() and form.cleaned_data['dupes']:
 		dupes_shown = True
-		level_records = level_records
 		dupes_present = True
+		level_records = level_records
 	else:
 		dupes_shown = False
-		level_records = level_records.filter(cache_is_dupe=False)
 		dupes_present = level_records.filter(cache_is_dupe=True)[:1].count()
+		level_records = level_records.filter(cache_is_dupe=False)
 
 	#tasks.download_level_task.delay(online_id)
 
