@@ -269,3 +269,8 @@ def get_level_id_before(last_date):
 	estimated_id = time_estimation.cache_online_id
 	print(estimated_id)
 	return estimated_id
+
+def annotate_record_set_with_date(record_set):
+	from django.db.models import Min
+	from django.db.models.functions import Coalesce
+	return record_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created', 'manual_submission__created'))

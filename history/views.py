@@ -34,7 +34,7 @@ def view_level(request, online_id=None, record_id=None):
 	if request.user.is_authenticated and request.user.is_superuser:
 		all_levels = LevelRecord.objects.all()
 
-	level_records_unfiltered = all_levels.filter(level__online_id=online_id).prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created', 'manual_submission__created')).order_by('-real_date')
+	level_records_unfiltered = utils.annotate_record_set_with_date(all_levels.filter(level__online_id=online_id).prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
 
 	if request.method == 'GET' and form.is_valid() and form.cleaned_data['blanks']:
 		level_records = level_records_unfiltered
@@ -43,12 +43,12 @@ def view_level(request, online_id=None, record_id=None):
 
 	if request.method == 'GET' and form.is_valid() and form.cleaned_data['dupes']:
 		dupes_shown = True
-		level_records = level_records_unfiltered
+		level_records = level_records
 		dupes_present = True
 	else:
 		dupes_shown = False
-		level_records = level_records_unfiltered.filter(cache_is_dupe=False)
-		dupes_present = level_records_unfiltered.filter(cache_is_dupe=True)[:1].count()
+		level_records = level_records.filter(cache_is_dupe=False)
+		dupes_present = level_records.filter(cache_is_dupe=True)[:1].count()
 
 	#tasks.download_level_task.delay(online_id)
 
