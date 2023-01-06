@@ -47,9 +47,11 @@ def print_filters_without(filters, to_delete):
 	return print_filters(filter_list)
 
 @register.simple_tag
-def print_search_th(filters, sort, default_desc, human_readable):
+def print_search_th(filters, sort, default_desc, human_readable, default_arrow=False):
 	filters_without = print_filters_without(filters, 's')
 	sort_mark = ""
+	if default_arrow:
+		sort_mark = " &#9660;"
 	if 's' in filters and filters['s'] == sort:
 		default_desc = True
 		sort_mark = " &#9650;"
