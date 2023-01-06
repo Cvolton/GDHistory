@@ -543,6 +543,18 @@ class Level(models.Model):
 		self.cache_daily_id = maximums['daily_id__max'] or 0
 		print("set maximums, not saved")
 
+	def dedup_records(self):
+		"""This ensures there is only one record of each level version with cache_is_dupe set to False"""
+		record_strings = set()
+		for record in self.levelrecord_set.filter(cache_is_dupe=False):
+			#name, rating_sum, ratings, demon, auto, stars, version, real_user_record, game_version, levelstring
+			current_record_string = f"{record.level_name}, {record.rating}, {record.rating_sum}, {record.auto}, {record.demon}, {record.stars}, {record.level_version}, {record.real_user_record}, {record.game_version}, {record.level_string}"
+			if current_record_string in record_strings:
+				record.cache_is_dupe = True
+				record.save()
+			record_strings.add(current_record_string)
+			print(f"{record} - {current_record_string} - {record.cache_is_dupe}")
+
 	def revalidate_cache(self):
 		self.cache_needs_revalidation = False
 		self.recalculate_maximums()
@@ -556,6 +568,8 @@ class Level(models.Model):
 		self.verify_needs_updating()
 
 		self.update_with_record(best_record[0], best_record[0].real_date, True)
+
+		self.dedup_records()
 
 		#set username
 		"""best_record = best_record[0]
@@ -791,6 +805,7 @@ class LevelRecord(models.Model):
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 
 	cache_is_public = models.BooleanField(blank=True, null=True, db_index=True)
+	cache_is_dupe = models.BooleanField(default=False, db_index=True)
 
 	level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True) #k2 #in the real world this can't be more than 20, unless you're dealing with private server save files
 	description = models.TextField(blank=True, null=True) #k3
