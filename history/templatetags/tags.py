@@ -50,12 +50,10 @@ def print_filters_without(filters, to_delete):
 def print_search_th(filters, sort, default_desc, human_readable, default_arrow=False):
 	filters_without = print_filters_without(filters, 's')
 	sort_mark = ""
-	if default_arrow:
-		sort_mark = " &#9660;"
 	if 's' in filters and filters['s'] == sort:
 		default_desc = True
 		sort_mark = " &#9650;"
-	elif 's' in filters and filters['s'] == f"-{sort}":
+	elif ('s' in filters and filters['s'] == f"-{sort}") or (default_arrow and not ('s' in filters and filters['s'])):
 		default_desc = False
 		sort_mark = " &#9660;"
 
