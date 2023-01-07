@@ -901,3 +901,8 @@ class LevelRecord(models.Model):
 		response['real_user_record'] = None if self.real_user_record is None else self.real_user_record.get_serialized_base()
 		response['song'] = None if self.song is None else self.song.get_serialized_base()
 		return response
+
+	class Meta:
+		indexes = [
+			models.Index(fields=['level', 'cache_is_dupe'], name='level_dupe')
+		]

@@ -28,7 +28,7 @@ def index(request):
 
 def view_level(request, online_id=None, record_id=None):
 	level = utils.get_level_object(online_id)
-	if not (request.user.is_authenticated and request.user.is_superuser) and not (level.is_public or online_id < utils.get_level_id_within_window()):
+	if (not (request.user.is_authenticated and request.user.is_superuser) and not (level.is_public or int(online_id) < utils.get_level_id_within_window())) or level.levelrecord_set.count() == 0:
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
 	form = LevelForm(request.GET or None)
