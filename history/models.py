@@ -360,6 +360,7 @@ class Level(models.Model):
 	cache_needs_revalidation = models.BooleanField(db_index=True, default=False)
 	cache_needs_search_update = models.BooleanField(db_index=True, default=False)
 
+	needs_priority_download = models.BooleanField(db_index=True, default=False)
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 	class Meta:

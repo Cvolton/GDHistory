@@ -8,7 +8,7 @@ from django.core.cache import cache
 from datetime import datetime
 
 from .models import LevelRecord, LevelDateEstimation
-from . import ccUtils, serverUtils, tasks, utils
+from . import ccUtils, serverUtils, tasks, utils, constants
 
 import math
 import plistlib
@@ -19,6 +19,15 @@ def index_counts(request):
 		counts = utils.recalculate_counts()
 
 	return JsonResponse(counts)
+
+def save_level(request, online_id=None):
+	level = utils.get_level_object(online_id)
+	if level.needs_priority_download: return JsonResponse({'success': False, 'fail_reason': constants.SaveFailReasons.ALREADY_QUEUED})
+
+	level.needs_priority_download = True
+	level.save()
+
+	return JsonResponse({'success': True})
 
 def level_info(request, online_id=None):
 	all_levels = LevelRecord.objects.filter(level__is_public=True)

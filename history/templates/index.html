@@ -90,8 +90,49 @@
 	</div>
 </div>
 <div class="row">
+	<div class="col mb-3">
+		<div class="card">
+			<div class="card-header lead">
+				Save level now
+			</div>
+			<div class="card-body">
+				<form id="estimator">
+					<div class="mb-3">
+						<label for="online_id" class="form-label">Level ID</label>
+						<input class="form-control" type="text" id="online_id" name="online_id">
+					</div>
+					<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#saveModal">Save</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col mb-3">
+		<!-- placeholder to fill space -->
+	</div>
+	<div class="col mb-3">
+		<!-- placeholder to fill space -->
+	</div>
+</div>
+<div class="row">
 	<p class="lead">Disclaimer</p>
 	<p>geometrydash.eu is <b>not</b> affiliated, associated, authorized, endorsed by, or in any way officially connected with <b>RobTop Games AB</b>, or any of its subsidiaries or its affiliates. All of the content on this website is <b>unofficial</b> and should be treated as such. The official RobTop Games AB website can be found at <a href="http://www.robtopgames.com">http://www.robtopgames.com</a>.</p>
+</div>
+
+<div class="modal" tabindex="-1" id="saveModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Save level now</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-placeholder">Placeholder text for save level now feature.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script type="text/javascript">
@@ -108,5 +149,30 @@
 		$('#gduser-count').append(numberWithCommas(counts.gduser_count));
 		//$('#rg-count').append(`<a data-toggle="tooltip" title="Total RG records (including no data): ${counts.rg_total}">${counts.rg_count}</a>`);
 	});
+
+	var saveModal = document.getElementById('saveModal')
+	saveModal.addEventListener('show.bs.modal', function (event) {
+		var paragraph = $('#modal-placeholder')
+		paragraph.text('Queuing level for download')
+
+		$.getJSON(`/api/v1/level/${online_id.value}/save`, function(result) {
+			if(result["success"]) {
+				paragraph.text('Level queued for download. Note that it might take a few hours for the updated record to appear on the website.')
+			} else {
+				switch(result['fail_reason']) {
+					case 1:
+						paragraph.text('Level already queued for download')
+						break;
+					default:
+						paragraph.text('Failed to queue level (unknown reason)')
+						break;
+				}
+			}
+		})
+		.fail(function() { 
+			paragraph.text('Failed to queue level')
+		});
+	})
+
 </script>
 {% endblock %}

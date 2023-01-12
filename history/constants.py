@@ -1,6 +1,9 @@
 from datetime import datetime
 from django.utils.timezone import make_aware
 
+class SaveFailReasons:
+	ALREADY_QUEUED = 1
+
 class XORKeys:
 	PASSWORD_KEY = 26364
 
