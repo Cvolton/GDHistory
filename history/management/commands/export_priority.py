@@ -13,17 +13,13 @@ class Command(BaseCommand):
 	def handle(self, *args, **options):
 		data_path = history.utils.get_data_path()
 		levels = Level.objects.filter(needs_priority_download=True)
-		level_count = levels.count()
+		levels_small = levels[0:20]
 		levels_to_export = []
-		batch_size = 2500
-		batch_count = math.ceil(level_count/2500)
-		for i in range(0,batch_count):
-			levels_small = levels[i*batch_size:(i+1)*batch_size]
-			for level in levels_small:
-				print(f"{i} / {batch_count} - {level.online_id}")
-				levels_to_export.append(level.online_id)
-				level.needs_priority_download = False
-				level.save()
+		for i,level in enumerate(levels_small):
+			print(f"{i} / 20 - {level.online_id}")
+			levels_to_export.append(level.online_id)
+			level.needs_priority_download = False
+			level.save()
 
 		print("Creating JSON")
 		task_json = {
