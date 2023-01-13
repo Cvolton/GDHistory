@@ -3,14 +3,14 @@ asgiref==3.5.2
 billiard==3.6.4.0
 camel-converter==1.0.6
 celery==5.2.3
-certifi==2021.10.8
+certifi==2022.12.7
 charset-normalizer==2.0.11
 click==8.0.3
 click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.2.0
 Deprecated==1.2.13
-Django==4.1.1
+Django==4.1.5
 django-debug-toolbar==3.2.4
 django-mathfilters==1.0.0
 django-redis==5.2.0
@@ -19,7 +19,7 @@ kombu==5.2.3
 meilisearch==0.22.0
 mysqlclient==2.1.0
 packaging==21.3
-Pillow==9.0.1
+Pillow==9.4.0
 prompt-toolkit==3.0.27
 psycopg2==2.9.3
 pycryptodome==3.15.0
