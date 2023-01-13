@@ -119,7 +119,7 @@
 				<tbody>
 					{% for record in level_records|get_item:year %}
 					<tr>
-						<td><a href="{% url 'level' online_id record.pk %}">{{ record.real_date|date:"N j, Y" }}</a></td>
+						<td><a href="{% url 'level' online_id record.pk %}?{% print_filters filters %}">{{ record.real_date|date:"N j, Y" }}</a></td>
 						<td>{{ record.record_type }}{% if record.record_type == "get" %} <small>({{ record.server_response.get_type }})</small>{% endif %}</td>
 						<td>{{ record.level_name }}</td>
 						<td>{{ record.downloads }}</td>

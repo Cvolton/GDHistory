@@ -93,7 +93,7 @@ def view_level(request, online_id=None, record_id=None):
 		years.insert(0, -1)
 		records[-1] = distinct_records
 
-	context = {'level_records': records, 'record_id': record_id, 'first_record': first_record, 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count, 'dupes_shown': dupes_shown, 'dupes_present': dupes_present}
+	context = {'level_records': records, 'record_id': record_id, 'first_record': first_record, 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count, 'dupes_shown': dupes_shown, 'dupes_present': dupes_present, 'filters': form.cleaned_data if form.is_valid() else []}
 
 	return render(request, 'level.html', context)
 
