@@ -83,7 +83,7 @@ def index_queue_positive():
 	from .models import Level
 	index = get_level_index()
 
-	levels_to_update = Level.objects.filter(cache_needs_search_update=True, cache_search_available=True)
+	levels_to_update = Level.objects.filter(cache_needs_search_update=True, cache_search_available=True, cache_needs_revalidation=False)
 
 	level_dicts = {}
 	for i,level in enumerate(levels_to_update):
