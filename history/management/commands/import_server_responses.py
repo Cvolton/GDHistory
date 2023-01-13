@@ -9,10 +9,19 @@ from django.core.management.base import BaseCommand, CommandError
 class Command(BaseCommand):
 	help = 'Imports server responses from JSON'
 
-	def handle(self, *args, **options):
+	def imports_root(self):
 		data_path = history.utils.get_data_path()
 		imports_root = f"{data_path}/Imports"
-		directory = f"{imports_root}/ServerResponse/"
+		return imports_root
+
+	def add_arguments(self, parser):
+		imports_root = self.imports_root()
+
+		parser.add_argument('directory',  nargs='?', type=str, help='Path to the import files', default=f"{imports_root}/ServerResponse/")
+
+	def handle(self, *args, **options):
+		imports_root = self.imports_root()
+		directory = options['directory']
 		files = os.listdir(directory)
 		file_count = len(files)
 		for i, filename in enumerate(files):
