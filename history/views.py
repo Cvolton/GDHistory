@@ -308,7 +308,7 @@ def download_record(request, record_id=None, online_id=None):
 def my_submissions(request, show_all=None):
 	#TODO: optimize this
 	submissions = SaveFile.objects.order_by('created').prefetch_related("author")
-	if not (show_all and request.user.is_superuser):
+	if not (show_all):# and request.user.is_superuser):
 		user = HistoryUser.objects.get(user=request.user)
 		submissions = submissions.filter(author=user)
 
