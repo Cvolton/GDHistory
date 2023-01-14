@@ -29,20 +29,6 @@ def do_is_public_updating(records):
 
 	LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
 
-def do_none_updating(records):
-	record_count = records.count()
-	i = 1
-	for record in records:
-		print(f"{i} / {record_count} - Updating {record.online_id}")
-		record.cache_downloads = record.cache_downloads if record.cache_downloads is not None else 0
-		record.cache_likes = record.cache_likes if record.cache_likes is not None else 0
-		record.cache_stars = record.cache_stars if record.cache_stars is not None else 0
-		record.cache_needs_search_update = True
-		#record.save()
-		i += 1
-
-	Level.objects.bulk_update(records, ['cache_stars', 'cache_likes', 'cache_downloads', 'cache_needs_search_update'], batch_size=1000)
-
 def do_search_cache_updating(records, status):
 	record_count = records.count()
 	i = 1
@@ -59,8 +45,6 @@ def update_cached_fields():
 	do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=False).exclude(level__is_public=False))
 	do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=True).exclude(level__is_public=True))
 	do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=None).exclude(level__is_public=None))
-
-	do_none_updating(Level.objects.filter( Q(cache_downloads=None) | Q(cache_likes=None) | Q(cache_stars=None) ))
 
 	estimated_id = get_level_id_within_window()
 
