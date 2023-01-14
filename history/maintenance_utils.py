@@ -17,6 +17,7 @@ def update_is_public():
 		record = record[0]
 		print(f"{i} / {record_count} - Updating {record.level.online_id}")
 		record.level.set_public(True)
+		record.level.save()
 
 def do_is_public_updating(records):
 	record_count = records.count()
