@@ -10,6 +10,16 @@ from history.constants import MiscConstants, SongNames
 register = template.Library()
 
 @register.simple_tag
+def print_file_size(size):
+	size_KB = size / 1024
+	size_MB = size_KB / 1024
+	if size_MB > 1: return f"{size_MB:.2f} MB"
+	if size_KB > 100: return f"{size_KB:.0f} KB"
+	if size_KB > 10: return f"{size_KB:.1f} KB"
+	if size_KB > 1: return f"{size_KB:.2f} KB"
+	return f"{size} B"
+
+@register.simple_tag
 def user_record_to_username(record):
 	if record.username:
 		return record.username

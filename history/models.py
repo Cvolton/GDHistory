@@ -695,6 +695,8 @@ class LevelString(models.Model):
 	requires_base64 = models.BooleanField(default=False)
 
 	decompressed_sha256 = models.CharField(max_length=64, db_index=True, blank=True, null=True)
+	file_size = models.IntegerField(blank=True, null=True, db_index=True)
+	decompressed_file_size = models.IntegerField(blank=True, null=True, db_index=True)
 
 	def get_file_path(self):
 		data_path = utils.get_data_path()
@@ -750,6 +752,18 @@ class LevelString(models.Model):
 			if self.decompressed_sha256: self.save()
 		
 		return self.decompressed_sha256
+
+	def calculate_file_size(self):
+		self.file_size = len(self.load_file_content())
+		self.decompressed_file_size = len(self.calculate_decompressed_string())
+		self.save()
+		return self.file_size
+
+	def get_file_size(self):
+		if not self.file_size:
+			return self.calculate_file_size()
+
+		return self.file_size
 
 
 class LevelRecord(models.Model):
