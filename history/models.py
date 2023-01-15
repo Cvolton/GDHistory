@@ -228,9 +228,11 @@ class Song(models.Model):
 	cache_artist_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
 
+	cache_needs_revalidation = models.BooleanField(db_index=True, default=False)
+
 	def update_with_record(self, record):
 		if record.song_name != self.cache_song_name or record.artist_name != self.cache_artist_name:
-			self.revalidate_cache()
+			self.cache_needs_revalidation = True
 
 	"""		This implementation would require a date cache to be built in SongRecord, something not currently worth doing since the data almost never changes
 	def update_with_record(self, record):
@@ -270,6 +272,8 @@ class Song(models.Model):
 		self.cache_song_name = best_record.song_name
 		self.cache_artist_name = best_record.artist_name
 		self.cache_submitted = best_record.real_date
+
+		self.cache_needs_revalidation = False
 		self.save()
 
 	def get_serialized_base(self):

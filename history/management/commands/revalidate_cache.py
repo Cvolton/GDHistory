@@ -13,11 +13,20 @@ class Command(BaseCommand):
 			print(f"{i} / {level_count} - Updating {level.online_id}")
 			level.revalidate_cache()
 
+	def recalculate_songs(self, songs):
+
+		song_count = songs.count()
+		for i in range(0,song_count):
+			song = songs[i:i+1]
+			song = song[0]
+			print(f"{i} / {song_count} - Updating {song.online_id}")
+			song.revalidate_cache()
+			i += 1
+
 	def handle(self, *args, **options):
 		levels = Level.objects.filter(cache_needs_revalidation=True)#.prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string')
-		#print("pass 1")
-		#self.recalculate_levels(levels.filter(cache_submitted=None))
-		#print("pass 2")
 		self.recalculate_levels(levels)
-
-		print("Done")
+		print("Done levels")
+		songs = Song.objects.filter(cache_needs_revalidation=True)#.prefetch_related('songrecord_set__save_file')
+		self.recalculate_songs(songs)
+		print("Done songs")
