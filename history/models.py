@@ -233,6 +233,7 @@ class Song(models.Model):
 	def update_with_record(self, record):
 		if record.song_name != self.cache_song_name or record.artist_name != self.cache_artist_name:
 			self.cache_needs_revalidation = True
+			self.save()
 
 	"""		This implementation would require a date cache to be built in SongRecord, something not currently worth doing since the data almost never changes
 	def update_with_record(self, record):
