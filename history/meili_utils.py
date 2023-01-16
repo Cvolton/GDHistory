@@ -105,19 +105,21 @@ def index_queue_positive():
 def index_queue_negative():
 	from .models import Level
 	index = get_level_index()
-	levels_to_delete = []
-	levels_to_update = Level.objects.filter(cache_needs_search_update=True, cache_search_available=False)
-	for level in levels_to_update:
-		levels_to_delete.append(level.online_id)
-		level.cache_needs_search_update = False
+	while True:
+		levels_to_delete = []
+		levels_to_update = Level.objects.filter(cache_needs_search_update=True, cache_search_available=False)[:50000]
+		for level in levels_to_update:
+			levels_to_delete.append(level.online_id)
+			level.cache_needs_search_update = False
 
-	Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
+		if len(levels_to_delete) == 0:
+			print("negative queue finished")
+			return
 
-	if len(levels_to_delete) == 0:
-		print("queue empty")
-		return
+		index.delete_documents(levels_to_delete)
 
-	index.delete_documents(levels_to_delete)
+		Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
+		print("done 1")
 
 def index_queue():
 	index_queue_positive()
