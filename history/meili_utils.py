@@ -83,24 +83,25 @@ def index_queue_positive():
 	from .models import Level
 	index = get_level_index()
 
-	levels_to_update = Level.objects.filter(cache_needs_search_update=True, cache_search_available=True, cache_needs_revalidation=False)
+	while True:
+		levels_to_update = Level.objects.filter(cache_needs_search_update=True, cache_search_available=True, cache_needs_revalidation=False)[:10000]
+		levels_dict = []
+		for level in levels_to_update:
+			levels_dict.append(level.get_serialized_base_json())
+			level.cache_needs_search_update = False
 
-	level_dicts = {}
-	for i,level in enumerate(levels_to_update):
-		dict_index = math.floor(i / 10000)
-		if dict_index not in level_dicts:
-			level_dicts[dict_index] = []
-		level_dicts[dict_index].append(level.get_serialized_base_json())
-		level.cache_needs_search_update = False
+		if len(levels_dict) == 0:
+			print("positive queue empty")
+			return
 
-	if len(level_dicts) == 0:
-		print("queue empty")
-		return
+		index.add_documents(levels_dict)
 
-	for i in level_dicts:
-		index.add_documents(level_dicts[i])
+		Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
+		print("done 1")
 
-	Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
+		if len(levels_dict) < 10000:
+			print("positive queue finished")
+			return
 
 def index_queue_negative():
 	from .models import Level
@@ -113,13 +114,17 @@ def index_queue_negative():
 			level.cache_needs_search_update = False
 
 		if len(levels_to_delete) == 0:
-			print("negative queue finished")
+			print("negative queue empty")
 			return
 
 		index.delete_documents(levels_to_delete)
 
 		Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
-		print("done 1")
+		print("done 1 negative")
+
+		if len(levels_to_delete) < 50000:
+			print("negative queue finished")
+			return
 
 def index_queue():
 	index_queue_positive()
