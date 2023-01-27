@@ -51,7 +51,6 @@ def response_to_dict(response, separator):
 		else:
 			result[last_key] = item
 		i += 1
-	print(result)
 	return result
 
 def create_user_dict(response):
