@@ -51,6 +51,7 @@ def response_to_dict(response, separator):
 		else:
 			result[last_key] = item
 		i += 1
+	print(result)
 	return result
 
 def create_user_dict(response):
@@ -127,7 +128,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			description = description,
 			description_encoded = description_encoded,
 			#username = not included,
-			user_id = int(assign_key(level_data, 6)),
+			user_id = assign_key(level_data, 6),
 			official_song = assign_key(level_data, 12),
 			rating = assign_key(level_data, 8),
 			rating_sum = assign_key(level_data, 9),
