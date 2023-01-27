@@ -760,7 +760,8 @@ class LevelString(models.Model):
 
 	def calculate_file_size(self):
 		self.file_size = len(self.load_file_content())
-		self.decompressed_file_size = len(self.calculate_decompressed_string())
+		if self.calculate_decompressed_string():
+			self.decompressed_file_size = len(self.calculate_decompressed_string())
 		self.save()
 		return self.file_size
 
