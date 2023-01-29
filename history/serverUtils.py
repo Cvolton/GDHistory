@@ -258,8 +258,9 @@ def process_get(response_json):
 		record = create_level_record_from_data(level_info, level_object, LevelRecordType.GET, response_object, legacy_description=response_json.get('legacy_description', False))
 		record.cache_is_public = True
 
-		if record.user_id in user_dict:
-			user_record = user_dict[record.user_id]
+		user_id = int(record.user_id or 0)
+		if user_id in user_dict:
+			user_record = user_dict[user_id]
 			record.username = record.username if len(user_record) < 2 else user_record[1]
 			record.account_id = record.account_id if len(user_record) < 3 else user_record[2]
 			
