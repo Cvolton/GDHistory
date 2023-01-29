@@ -81,6 +81,9 @@ def view_level(request, online_id=None, record_id=None):
 
 	if first_record is None:
 		first_record = level_records[0]
+
+	if not first_record.real_user_record:
+		first_record.create_user()
 	
 	if record_id is not None and not record_belongs:
 		return render(request, 'error.html', {'error': 'Level record does not belong to this level'})
