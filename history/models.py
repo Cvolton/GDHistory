@@ -554,6 +554,8 @@ class Level(models.Model):
 		record_strings = set()
 		records_to_update = []
 		for record in self.levelrecord_set.filter(cache_is_dupe=False).order_by('downloads'):
+			if not record.real_user_record:
+				record.create_user()
 			#name, rating_sum, ratings, demon, auto, stars, version, real_user_record, game_version, levelstring
 			current_record_string = f"{record.level_name or 0}, {record.rating or 0}, {record.rating_sum or 0}, {record.auto or 0}, {record.demon or 0}, {record.stars or 0}, {record.demon_type or 0}, {record.level_version or 0}, {record.real_user_record.get_serialized_base() if record.real_user_record else (record.username or 0)}, {record.game_version or 0}, {record.level_string or 0}, {record.coins or 0}, {record.description or 0}, {record.song or 0}, {record.official_song or 0}, {record.feature_score or 0}, {record.epic or 0}, {record.password or 0}, {record.two_player or 0}, {record.objects_count or 0}, {record.extra_string or 0}, {record.original or 0}"
 			if current_record_string in record_strings:
