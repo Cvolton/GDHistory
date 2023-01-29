@@ -17,8 +17,7 @@ class Command(BaseCommand):
 
 		song_count = songs.count()
 		for i in range(0,song_count):
-			song = songs[i:i+1]
-			song = song[0]
+			song = songs[0:1][0]
 			print(f"{i} / {song_count} - Updating {song.online_id}")
 			song.revalidate_cache()
 			i += 1

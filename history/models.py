@@ -262,6 +262,8 @@ class Song(models.Model):
 			self.save()"""
 
 	def revalidate_cache(self):
+		self.cache_needs_revalidation = False
+		
 		best_record = self.songrecord_set.annotate(newest_created=Max('save_file__created'), real_date=Coalesce('newest_created', 'server_response__created')).exclude(real_date=None, song_name=None).order_by('-real_date')[:1]
 		if len(best_record) < 1:
 			self.cache_song_name = None
@@ -274,7 +276,6 @@ class Song(models.Model):
 		self.cache_artist_name = best_record.artist_name
 		self.cache_submitted = best_record.real_date
 
-		self.cache_needs_revalidation = False
 		self.save()
 
 	def get_serialized_base(self):
