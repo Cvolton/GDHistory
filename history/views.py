@@ -84,6 +84,9 @@ def view_level(request, online_id=None, record_id=None):
 
 	if not first_record.real_user_record:
 		first_record.create_user()
+
+	if level.cache_needs_revalidation:
+		tasks.revalidate_cache_level.delay(level.online_id)
 	
 	if record_id is not None and not record_belongs:
 		return render(request, 'error.html', {'error': 'Level record does not belong to this level'})
