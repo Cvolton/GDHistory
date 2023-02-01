@@ -184,7 +184,7 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 		record.create_user()
 		return record
 
-def create_data_from_level_record(record, double_base64 = False):
+def create_data_from_level_record(record, double_base64 = False, is_saved = False):
 	data = {
 		'kCEK': 4,
 		'k1': record.level.online_id,
@@ -196,16 +196,10 @@ def create_data_from_level_record(record, double_base64 = False):
 		'k8': record.official_song,
 		'k9': record.rating,
 		'k10': record.rating_sum,
-		'k11': record.downloads,
 		'k16': record.level_version,
 		'k17': record.game_version,
-		'k22': record.likes,
+		'k21': 3 if is_saved else 2,
 		'k23': record.length,
-		'k24': record.dislikes,
-		'k25': record.demon,
-		'k26': record.stars,
-		'k27': record.feature_score,
-		'k33': record.auto,
 		'k41': record.password,
 		'k42': record.original,
 		'k43': record.two_player,
@@ -213,15 +207,28 @@ def create_data_from_level_record(record, double_base64 = False):
 		'k48': record.objects_count,
 		'k60': record.account_id,
 		'k64': record.coins,
-		'k65': record.coins_verified,
 		'k66': record.requested_stars,
 		'k67': record.extra_string,
-		'k74': record.daily_id,
-		'k75': record.epic,
-		'k76': record.demon_type,
 		'k80': record.seconds_spent_editing,
 		'k81': record.seconds_spent_editing_copies
 	}
+
+	data_saved = {
+		'k11': record.downloads,
+		'k22': record.likes,
+		'k24': record.dislikes,
+		'k25': record.demon,
+		'k26': record.stars,
+		'k27': record.feature_score,
+		'k33': record.auto,
+		'k65': record.coins_verified,
+		'k74': record.daily_id,
+		'k75': record.epic,
+		'k76': record.demon_type
+	}
+
+	if is_saved:
+		data = data | data_saved
 
 	data2 = {}
 
