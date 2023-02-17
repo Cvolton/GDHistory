@@ -432,7 +432,7 @@ class Level(models.Model):
 			self.cache_level_string_available = True
 
 			data_record = data_record[0]
-			if best_record.description != data_record.description: self.cache_needs_updating = True
+			if best_record.description != data_record.description and not best_record.downloads == data_record.downloads: self.cache_needs_updating = True
 			if (best_record.official_song or 0) != (data_record.official_song or 0): self.cache_needs_updating = True
 			if (best_record.song != data_record.song) and not ((data_record.song is None and best_record.song.online_id == 0) or (best_record.song is None and data_record.song.online_id == 0)): self.cache_needs_updating = True
 			if (best_record.level_version or 0) != (data_record.level_version or 0): self.cache_needs_updating = True
