@@ -446,6 +446,9 @@ class Level(models.Model):
 		else:
 			self.cache_needs_updating = True
 			self.cache_level_string_available = False
+		
+		if self.cache_needs_updating == True and self.cache_stars > 0 and not self.is_deleted:
+			self.needs_priority_download = True
 		#self.save()
 	def assign_username(self):
 		try:
@@ -536,7 +539,7 @@ class Level(models.Model):
 		if changed:
 			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.cache_level_name is not None)
 		
-		if changed or force:
+		if changed and not force:
 			self.save()
 
 	def recalculate_maximums(self):
@@ -577,9 +580,9 @@ class Level(models.Model):
 			self.save()
 			return
 
-		self.verify_needs_updating()
-
 		self.update_with_record(best_record[0], best_record[0].real_date, True)
+
+		self.verify_needs_updating()
 
 		self.dedup_records()
 
@@ -596,7 +599,7 @@ class Level(models.Model):
 
 		#needs updating field
 
-		#self.save()
+		self.save()
 
 	def get_serialized_base(self):
 		if isinstance(self.cache_submitted, str): submitted_date = timezone.datetime.fromisoformat(self.cache_submitted)
