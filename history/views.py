@@ -48,7 +48,7 @@ def view_level(request, online_id=None, record_id=None):
 		level_records = level_records
 	else:
 		dupes_shown = False
-		dupes_present = level_records.filter(cache_is_dupe=True)[:1].count()
+		dupes_present = level.levelrecord_set.filter(cache_is_dupe=True)[:1].count()
 		level_records = level_records.filter(cache_is_dupe=False)
 
 	#tasks.download_level_task.delay(online_id)
