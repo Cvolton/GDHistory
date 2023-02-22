@@ -420,6 +420,8 @@ class Level(models.Model):
 		#self.levelrecord_set.update(cache_is_public=True)
 
 	def verify_needs_updating(self):
+		print("verifying needs updating")
+
 		data_record = self.levelrecord_set.exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
@@ -460,6 +462,8 @@ class Level(models.Model):
 			print("couldnt assign username")
 
 	def update_with_record(self, record, record_date, force=False):
+		print("updating with record")
+
 		changed = False
 		check_level_string = False
 
