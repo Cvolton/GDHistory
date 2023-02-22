@@ -120,7 +120,7 @@ def search(request):
 	form = SearchForm(request.GET or None)
 
 	if request.method == 'GET':
-		needs_revalidation = Level.objects.filter(cache_needs_revalidation=True)[:1].count()
+		needs_revalidation = Level.objects.filter(cache_needs_revalidation=True)[:1000].count()
 
 		index = meili_utils.get_level_index()
 

@@ -23,7 +23,7 @@ tr:hover, tr:focus-within {
 }
 </style>
 <div class="row">
-	{% if needs_revalidation %}
+	{% if needs_revalidation >= 1000 %}
 	  <div class="alert alert-info" role="alert">
 	    Search revalidation in progress, search results may be incomplete
 	  </div>
