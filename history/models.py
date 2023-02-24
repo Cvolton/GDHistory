@@ -578,13 +578,18 @@ class Level(models.Model):
 		self.cache_needs_revalidation = False
 		self.recalculate_maximums()
 
-		best_record = self.levelrecord_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created')).exclude( Q(real_date=None) | Q(level_name=None) ).order_by('-downloads', '-oldest_created')[:1]
+		best_record = self.levelrecord_set.exclude( Q(level_name=None) ).order_by('-downloads')[:1]
 		if len(best_record) < 1:
 			self.cache_level_name = None
 			self.save()
 			return
 
-		self.update_with_record(best_record[0], best_record[0].real_date, True)
+		best_record = best_record[0]
+		real_date = best_record.server_response.created or best_record.save_file_set.aggregate(oldest=Min('created'))['created']
+
+		#best_record = best_record.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created'))
+
+		self.update_with_record(best_record, real_date, True)
 
 		self.verify_needs_updating()
 
