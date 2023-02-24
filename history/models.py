@@ -422,7 +422,7 @@ class Level(models.Model):
 	def verify_needs_updating(self):
 		print("verifying needs updating")
 
-		data_record = self.levelrecord_set.exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')
+		data_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
 			best_record = self.levelrecord_set.exclude( Q(level_name=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')[:1][0]
@@ -558,27 +558,49 @@ class Level(models.Model):
 		print("set maximums, not saved")
 
 	def dedup_records(self):
-		"""This ensures there is only one record of each level version with cache_is_dupe set to False"""
+		"""This ensures there is only one record of each level version with cache_is_dupe set to False. The record with the highest amount of downloads is also kept."""
+		print("deduplicating records")
+
 		record_strings = set()
-		records_to_update = []
+		records_to_update = set()
+		highest_downloads = 0
+		highest_downloads_record = None
+		highest_downloads_with_levelstring = 0
+		highest_downloads_with_levelstring_record = None
+
 		for record in self.levelrecord_set.filter(cache_is_dupe=False).order_by('downloads'):
 			if not record.real_user_record:
 				record.create_user()
 			#name, rating_sum, ratings, demon, auto, stars, version, real_user_record, game_version, levelstring
 			current_record_string = f"{record.level_name or 0}, {record.rating or 0}, {record.rating_sum or 0}, {record.auto or 0}, {record.demon or 0}, {record.stars or 0}, {record.demon_type or 0}, {record.level_version or 0}, {record.real_user_record.get_serialized_base() if record.real_user_record else (record.username or 0)}, {record.game_version or 0}, {record.level_string or 0}, {record.coins or 0}, {record.description or 0}, {record.song or 0}, {record.official_song or 0}, {record.feature_score or 0}, {record.epic or 0}, {record.password or 0}, {record.two_player or 0}, {record.objects_count or 0}, {record.extra_string or 0}, {record.original or 0}"
+			if (record.downloads or 0) > highest_downloads:
+				highest_downloads_record = record
+				highest_downloads = record.downloads or 0
+
+			if record.level_string and (record.downloads or 0) > highest_downloads_with_levelstring:
+				highest_downloads_with_levelstring_record = record
+				highest_downloads_with_levelstring = record.downloads or 0
+
 			if current_record_string in record_strings:
 				record.cache_is_dupe = True
-				records_to_update.append(record)
+				records_to_update.add(record)
 			record_strings.add(current_record_string)
 			print(f"{record} - {current_record_string} - {record.cache_is_dupe}")
 
+		if highest_downloads_record in records_to_update: records_to_update.remove(highest_downloads_record)
+		if highest_downloads_with_levelstring_record in records_to_update: records_to_update.remove(highest_downloads_with_levelstring_record)
+		highest_downloads_record.cache_is_dupe = False
 		self.levelrecord_set.bulk_update(records_to_update, ['cache_is_dupe'], batch_size=1000)
 
 	def revalidate_cache(self):
 		self.cache_needs_revalidation = False
+		self.dedup_records()
+
 		self.recalculate_maximums()
 
-		best_record = self.levelrecord_set.exclude( Q(level_name=None) ).order_by('-downloads')[:1]
+		#best_record = best_record.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created'))
+
+		best_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) ).order_by('-downloads')[:1]
 		if len(best_record) < 1:
 			self.cache_level_name = None
 			self.save()
@@ -587,13 +609,9 @@ class Level(models.Model):
 		best_record = best_record[0]
 		real_date = best_record.server_response.created or best_record.save_file_set.aggregate(oldest=Min('created'))['created']
 
-		#best_record = best_record.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created'))
-
 		self.update_with_record(best_record, real_date, True)
 
 		self.verify_needs_updating()
-
-		self.dedup_records()
 
 		#set username
 		"""best_record = best_record[0]
