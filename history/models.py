@@ -425,7 +425,7 @@ class Level(models.Model):
 		data_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
-			best_record = self.levelrecord_set.exclude( Q(level_name=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')[:1][0]
+			best_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')[:1][0]
 
 			level_strings = {}
 			for record in data_record:
