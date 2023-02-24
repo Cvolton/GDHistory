@@ -75,7 +75,7 @@ def index_levels():
 			if len(levels_to_update) > 10000:
 				lists_to_send.append(levels_to_update)
 				levels_to_update = []
-		index.add_documents(levels_to_update)
+		index.add_documents(levels_to_update, 'online_id')
 		for levels_to_update in lists_to_send:
 			index.add_documents(levels_to_update)
 
@@ -94,7 +94,7 @@ def index_queue_positive():
 			print("positive queue empty")
 			return
 
-		index.add_documents(levels_dict)
+		index.add_documents(levels_dict, 'online_id')
 
 		Level.objects.bulk_update(levels_to_update, ['cache_needs_search_update'], batch_size=1000)
 		print("done 1")
