@@ -16,7 +16,7 @@ django-mathfilters==1.0.0
 django-redis==5.2.0
 idna==3.3
 kombu==5.2.3
-meilisearch==0.22.0
+meilisearch==0.25.0
 mysqlclient==2.1.0
 packaging==21.3
 Pillow==9.4.0
