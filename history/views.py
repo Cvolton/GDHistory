@@ -246,6 +246,9 @@ def search(request):
 			level_count = search_result['estimatedTotalHits']
 		except meilisearch.errors.MeiliSearchCommunicationError:
 			return render(request, 'error.html', {'error': 'Unable to connect to the search system. Please report this if the issue persists.'})
+		except:
+			print(sys.exc_info())
+			return render(request, 'error.html', {'error': 'An error with the search system has occured. Please report this if the issue persists.'})
 
 		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})
