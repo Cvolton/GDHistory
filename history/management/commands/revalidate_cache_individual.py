@@ -12,7 +12,7 @@ class Command(BaseCommand):
 	def handle(self, *args, **options):
 		total = len(options['levels'])
 		for i, level in enumerate(options['levels']):
-			levels = Level.objects.all().prefetch_related('levelrecord_set__save_file').prefetch_related('levelrecord_set__level_string').filter(online_id=level)
+			levels = Level.objects.filter(online_id=level)
 			for level_object in levels:
 				print(f"{i} / {total} - Updating {level_object.online_id}")
 				level_object.revalidate_cache()
