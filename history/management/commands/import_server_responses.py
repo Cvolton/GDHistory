@@ -19,6 +19,12 @@ class Command(BaseCommand):
 
 		parser.add_argument('directory',  nargs='?', type=str, help='Path to the import files', default=f"{imports_root}/ServerResponse/")
 
+		parser.add_argument(
+			'--skip-recalc',
+			action='store_true',
+			help='Skips the recalculation at the end of the import',
+		)
+
 	def handle(self, *args, **options):
 		imports_root = self.imports_root()
 		directory = options['directory']
@@ -34,5 +40,7 @@ class Command(BaseCommand):
 			if history.serverUtils.import_json(f) is not None:
 				os.rename(export_path, f"{imports_root}/ServerResponse-Processed/{filename}")
 
-		history.utils.recalculate_everything()
+		if not options['skip_recalc']:
+			print("Recalculating")
+			history.utils.recalculate_everything()
 		print("Done")
