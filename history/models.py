@@ -589,7 +589,6 @@ class Level(models.Model):
 
 		if highest_downloads_record in records_to_update: records_to_update.remove(highest_downloads_record)
 		if highest_downloads_with_levelstring_record in records_to_update: records_to_update.remove(highest_downloads_with_levelstring_record)
-		highest_downloads_record.cache_is_dupe = False
 		self.levelrecord_set.bulk_update(records_to_update, ['cache_is_dupe'], batch_size=1000)
 
 	def revalidate_cache(self):
