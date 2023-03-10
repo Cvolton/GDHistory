@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponse
 from django.db.models import Count, Min, Max, Q
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
+from django.views.decorators.csrf import csrf_exempt
 
 from datetime import datetime
 
@@ -13,6 +14,7 @@ from . import ccUtils, serverUtils, tasks, utils, constants
 import math
 import plistlib
 
+@csrf_exempt
 def index_counts(request):
 	counts = cache.get('counts')
 	if counts is None:
@@ -20,6 +22,7 @@ def index_counts(request):
 
 	return JsonResponse(counts)
 
+@csrf_exempt
 def save_level(request, online_id=None):
 	level = utils.get_level_object(online_id)
 	if level.needs_priority_download: return JsonResponse({'success': False, 'fail_reason': constants.SaveFailReasons.ALREADY_QUEUED})
@@ -29,6 +32,7 @@ def save_level(request, online_id=None):
 
 	return JsonResponse({'success': True})
 
+@csrf_exempt
 def level_info(request, online_id=None):
 	all_levels = LevelRecord.objects.filter(level__is_public=True)
 	#TODO: improve this
@@ -56,6 +60,7 @@ def level_info(request, online_id=None):
 
 	return JsonResponse(response)
 
+@csrf_exempt
 def level_date_estimation(request, online_id):
 	low = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__lte=online_id).order_by('-cache_online_id', 'estimation')[:1]
 	high = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__gte=online_id).order_by('cache_online_id', 'estimation')[:1]
