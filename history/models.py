@@ -606,7 +606,7 @@ class Level(models.Model):
 			return
 
 		best_record = best_record[0]
-		real_date = best_record.server_response.created if best_record.server_response else best_record.save_file.aggregate(oldest=Min('created'))['oldest']
+		real_date = best_record.server_response.created if best_record.server_response else best_record.manual_submission.created if best_record.manual_submission else best_record.save_file.aggregate(oldest=Min('created'))['oldest']
 
 		self.update_with_record(best_record, real_date, True)
 
