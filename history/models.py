@@ -547,13 +547,15 @@ class Level(models.Model):
 			self.save()
 
 	def recalculate_maximums(self):
-		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'))
+		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'))
 		self.cache_max_stars = maximums['stars__max'] or 0
 		#self.cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
 		self.cache_max_featured = maximums['feature_score__max'] or 0
 		self.cache_max_epic = maximums['epic__max'] or 0
 		self.cache_max_two_player = maximums['two_player__max'] or 0
 		self.cache_max_original = maximums['original__max'] or 0
+
+		maximum_daily = self.levelrecord_set.aggregate(Max('daily_id'))
 		self.cache_daily_id = maximums['daily_id__max'] or 0
 		print("set maximums, not saved")
 
