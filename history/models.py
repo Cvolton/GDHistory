@@ -556,7 +556,7 @@ class Level(models.Model):
 		self.cache_max_original = maximums['original__max'] or 0
 
 		maximum_daily = self.levelrecord_set.aggregate(Max('daily_id'))
-		self.cache_daily_id = maximums['daily_id__max'] or 0
+		self.cache_daily_id = maximum_daily['daily_id__max'] or 0
 		print("set maximums, not saved")
 
 	def dedup_records(self):
