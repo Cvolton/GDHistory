@@ -146,6 +146,15 @@ class GDUser(models.Model):
 		if record is not None and record.username is not None and self.cache_username != record.username:
 			self.revalidate_cache()
 
+	def get_serialized_base(self):
+		response = {
+			'user_id': self.online_id,
+			'username': self.cache_username,
+			'non_player_username': self.cache_non_player_username,
+			'account_id': self.cache_account_id
+		}
+		return response
+
 	"""Implementation removed because usernames don't change most of the time therefore it's better to just revalidate cache every once in a while
 	def update_with_record(self, record):
 		should_save = False
@@ -217,7 +226,8 @@ class GDUserRecord(models.Model):
 		response = {
 			'user_id': self.user.online_id,
 			'username': self.username,
-			'account_id': self.account_id
+			'account_id': self.account_id,
+			'cache_created': self.cache_created
 		}
 		return response
 

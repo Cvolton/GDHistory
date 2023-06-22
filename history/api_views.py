@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from datetime import datetime
 
-from .models import LevelRecord, LevelDateEstimation
+from .models import LevelRecord, LevelDateEstimation, GDUserRecord
 from . import ccUtils, serverUtils, tasks, utils, constants
 
 import math
@@ -40,6 +40,9 @@ def level_info(request, online_id=None):
 		all_levels = LevelRecord.objects.all()
 
 	level_records = all_levels.filter(level__online_id=online_id).exclude(level_version=None).prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user').prefetch_related('song').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created', 'manual_submission__created')).order_by('-real_date')
+	if len(level_records) == 0:
+		return JsonResponse({'success': False}, status=404)
+
 	level = level_records[0].level
 
 	response = level.get_serialized_base()
@@ -54,9 +57,25 @@ def level_info(request, online_id=None):
 			response['level_string_count'] += 1
 			level_strings[record.level_string.pk] = True
 
-	if len(response['records']) == 0:
-		utils.get_level_object(online_id)
-		return render(request, 'error.html', {'error': 'Level not found in our database'})
+
+	return JsonResponse(response)
+
+@csrf_exempt
+def user_info(request, online_id=None):
+	all_users = GDUserRecord.objects.all()
+
+	user_records = all_users.filter(user__online_id=online_id).prefetch_related('user').order_by('-cache_created')
+	if len(user_records) == 0:
+		return JsonResponse({'success': False}, status=404)
+
+	user = user_records[0].user
+
+	response = user.get_serialized_base()
+
+	user_strings = {}
+	response['records'] = []
+	for record in user_records:
+		response['records'].append(record.get_serialized_base())
 
 	return JsonResponse(response)
 
