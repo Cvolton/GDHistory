@@ -17,7 +17,14 @@
 
 <div class="row">
 	<b>GET /api/v1/level/{level_id}/</b>
-	<p>Returns informations about the level and its level records. Do note that for some fields it is not consistent between records whether they return Null for their default values or the actual values themselves.</p>
+	<p>Returns informations about the level and its level records. Do note that for some fields it is not consistent between records whether they return Null for their default values or the actual values themselves.
+	<br>Returns <code>{"success": false}</code> if the given level does not have any records.</p>
+</div>
+
+<div class="row">
+	<b>GET /api/v1/user/{user_id}/</b>
+	<p>Returns informations about the user and its user records.
+	<br>Returns <code>{"success": false}</code> if the given user does not have any records.</p>
 </div>
 
 <div class="row">
