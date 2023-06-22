@@ -33,13 +33,15 @@ def save_level(request, online_id=None):
 	return JsonResponse({'success': True})
 
 @csrf_exempt
-def level_info(request, online_id=None):
+def level_info(request, online_id=None, view_mode="normal"):
 	all_levels = LevelRecord.objects.filter(level__is_public=True)
 	#TODO: improve this
 	if request.user.is_authenticated and request.user.is_superuser:
 		all_levels = LevelRecord.objects.all()
 
 	level_records = all_levels.filter(level__online_id=online_id).exclude(level_version=None).prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user').prefetch_related('song').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created', 'manual_submission__created')).order_by('-real_date')
+	if view_mode == "brief":
+		level_records = level_records[:1]
 	if len(level_records) == 0:
 		return JsonResponse({'success': False}, status=404)
 
@@ -49,22 +51,25 @@ def level_info(request, online_id=None):
 
 	level_strings = {}
 	response['level_string_count'] = 0
-	response['records'] = []
-	for record in level_records:
-		response['records'].append(record.get_serialized_full())
+	if view_mode != "brief":
+		response['records'] = []
+		for record in level_records:
+			response['records'].append(record.get_serialized_full())
 
-		if record.level_string is not None and record.level_string.pk not in level_strings:
-			response['level_string_count'] += 1
-			level_strings[record.level_string.pk] = True
+			if record.level_string is not None and record.level_string.pk not in level_strings:
+				response['level_string_count'] += 1
+				level_strings[record.level_string.pk] = True
 
 
 	return JsonResponse(response)
 
 @csrf_exempt
-def user_info(request, online_id=None):
+def user_info(request, online_id=None, view_mode="normal"):
 	all_users = GDUserRecord.objects.all()
 
 	user_records = all_users.filter(user__online_id=online_id).prefetch_related('user').order_by('-cache_created')
+	if view_mode == "brief":
+		user_records = user_records[:1]
 	if len(user_records) == 0:
 		return JsonResponse({'success': False}, status=404)
 
@@ -73,9 +78,10 @@ def user_info(request, online_id=None):
 	response = user.get_serialized_base()
 
 	user_strings = {}
-	response['records'] = []
-	for record in user_records:
-		response['records'].append(record.get_serialized_base())
+	if view_mode != "brief":
+		response['records'] = []
+		for record in user_records:
+			response['records'].append(record.get_serialized_base())
 
 	return JsonResponse(response)
 

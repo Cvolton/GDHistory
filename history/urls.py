@@ -20,7 +20,9 @@ urlpatterns = [
 
     path('api/v1/counts/', api_views.index_counts, name='api_counts'),
     path('api/v1/user/<online_id>/', api_views.user_info, name='api_user'),
+    path('api/v1/user/<online_id>/<view_mode>/', api_views.user_info, name='api_user'),
     path('api/v1/level/<online_id>/', api_views.level_info, name='api_level'),
+    path('api/v1/level/<online_id>/<view_mode>/', api_views.level_info, name='api_level'),
     path('api/v1/level/<online_id>/save', api_views.save_level, name='api_level_save'),
     path('api/v1/date/level/<online_id>/', api_views.level_date_estimation, name='api_estimate_level'),
 
