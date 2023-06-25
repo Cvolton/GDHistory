@@ -81,7 +81,7 @@ def user_info(request, online_id=None, view_mode="normal"):
 	if view_mode != "brief":
 		response['records'] = []
 		for record in user_records:
-			response['records'].append(record.get_serialized_base())
+			response['records'].append(record.get_serialized_full())
 
 	return JsonResponse(response)
 

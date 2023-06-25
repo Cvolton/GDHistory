@@ -226,9 +226,13 @@ class GDUserRecord(models.Model):
 		response = {
 			'user_id': self.user.online_id,
 			'username': self.username,
-			'account_id': self.account_id,
-			'cache_created': self.cache_created
+			'account_id': self.account_id
 		}
+		return response
+
+	def get_serialized_full(self):
+		response = self.get_serialized_base()
+		response['cache_created'] = self.cache_created
 		return response
 
 class Song(models.Model):
