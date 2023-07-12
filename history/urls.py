@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/v1/level/<online_id>/<view_mode>/', api_views.level_info, name='api_level'),
     path('api/v1/level/<online_id>/save', api_views.save_level, name='api_level_save'),
     path('api/v1/date/level/<online_id>/', api_views.level_date_estimation, name='api_estimate_level'),
+    path('api/v1/date/date/<online_date>/', api_views.level_date_to_id_estimation, name='api_estimate_date'),
 
     #path('debug/<online_id>/', views.debug, name='debug'),
 ]

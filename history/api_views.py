@@ -5,6 +5,7 @@ from django.db.models import Count, Min, Max, Q
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import make_aware
 
 from datetime import datetime, timedelta
 
@@ -87,6 +88,8 @@ def user_info(request, online_id=None, view_mode="normal"):
 
 @csrf_exempt
 def level_date_estimation(request, online_id):
+	online_id = int(online_id)
+
 	low = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__lte=online_id).order_by('-cache_online_id', 'estimation')[:1]
 	high = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__gte=online_id).order_by('cache_online_id', 'estimation')[:1]
 
@@ -94,10 +97,40 @@ def level_date_estimation(request, online_id):
 	if low and high:
 		date_difference = high[0].estimation - low[0].estimation
 		id_difference = high[0].level.online_id - low[0].level.online_id
-		requested_id_difference = int(online_id) - low[0].level.online_id
+		requested_id_difference = online_id - low[0].level.online_id
 		percentage = requested_id_difference / id_difference
 		new_date_difference = date_difference * percentage
-		approx = low[0].estimation + new_date_difference
+		approx = {
+			"estimation": low[0].estimation + new_date_difference,
+			"online_id": online_id
+		}
+
+	response = {
+		'low': low[0].get_serialized_base() if len(low) > 0 else None,
+		'high': high[0].get_serialized_base()  if len(high) > 0 else None,
+		'approx': approx
+	}
+	
+	return JsonResponse(response)
+
+@csrf_exempt
+def level_date_to_id_estimation(request, online_date):
+	online_date = make_aware(datetime.strptime(online_date, '%Y-%m-%d'))
+
+	low = LevelDateEstimation.objects.prefetch_related('level').filter(estimation__lte=online_date).order_by('-estimation', 'cache_online_id')[:1]
+	high = LevelDateEstimation.objects.prefetch_related('level').filter(estimation__gte=online_date).order_by('estimation', 'cache_online_id')[:1]
+
+	approx = None
+	if low and high:
+		date_difference = high[0].estimation - low[0].estimation
+		id_difference = high[0].level.online_id - low[0].level.online_id
+		requested_date_difference = online_date - low[0].estimation
+		percentage = requested_date_difference / date_difference
+		new_id_difference = id_difference * percentage
+		approx = {
+			"estimation": online_date,
+			"online_id": math.floor(low[0].level.online_id + new_id_difference)
+		}
 
 	response = {
 		'low': low[0].get_serialized_base() if len(low) > 0 else None,

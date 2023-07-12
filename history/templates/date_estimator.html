@@ -6,7 +6,7 @@
 	<div class="col mb-3">
 		<div class="card mt-1">
 			<div class="card-header lead">
-				Level ID to date estimator
+				Level ID to date
 			</div>
 			<div class="card-body">
 				<form id="estimator">
@@ -20,10 +20,10 @@
 		</div>
 		<div class="card mt-3">
 			<div class="card-header lead">
-				Date to level ID estimator
+				Date to level ID
 			</div>
 			<div class="card-body">
-				<form id="date-estimator">
+				<form id="date-to-id-estimator">
 					<div class="mb-3">
 						<label for="file" class="form-label">Date</label>
 						<input class="form-control" type="date" id="online_date" name="online_date">
@@ -61,8 +61,8 @@
 
 		if(result["approx"])
 				result_string = `<p>Interpolated exact estimate:</p>
-				<p><b>Level ID: ${online_id.value}</b>
-				<br>Estimated date: ${result["approx"]}</p>
+				<p><b>Level ID: ${result["approx"]["online_id"]}</b>
+				<br>Estimated date: ${result["approx"]["estimation"]}</p>
 				<details>
 					<summary>Closest available estimates:</summary>
 					<p>${result_string}</p>
@@ -85,6 +85,7 @@
 			</span>`);
 	}
 
+	//add listener for first form
 	const form  = document.getElementById('estimator');
 
 	form.addEventListener('submit', (event) => {
@@ -97,6 +98,22 @@
 
 	    online_id = form.elements['online_id'];
 	    $.getJSON(`/api/v1/date/level/${online_id.value}`, (result) => onLoadComplete(result))
+		.fail(() => this.onLoadFailed());
+	});
+
+	//add listener to second form
+	const dateToId = document.getElementById('date-to-id-estimator');
+
+	dateToId.addEventListener('submit', (event) => {
+	    event.preventDefault();
+	    $('#result-pane').remove();
+	    $('#result-card').append(`
+			<span id="result-pane">
+				<p>Loading...</p>
+			</span>`);
+
+	    online_date = dateToId.elements['online_date'];
+	    $.getJSON(`/api/v1/date/date/${online_date.value}`, (result) => onLoadComplete(result))
 		.fail(() => this.onLoadFailed());
 	});
 
