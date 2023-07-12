@@ -98,7 +98,7 @@ def level_date_estimation(request, online_id):
 		date_difference = high[0].estimation - low[0].estimation
 		id_difference = high[0].level.online_id - low[0].level.online_id
 		requested_id_difference = online_id - low[0].level.online_id
-		percentage = requested_id_difference / id_difference
+		percentage = 0 if id_difference == 0 else requested_id_difference / id_difference
 		new_date_difference = date_difference * percentage
 		approx = {
 			"estimation": low[0].estimation + new_date_difference,
@@ -121,7 +121,7 @@ def level_date_to_id_estimation(request, online_date):
 	high = LevelDateEstimation.objects.prefetch_related('level').filter(estimation__gte=online_date).order_by('estimation', 'cache_online_id')[:1]
 
 	approx = None
-	if low and high:
+	if low and high and low[0].estimation != high[0].estimation:
 		date_difference = high[0].estimation - low[0].estimation
 		id_difference = high[0].level.online_id - low[0].level.online_id
 		requested_date_difference = online_date - low[0].estimation
