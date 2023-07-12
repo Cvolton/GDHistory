@@ -56,15 +56,21 @@
 
 			if(result_string == "") result_string = "<p>An error has occured while loading estimates.</p>";
 
-			$('#result-card').append(`
-				<span id="result-pane">
-					<p>Interpolated exact estimate:</p>
+			if(result["approx"])
+					result_string = `<p>Interpolated exact estimate:</p>
 					<p><b>Level ID: ${online_id.value}</b>
 					<br>Estimated date: ${result["approx"]}</p>
 					<details>
 						<summary>Closest available estimates:</summary>
 						<p>${result_string}</p>
-					</details>
+					</details>`
+			else
+					result_string = `<p>Closest available estimates:</p>
+					<p>${result_string}</p>`
+
+			$('#result-card').append(`
+				<span id="result-pane">
+					${result_string}
 				</span>`);
 		})
 		.fail(function() { 

@@ -90,12 +90,14 @@ def level_date_estimation(request, online_id):
 	low = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__lte=online_id).order_by('-cache_online_id', 'estimation')[:1]
 	high = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__gte=online_id).order_by('cache_online_id', 'estimation')[:1]
 
-	date_difference = high[0].estimation - low[0].estimation
-	id_difference = high[0].level.online_id - low[0].level.online_id
-	requested_id_difference = int(online_id) - low[0].level.online_id
-	percentage = requested_id_difference / id_difference
-	new_date_difference = date_difference * percentage
-	approx = low[0].estimation + new_date_difference
+	approx = None
+	if low and high:
+		date_difference = high[0].estimation - low[0].estimation
+		id_difference = high[0].level.online_id - low[0].level.online_id
+		requested_id_difference = int(online_id) - low[0].level.online_id
+		percentage = requested_id_difference / id_difference
+		new_date_difference = date_difference * percentage
+		approx = low[0].estimation + new_date_difference
 
 	response = {
 		'low': low[0].get_serialized_base() if len(low) > 0 else None,
