@@ -58,8 +58,13 @@
 
 			$('#result-card').append(`
 				<span id="result-pane">
-					<p>Closest available estimates:</p>
-					${result_string}
+					<p>Interpolated exact estimate:</p>
+					<p><b>Level ID: ${online_id.value}</b>
+					<br>Estimated date: ${result["approx"]}</p>
+					<details>
+						<summary>Closest available estimates:</summary>
+						<p>${result_string}</p>
+					</details>
 				</span>`);
 		})
 		.fail(function() { 
