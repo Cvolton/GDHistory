@@ -4,9 +4,9 @@
 
 <div class="row">
 	<div class="col mb-3">
-		<div class="card">
+		<div class="card mt-1">
 			<div class="card-header lead">
-				Level ID date estimator
+				Level ID to date estimator
 			</div>
 			<div class="card-body">
 				<form id="estimator">
@@ -18,9 +18,23 @@
 				</form>
 			</div>
 		</div>
+		<div class="card mt-3">
+			<div class="card-header lead">
+				Date to level ID estimator
+			</div>
+			<div class="card-body">
+				<form id="date-estimator">
+					<div class="mb-3">
+						<label for="file" class="form-label">Date</label>
+						<input class="form-control" type="date" id="online_date" name="online_date">
+					</div>
+					<button type="submit" class="btn btn-primary">Estimate</button>
+				</form>
+			</div>
+		</div>
 	</div>
 	<div class="col mb-3">
-		<div class="card">
+		<div class="card mt-1">
 			<div class="card-header lead">
 				Results
 			</div>
@@ -32,6 +46,45 @@
 </div>
 
 <script type="text/javascript">
+	function onLoadComplete(result) {
+    	$('#result-pane').remove();
+    	result_string = "";
+    	if(result["low"])
+    			result_string += `<p><b>Level ID: ${result["low"]["online_id"]}</b>
+				<br>Estimated date: ${result["low"]["estimation"]}</p>`;
+
+		if(result["high"])
+    			result_string += `<p><b>Level ID: ${result["high"]["online_id"]}</b>
+				<br>Estimated date: ${result["high"]["estimation"]}</p>`;
+
+		if(result_string == "") result_string = "<p>An error has occured while loading estimates.</p>";
+
+		if(result["approx"])
+				result_string = `<p>Interpolated exact estimate:</p>
+				<p><b>Level ID: ${online_id.value}</b>
+				<br>Estimated date: ${result["approx"]}</p>
+				<details>
+					<summary>Closest available estimates:</summary>
+					<p>${result_string}</p>
+				</details>`
+		else
+				result_string = `<p>Closest available estimates:</p>
+				<p>${result_string}</p>`
+
+		$('#result-card').append(`
+			<span id="result-pane">
+				${result_string}
+			</span>`);
+	}
+
+	function onLoadFailed() {
+		$('#result-pane').remove();
+    	$('#result-card').append(`
+			<span id="result-pane">
+				<p>Estimates failed to load.</p>
+			</span>`);
+	}
+
 	const form  = document.getElementById('estimator');
 
 	form.addEventListener('submit', (event) => {
@@ -43,43 +96,8 @@
 			</span>`);
 
 	    online_id = form.elements['online_id'];
-	    $.getJSON(`/api/v1/date/level/${online_id.value}`, function(result) {
-	    	$('#result-pane').remove();
-	    	result_string = "";
-	    	if(result["low"])
-	    			result_string += `<p><b>Level ID: ${result["low"]["online_id"]}</b>
-					<br>Estimated date: ${result["low"]["estimation"]}</p>`;
-
-			if(result["high"])
-	    			result_string += `<p><b>Level ID: ${result["high"]["online_id"]}</b>
-					<br>Estimated date: ${result["high"]["estimation"]}</p>`;
-
-			if(result_string == "") result_string = "<p>An error has occured while loading estimates.</p>";
-
-			if(result["approx"])
-					result_string = `<p>Interpolated exact estimate:</p>
-					<p><b>Level ID: ${online_id.value}</b>
-					<br>Estimated date: ${result["approx"]}</p>
-					<details>
-						<summary>Closest available estimates:</summary>
-						<p>${result_string}</p>
-					</details>`
-			else
-					result_string = `<p>Closest available estimates:</p>
-					<p>${result_string}</p>`
-
-			$('#result-card').append(`
-				<span id="result-pane">
-					${result_string}
-				</span>`);
-		})
-		.fail(function() { 
-	    	$('#result-pane').remove();
-	    	$('#result-card').append(`
-				<span id="result-pane">
-					<p>Estimates failed to load.</p>
-				</span>`);
-		});
+	    $.getJSON(`/api/v1/date/level/${online_id.value}`, (result) => onLoadComplete(result))
+		.fail(() => this.onLoadFailed());
 	});
 
 	
