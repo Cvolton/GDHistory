@@ -54,11 +54,11 @@
 	    			result_string += `<p><b>Level ID: ${result["high"]["online_id"]}</b>
 					<br>Estimated date: ${result["high"]["estimation"]}</p>`;
 
-			if(result_string == "") result_string = "<p>An error has occured while loading estimations.</p>";
+			if(result_string == "") result_string = "<p>An error has occured while loading estimates.</p>";
 
 			$('#result-card').append(`
 				<span id="result-pane">
-					<p>Closest available estimations:</p>
+					<p>Closest available estimates:</p>
 					${result_string}
 				</span>`);
 		})
@@ -66,7 +66,7 @@
 	    	$('#result-pane').remove();
 	    	$('#result-card').append(`
 				<span id="result-pane">
-					<p>Estimations failed to load.</p>
+					<p>Estimates failed to load.</p>
 				</span>`);
 		});
 	});
