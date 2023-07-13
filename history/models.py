@@ -502,7 +502,7 @@ class Level(models.Model):
 			self.cache_level_name = record.level_name
 			self.cache_submitted = record_date
 			self.cache_downloads = record.downloads or 0
-			self.cache_likes = record.likes or 0
+			self.cache_likes = (record.likes or 0) - (record.dislikes or 0)
 			self.cache_rating_sum = record.rating_sum or 0
 			self.cache_rating = record.rating or 0
 			self.cache_demon = record.demon or 0
