@@ -40,16 +40,14 @@ def level_info(request, online_id=None, view_mode="normal"):
 		return JsonResponse({'success': False}, status=404)
 
 	all_levels = level.levelrecord_set
-	level_records = utils.annotate_record_set_with_date(all_levels.filter(level__online_id=online_id).prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
-	
-	if view_mode == "brief":
-		level_records = level_records[:1]
-	if len(level_records) == 0:
+
+	if all_levels.all()[:1].count() == 0:
 		return JsonResponse({'success': False}, status=404)
 
 	response = level.get_serialized_base()
 
 	if view_mode != "brief":
+		level_records = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
 		level_strings = {}
 		response['level_string_count'] = 0
 		response['records'] = []

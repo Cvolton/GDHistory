@@ -35,7 +35,7 @@ def view_level(request, online_id=None, record_id=None):
 
 	all_levels = level.levelrecord_set
 
-	level_records_unfiltered = utils.annotate_record_set_with_date(all_levels.filter(level__online_id=online_id).prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
+	level_records_unfiltered = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
 
 	if request.method == 'GET' and form.is_valid() and form.cleaned_data['blanks']:
 		level_records = level_records_unfiltered
