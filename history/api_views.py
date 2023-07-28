@@ -35,24 +35,23 @@ def save_level(request, online_id=None):
 
 @csrf_exempt
 def level_info(request, online_id=None, view_mode="normal"):
-	all_levels = LevelRecord.objects.filter(level__is_public=True)
-	#TODO: improve this
-	if request.user.is_authenticated and request.user.is_superuser:
-		all_levels = LevelRecord.objects.all()
+	level = utils.get_level_object(online_id)
+	if (not (request.user.is_authenticated and request.user.is_superuser) and not (level.is_public or int(online_id) < utils.get_level_id_within_window())) or level.levelrecord_set.count() == 0:
+		return JsonResponse({'success': False}, status=404)
 
-	level_records = all_levels.filter(level__online_id=online_id).exclude(level_version=None).prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user').prefetch_related('song').annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created', 'manual_submission__created')).order_by('-real_date')
+	all_levels = level.levelrecord_set
+	level_records = utils.annotate_record_set_with_date(all_levels.filter(level__online_id=online_id).prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
+	
 	if view_mode == "brief":
 		level_records = level_records[:1]
 	if len(level_records) == 0:
 		return JsonResponse({'success': False}, status=404)
 
-	level = level_records[0].level
-
 	response = level.get_serialized_base()
 
-	level_strings = {}
-	response['level_string_count'] = 0
 	if view_mode != "brief":
+		level_strings = {}
+		response['level_string_count'] = 0
 		response['records'] = []
 		for record in level_records:
 			response['records'].append(record.get_serialized_full())
