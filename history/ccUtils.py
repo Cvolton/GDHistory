@@ -205,6 +205,7 @@ def create_data_from_level_record(record, double_base64 = False, is_saved = Fals
 		'k43': record.two_player,
 		'k45': record.song.online_id if record.song else None,
 		'k48': record.objects_count,
+		'k50': 35, #GD 2.11 level data format
 		'k60': record.account_id,
 		'k64': record.coins,
 		'k66': record.requested_stars,
