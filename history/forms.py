@@ -26,3 +26,10 @@ class SearchForm(forms.Form):
 class LevelForm(forms.Form):
 	blanks = forms.BooleanField(label='Show blanks', required=False)
 	dupes = forms.BooleanField(label='Show dupes', required=False)
+
+class AdvancedSearchForm(forms.Form):
+	query = forms.CharField(label='Query', required=False)
+	limit = forms.IntegerField(label='Limit', required=False)
+	offset = forms.IntegerField(label='Offset', required=False)
+	sort = forms.CharField(label='Sort', required=False)
+	filter = forms.CharField(label='Filter', required=False)

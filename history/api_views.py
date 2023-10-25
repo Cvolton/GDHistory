@@ -10,10 +10,13 @@ from django.utils.timezone import make_aware
 from datetime import datetime, timedelta
 
 from .models import LevelRecord, LevelDateEstimation, GDUserRecord
-from . import ccUtils, serverUtils, tasks, utils, constants
+from . import ccUtils, serverUtils, tasks, utils, constants, meili_utils
+from .forms import AdvancedSearchForm
 
 import math
 import plistlib
+import meilisearch
+import sys
 
 @csrf_exempt
 def index_counts(request):
@@ -140,3 +143,28 @@ def level_date_to_id_estimation(request, online_date):
 	}
 	
 	return JsonResponse(response)
+
+def level_search(request):
+	def sort_filter(value):
+		return ":asc" in value or ":desc" in value
+
+	form = AdvancedSearchForm(request.GET or None)
+	print(form.is_valid())
+
+	sort = list(filter(sort_filter, (form.cleaned_data['sort']).split(",")))
+
+	#try:
+	index = meili_utils.get_level_index()
+	search_result = index.search(form.cleaned_data['query'], {
+		'limit': form.cleaned_data['limit'] or 10,
+		'offset': form.cleaned_data['offset'] or 0,
+		'sort': sort,
+		'filter': form.cleaned_data['filter']
+	})
+
+	return JsonResponse(search_result)
+	#except meilisearch.errors.MeiliSearchCommunicationError:
+	#	return JsonResponse({'success': False, 'error': 'MeiliSearchCommunicationError'}, status=500)
+	#except:
+	#	print(sys.exc_info())
+	#	return JsonResponse({'success': False, 'error': 'generic'}, status=500)#
