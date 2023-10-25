@@ -87,14 +87,18 @@ def user_info(request, online_id=None, view_mode="normal"):
 def level_date_estimation(request, online_id):
 	online_id = int(online_id)
 
-	low = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__lte=online_id).order_by('-cache_online_id', 'estimation')[:1]
-	high = LevelDateEstimation.objects.prefetch_related('level').filter(cache_online_id__gte=online_id).order_by('cache_online_id', 'estimation')[:1]
+	low = LevelDateEstimation.objects.filter(cache_online_id__lte=online_id).order_by('-cache_online_id')[:1]
+	high = LevelDateEstimation.objects.filter(cache_online_id__gte=online_id).order_by('cache_online_id')[:1]
 
+	if low: low = LevelDateEstimation.objects.filter(cache_online_id=low[0].cache_online_id).order_by('estimation')
+	if high: high = LevelDateEstimation.objects.filter(cache_online_id=high[0].cache_online_id).order_by('estimation')
+	
 	approx = None
 	if low and high:
+
 		date_difference = high[0].estimation - low[0].estimation
-		id_difference = high[0].level.online_id - low[0].level.online_id
-		requested_id_difference = online_id - low[0].level.online_id
+		id_difference = high[0].cache_online_id - low[0].cache_online_id
+		requested_id_difference = online_id - low[0].cache_online_id
 		percentage = 0 if id_difference == 0 else requested_id_difference / id_difference
 		new_date_difference = date_difference * percentage
 		approx = {
