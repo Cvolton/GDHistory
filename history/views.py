@@ -250,7 +250,6 @@ def search(request):
 			print(sys.exc_info())
 			return render(request, 'error.html', {'error': 'An error with the search system has occured. Please report this if the issue persists.'})
 
-		print(level_results)
 		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})
 
