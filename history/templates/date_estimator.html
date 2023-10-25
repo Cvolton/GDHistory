@@ -97,7 +97,7 @@
 			</span>`);
 
 	    online_id = form.elements['online_id'];
-	    $.getJSON(`/api/v1/date/level/${online_id.value}`, (result) => onLoadComplete(result))
+	    $.getJSON(`/api/v1/date/level/${online_id.value}/`, (result) => onLoadComplete(result))
 		.fail(() => this.onLoadFailed());
 	});
 
@@ -113,7 +113,7 @@
 			</span>`);
 
 	    online_date = dateToId.elements['online_date'];
-	    $.getJSON(`/api/v1/date/date/${online_date.value}`, (result) => onLoadComplete(result))
+	    $.getJSON(`/api/v1/date/date/${online_date.value}/`, (result) => onLoadComplete(result))
 		.fail(() => this.onLoadFailed());
 	});
 
