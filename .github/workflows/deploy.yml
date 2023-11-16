@@ -13,7 +13,7 @@ jobs:
             - name: Push code to remote
               uses: burnett01/rsync-deployments@5.2.1
               with:
-                switches: -avzr --delete
+                switches: -avzr --delete --exclude "history/migrations"
                 remote_path: src/gdhistory/
                 remote_host: ${{ secrets.HOST }}
                 remote_port: ${{ secrets.PORT }}
