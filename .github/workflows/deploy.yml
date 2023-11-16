@@ -1,0 +1,34 @@
+name: Deploy to main
+
+on:
+    push:
+        branches: [meili]
+    
+jobs:
+    server-ci:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+            - name: Push code to remote
+              uses: burnett01/rsync-deployments@5.2.1
+              with:
+                switches: -avzr --delete
+                remote_path: src/gdhistory/
+                remote_host: ${{ secrets.HOST }}
+                remote_port: ${{ secrets.PORT }}
+                remote_user: ${{ secrets.USERNAME }} 
+                remote_key: ${{ secrets.SSH_KEY }}
+            
+            - name: Restart Server 
+              uses: appleboy/ssh-action@v0.1.6
+              with:
+                host: ${{ secrets.HOST }}
+                username: ${{ secrets.USERNAME }}
+                password: ${{ secrets.PASSWORD }}
+                key: ${{ secrets.SSH_KEY }}
+                port: ${{ secrets.PORT }}
+                script: |
+                  bash -c 'source ~/venv/website/bin/activate; cd ~/src/gdhistory; pip install -r requirements.txt; python manage.py collectstatic --no-input'
+                  sudo /usr/bin/systemctl restart gdhistory-gunicorn.service
+                  sudo /usr/bin/systemctl restart gdhistory-celery.service
