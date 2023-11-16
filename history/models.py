@@ -27,7 +27,6 @@ class HistoryUser(models.Model):
         on_delete=models.CASCADE,
         db_index=True,
     )
-    test = models.CharField(max_length=255)
     def __str__(self):
         return self.user.username
 
