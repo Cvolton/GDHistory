@@ -149,22 +149,40 @@ def level_search(request):
 		return ":asc" in value or ":desc" in value
 
 	form = AdvancedSearchForm(request.GET or None)
-	print(form.is_valid())
+	print()
 
-	sort = list(filter(sort_filter, (form.cleaned_data['sort']).split(",")))
+	#initial data gathering
+	if form.is_valid():
+		query = form.cleaned_data['query']
+		limit = form.cleaned_data['limit'] or 10
+		offset = form.cleaned_data['offset'] or 0
+		sort = list(filter(sort_filter, (form.cleaned_data['sort']).split(",")))
+		search_filter = form.cleaned_data['filter']
+	else:
+		query = ""
+		offset = 0
+		limit = 10
+		sort = []
+		search_filter = None
 
-	#try:
-	index = meili_utils.get_level_index()
-	search_result = index.search(form.cleaned_data['query'], {
-		'limit': form.cleaned_data['limit'] or 10,
-		'offset': form.cleaned_data['offset'] or 0,
-		'sort': sort,
-		'filter': form.cleaned_data['filter']
-	})
+	#data sanitization
+	if "cache_downloads:asc" not in sort and "cache_downloads:desc" not in sort:
+		sort.append("cache_downloads:desc")
 
-	return JsonResponse(search_result)
-	#except meilisearch.errors.MeiliSearchCommunicationError:
-	#	return JsonResponse({'success': False, 'error': 'MeiliSearchCommunicationError'}, status=500)
-	#except:
-	#	print(sys.exc_info())
-	#	return JsonResponse({'success': False, 'error': 'generic'}, status=500)#
+	if limit > 1000: limit = 1000
+
+	try:
+		index = meili_utils.get_level_index()
+		search_result = index.search(query, {
+			'limit': limit,
+			'offset': offset,
+			'sort': sort,
+			'filter': search_filter
+		})
+
+		return JsonResponse(search_result)
+	except meilisearch.errors.MeiliSearchCommunicationError:
+		return JsonResponse({'success': False, 'error': 'MeiliSearchCommunicationError'}, status=500)
+	except:
+		print(sys.exc_info())
+		return JsonResponse({'success': False, 'error': 'generic'}, status=500)#

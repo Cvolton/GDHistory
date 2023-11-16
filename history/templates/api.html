@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load mathfilters %}
 {% load tags %}
-{% block title %}Daily Levels{% endblock title %}
+{% block title %}API documentation{% endblock title %}
 {% block content %}
 
 <div class="row">
@@ -30,5 +30,16 @@
 <div class="row">
 	<b>GET /api/v1/date/level/{level_id}/</b>
 	<p>Returns the closest available date estimations for a given level ID.</p>
+</div>
+
+<div class="row">
+	<b>GET /api/v1/search/level/advanced/</b>
+	<p>Uses the following GET parameters (all optional):<br>
+		<code>query</code>: The search query text<br>
+		<code>limit</code>: Amount of levels per page, max is 1000<br>
+		<code>offset</code>: Amount of levels to offset search results by - usually recommended to be a multiple of limit<br>
+		<code>sort</code>: Sort parameters separated by <code>,</code> - example: <code>cache_difficulty:asc,cache_downloads:desc</code><br>
+		<code>filter</code>: Filters in SQL-like format - example: <code>online_id < 1000 AND (cache_filter_difficulty = 5 OR cache_likes >= 100)</code>
+	<br>AND/OR clauses must be uppercase, see search output or level brief output to see filterable/sortable parameters.</p>
 </div>
 {% endblock %}
