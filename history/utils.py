@@ -192,10 +192,17 @@ def create_user_record(user_object, account_id, username, date, server_response,
 	return record
 
 def get_level_object(level_id):
+	try:
+		level_id = int(level_id)
+	except:
+		return None
+
 	from .models import Level
 	try:
 		level_object = Level.objects.get(online_id=level_id)
 	except:
+		if level_id < MiscConstants.LAST_FULL_SCRAPE_ID: return None
+
 		level_object = Level(online_id=level_id)
 		level_object.save()
 	return level_object
