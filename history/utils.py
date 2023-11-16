@@ -191,7 +191,7 @@ def create_user_record(user_object, account_id, username, date, server_response,
 	record.save_file.add(*(save_file.all()))
 	return record
 
-def get_level_object(level_id):
+def get_level_object(level_id, validate_id_range=False):
 	try:
 		level_id = int(level_id)
 	except:
@@ -201,7 +201,7 @@ def get_level_object(level_id):
 	try:
 		level_object = Level.objects.get(online_id=level_id)
 	except:
-		if level_id < MiscConstants.LAST_FULL_SCRAPE_ID: return None
+		if validate_id_range and level_id < MiscConstants.LAST_FULL_SCRAPE_ID: return None
 
 		level_object = Level(online_id=level_id)
 		level_object.save()
