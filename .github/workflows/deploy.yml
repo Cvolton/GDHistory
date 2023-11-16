@@ -29,6 +29,6 @@ jobs:
                 key: ${{ secrets.SSH_KEY }}
                 port: ${{ secrets.PORT }}
                 script: |
-                  bash -c 'source ~/venv/website/bin/activate; cd ~/src/gdhistory; pip install -r requirements.txt; python manage.py collectstatic --no-input'
+                  bash -c 'source ~/venv/website/bin/activate; cd ~/src/gdhistory; pip install -r requirements.txt; python manage.py collectstatic --no-input; python manage.py makemigrations && python manage.py migrate'
                   sudo /usr/bin/systemctl restart gdhistory-gunicorn.service
                   sudo /usr/bin/systemctl restart gdhistory-celery.service
