@@ -323,7 +323,7 @@ def import_json(file):
 	if response_json["endpoint"] == "GDHistory-Special":
 		return process_special(response_json)
 
-	if response_json["raw_output"][:5] == '<html' or response_json["raw_output"][:5] == '<!DOC' or response_json["raw_output"][:5] == 'error':
+	if response_json["raw_output"][:5] == '<html' or response_json["raw_output"][:5] == '<body' or response_json["raw_output"][:5] == '<!DOC' or response_json["raw_output"][:5] == 'error':
 		return None
 
 	if response_json["endpoint"].startswith("getGJLevels"):
