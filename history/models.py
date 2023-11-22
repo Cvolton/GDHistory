@@ -570,6 +570,7 @@ class Level(models.Model):
 		self.cache_max_two_player = maximums['two_player__max'] or 0
 		self.cache_max_original = maximums['original__max'] or 0
 
+		print("recalculating maximums daily id")
 		maximum_daily = self.levelrecord_set.aggregate(Max('daily_id'))
 		self.cache_daily_id = maximum_daily['daily_id__max'] or 0
 		print("set maximums, not saved")
@@ -602,6 +603,8 @@ class Level(models.Model):
 				record.cache_is_dupe = True
 				records_to_update.add(record)
 			record_strings.add(current_record_string)
+
+
 			print(f"{record} - {current_record_string} - {record.cache_is_dupe}")
 
 		print("deduplicating records - updating db")
