@@ -562,17 +562,14 @@ class Level(models.Model):
 
 	def recalculate_maximums(self):
 		print("recalculating maximums")
-		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'))
+		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'))
 		self.cache_max_stars = maximums['stars__max'] or 0
 		#self.cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
 		self.cache_max_featured = maximums['feature_score__max'] or 0
 		self.cache_max_epic = maximums['epic__max'] or 0
 		self.cache_max_two_player = maximums['two_player__max'] or 0
 		self.cache_max_original = maximums['original__max'] or 0
-
-		print("recalculating maximums daily id")
-		maximum_daily = self.levelrecord_set.aggregate(Max('daily_id'))
-		self.cache_daily_id = maximum_daily['daily_id__max'] or 0
+		self.cache_daily_id = maximums['daily_id__max'] or 0
 		print("set maximums, not saved")
 
 	def dedup_records(self):
@@ -590,7 +587,7 @@ class Level(models.Model):
 			if not record.real_user_record:
 				record.create_user()
 			#name, rating_sum, ratings, demon, auto, stars, version, real_user_record, game_version, levelstring
-			current_record_string = f"{record.level_name or 0}, {record.rating or 0}, {record.rating_sum or 0}, {record.auto or 0}, {record.demon or 0}, {record.stars or 0}, {record.demon_type or 0}, {record.level_version or 0}, {record.real_user_record.get_serialized_base() if record.real_user_record else (record.username or 0)}, {record.game_version or 0}, {record.level_string or 0}, {record.coins or 0}, {record.description or 0}, {record.song or 0}, {record.official_song or 0}, {record.feature_score or 0}, {record.epic or 0}, {record.password or 0}, {record.two_player or 0}, {record.objects_count or 0}, {record.extra_string or 0}, {record.original or 0}"
+			current_record_string = f"{record.level_name or 0}, {record.rating or 0}, {record.rating_sum or 0}, {record.auto or 0}, {record.demon or 0}, {record.stars or 0}, {record.demon_type or 0}, {record.level_version or 0}, {record.real_user_record.get_serialized_base() if record.real_user_record else (record.username or 0)}, {record.game_version or 0}, {record.level_string or 0}, {record.coins or 0}, {record.description or 0}, {record.song or 0}, {record.official_song or 0}, {record.feature_score or 0}, {record.epic or 0}, {record.password or 0}, {record.two_player or 0}, {record.objects_count or 0}, {record.extra_string or 0}, {record.original or 0}, {record.daily_id or 0}"
 			if (record.downloads or 0) > highest_downloads:
 				highest_downloads_record = record
 				highest_downloads = record.downloads or 0
