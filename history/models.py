@@ -615,7 +615,12 @@ class Level(models.Model):
 
 		#best_record = best_record.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created'))
 
-		best_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) ).order_by('-downloads')[:1]
+		best_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) ).order_by('-downloads')
+
+		best_record_download = best_record.filter(Q(record_type=LevelRecordType.DOWNLOAD) | Q(record_type=LevelRecordType.GET))[:1]
+		if len(best_record_download) > 0: best_record = best_record_download
+		else: best_record = best_record[:1]
+
 		if len(best_record) < 1:
 			self.cache_level_name = None
 			self.save()
