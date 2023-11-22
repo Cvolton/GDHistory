@@ -561,6 +561,7 @@ class Level(models.Model):
 			self.save()
 
 	def recalculate_maximums(self):
+		print("recalculating maximums")
 		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'))
 		self.cache_max_stars = maximums['stars__max'] or 0
 		#self.cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
@@ -603,9 +604,11 @@ class Level(models.Model):
 			record_strings.add(current_record_string)
 			print(f"{record} - {current_record_string} - {record.cache_is_dupe}")
 
+		print("deduplicating records - updating db")
 		if highest_downloads_record in records_to_update: records_to_update.remove(highest_downloads_record)
 		if highest_downloads_with_levelstring_record in records_to_update: records_to_update.remove(highest_downloads_with_levelstring_record)
 		self.levelrecord_set.bulk_update(records_to_update, ['cache_is_dupe'], batch_size=1000)
+		print("deduplicating records done")
 
 	def revalidate_cache(self):
 		self.cache_needs_revalidation = False
