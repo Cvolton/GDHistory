@@ -11,9 +11,7 @@ def get_level_index():
 	index = client.index('levels')
 	return index
 
-def index_levels():
-	from .models import Level
-
+def update_settings():
 	index = get_level_index()
 
 	index.update_settings({'distinctAttribute': 'online_id'})
@@ -60,6 +58,12 @@ def index_levels():
 	index.update_filterable_attributes(attribute_list)
 	index.update_sortable_attributes(attribute_list)
 	index.update_pagination_settings({'maxTotalHits': 2147483647})
+
+def index_levels():
+	from .models import Level
+
+	index = get_level_index()
+	update_settings()
 
 	searchable_levels = Level.objects.filter(cache_search_available=True)
 
