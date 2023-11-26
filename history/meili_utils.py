@@ -69,7 +69,7 @@ def index_levels():
 
 	max_id = Level.objects.all().order_by('-id')[:1][0].pk
 
-	batch_size = 1000
+	batch_size = 50000
 
 	for i in range(0,math.ceil(max_id / batch_size)):
 		level_list = Level.objects.filter(pk__gt=i*batch_size, pk__lt=(i+1)*batch_size, cache_search_available=True)
@@ -79,7 +79,7 @@ def index_levels():
 			print(f"{j+(i*batch_size)} / {max_id} - Updating {level.online_id}")
 			level_dict = level.get_serialized_base_json()
 			levels_to_update.append(level_dict)
-			if len(levels_to_update) > 100:
+			if len(levels_to_update) > 10000:
 				lists_to_send.append(levels_to_update)
 				levels_to_update = []
 		if len(levels_to_update) > 0:
