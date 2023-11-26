@@ -65,25 +65,27 @@ def index_levels():
 	index = get_level_index()
 	update_settings()
 
-	searchable_levels = Level.objects.filter(cache_search_available=True)
+	#searchable_levels = Level.objects.filter(cache_search_available=True)
 
-	batch_size = 250000
+	max_id = Level.objects.all().order_by('-id')[:1][0].pk
 
-	level_count = searchable_levels.count()
-	for i in range(0,math.ceil(level_count / batch_size)):
-		level_list = searchable_levels[i*batch_size:(i+1)*batch_size]
+	batch_size = 1000
+
+	for i in range(0,math.ceil(max_id / batch_size)):
+		level_list = Level.objects.filter(pk__gt=i*batch_size, pk__lt=(i+1)*batch_size, cache_search_available=True)
 		levels_to_update = []
 		lists_to_send = []
 		for j,level in enumerate(level_list):
-			print(f"{j+(i*batch_size)} / {level_count} - Updating {level.online_id}")
+			print(f"{j+(i*batch_size)} / {max_id} - Updating {level.online_id}")
 			level_dict = level.get_serialized_base_json()
 			levels_to_update.append(level_dict)
-			if len(levels_to_update) > 10000:
+			if len(levels_to_update) > 100:
 				lists_to_send.append(levels_to_update)
 				levels_to_update = []
-		index.add_documents(levels_to_update, 'online_id')
+		if len(levels_to_update) > 0:
+			index.add_documents(levels_to_update, 'online_id')
 		for levels_to_update in lists_to_send:
-			index.add_documents(levels_to_update)
+			if len(levels_to_update) > 0: index.add_documents(levels_to_update)
 
 def index_queue_positive():
 	from .models import Level
