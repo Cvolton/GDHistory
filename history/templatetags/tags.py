@@ -183,9 +183,9 @@ def get_item(dictionary, key):
 @register.simple_tag
 def print_cache_stars(level):
 	cache_stars = []
-	if level['cache_min_stars'] != level['cache_max_stars'] and level['cache_min_stars'] != level['cache_stars']:
+	if 'cache_min_stars' in level and level['cache_min_stars'] != level['cache_max_stars'] and level['cache_min_stars'] != level['cache_stars']:
 		cache_stars.append(f"{level['cache_min_stars']}*")
-	if level['cache_max_stars'] > level['cache_stars']:
+	if 'cache_max_stars' in level and level['cache_max_stars'] > level['cache_stars']:
 		cache_stars.append(f"{level['cache_max_stars']}*")
 	result = "/".join(cache_stars)
 	if result:
