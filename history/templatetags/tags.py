@@ -178,3 +178,17 @@ def game_version(number):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+
+@register.simple_tag
+def print_cache_stars(level):
+	cache_stars = []
+	if level['cache_min_stars'] != level['cache_max_stars'] and level['cache_min_stars'] != level['cache_stars']:
+		cache_stars.append(f"{level['cache_min_stars']}*")
+	if level['cache_max_stars'] > level['cache_stars']:
+		cache_stars.append(f"{level['cache_max_stars']}*")
+	result = "/".join(cache_stars)
+	if result:
+		return f"[{result}]"
+	else:
+		return ""

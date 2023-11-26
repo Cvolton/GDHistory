@@ -149,35 +149,39 @@ def search(request):
 
 		if 'deleted' in form.cleaned_data and form.cleaned_data['deleted'] is True:
 			filters.append("is_deleted = true")
-			visible_query += f" (deleted only)"
+			visible_query += f" (deleted)"
 
 		if 'undeleted' in form.cleaned_data and form.cleaned_data['undeleted'] is True:
 			filters.append("is_deleted != true")
-			visible_query += f" (undeleted only)"
+			visible_query += f" (not deleted)"
 
 		if 'playable' in form.cleaned_data and form.cleaned_data['playable'] is True:
 			filters.append("cache_level_string_available = true")
-			visible_query += f" (playable only)"
+			visible_query += f" (level data available)"
 
 		if 'unplayable' in form.cleaned_data and form.cleaned_data['unplayable'] is True:
 			filters.append("cache_level_string_available != true")
-			visible_query += f" (unplayable only)"
+			visible_query += f" (level data unavailable)"
 
 		if 'rated' in form.cleaned_data and form.cleaned_data['rated'] is True:
 			filters.append("cache_stars > 0")
-			visible_query += f" (rated only)"
+			visible_query += f" (rated)"
 
 		if 'unrated' in form.cleaned_data and form.cleaned_data['unrated'] is True:
 			filters.append("cache_stars = 0")
-			visible_query += f" (unrated only)"
+			visible_query += f" (unrated)"
 
 		if 'wasrated' in form.cleaned_data and form.cleaned_data['wasrated'] is True:
 			filters.append("cache_max_stars > 0")
 			visible_query += f" (was rated)"
 
+		if 'rerated' in form.cleaned_data and form.cleaned_data['rerated'] is True:
+			filters.append("cache_rating_changed = true")
+			visible_query += f" (rating changed)"
+
 		if 'wasnotrated' in form.cleaned_data and form.cleaned_data['wasnotrated'] is True:
 			filters.append("cache_max_stars = 0")
-			visible_query += f" (was not rated)"
+			visible_query += f" (was never rated)"
 
 		if 'featured' in form.cleaned_data and form.cleaned_data['featured'] is True:
 			filters.append("cache_featured > 0")

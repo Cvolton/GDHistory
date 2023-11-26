@@ -364,7 +364,9 @@ class Level(models.Model):
 	cache_search_available = models.BooleanField(default=False, db_index=True)
 	cache_main_difficulty = models.IntegerField(default=0, db_index=True)
 
+	cache_min_stars = models.IntegerField(db_index=True, default=0)
 	cache_max_stars = models.IntegerField(db_index=True, default=0)
+	cache_rating_changed = models.BooleanField(default=False, db_index=True)
 	cache_filter_difficulty = models.IntegerField(default=0, db_index=True)
 	#cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
 	cache_length = models.IntegerField(default=0, db_index=True)
@@ -572,6 +574,16 @@ class Level(models.Model):
 		self.cache_daily_id = maximums['daily_id__max'] or 0
 		print("set maximums, not saved")
 
+		if self.cache_max_stars > 0:
+			print("recalculating minimums")
+			minimums = self.levelrecord_set.filter(cache_is_dupe=False, stars__gt=0).aggregate(Min('stars'))
+			self.cache_min_stars = minimums['stars__min'] or 0
+			print("set minimums, not saved")
+		else:
+			self.cache_min_stars = 0
+
+		self.cache_rating_changed = (self.cache_stars != self.cache_max_stars) or (self.cache_min_stars != self.cache_stars) or (self.cache_min_stars != self.cache_max_stars)
+
 	def dedup_records(self):
 		"""This ensures there is only one record of each level version with cache_is_dupe set to False. The record with the highest amount of downloads is also kept."""
 		print("deduplicating records")
@@ -678,7 +690,9 @@ class Level(models.Model):
 			'cache_available_versions': int(self.cache_available_versions),
 			'cache_search_available': bool(self.cache_search_available),
 			'cache_main_difficulty': int(self.cache_main_difficulty),
+			'cache_min_stars': int(self.cache_min_stars),
 			'cache_max_stars': int(self.cache_max_stars),
+			'cache_rating_changed': bool(self.cache_rating_changed),
 			'cache_filter_difficulty': int(self.cache_filter_difficulty),
 			'cache_length': int(self.cache_length),
 			'cache_featured': int(self.cache_featured),

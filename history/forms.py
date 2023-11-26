@@ -15,6 +15,7 @@ class SearchForm(forms.Form):
 	rated = forms.BooleanField(label='Star only', required=False)
 	unrated = forms.BooleanField(label='No Star', required=False)
 	difficulty = forms.IntegerField(label='Difficulty', required=False)
+	rerated = forms.BooleanField(label='Re-rated', required=False)
 	wasrated = forms.BooleanField(label='Was rated', required=False)
 	wasnotrated = forms.BooleanField(label='Was not rated', required=False)
 	featured = forms.BooleanField(label='Featured', required=False)
