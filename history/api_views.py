@@ -9,7 +9,7 @@ from django.utils.timezone import make_aware
 
 from datetime import datetime, timedelta
 
-from .models import LevelRecord, LevelDateEstimation, GDUserRecord
+from .models import LevelRecord, LevelDateEstimation, GDUserRecord, ManualSubmission
 from . import ccUtils, serverUtils, tasks, utils, constants, meili_utils
 from .forms import AdvancedSearchForm
 
@@ -85,6 +85,16 @@ def user_info(request, online_id=None, view_mode="normal"):
 			response['records'].append(record.get_serialized_full())
 
 	return JsonResponse(response)
+
+@csrf_exempt
+def manual_info(request, pk=None):
+	manual = ManualSubmission.objects.get(pk=pk)
+	try:
+		manual = ManualSubmission.objects.get(pk=pk)
+	except:
+		return JsonResponse({'success': False}, status=404)
+
+	return JsonResponse(manual.get_serialized_base())
 
 @csrf_exempt
 def level_date_estimation(request, online_id):

@@ -46,6 +46,14 @@ class ManualSubmission(models.Model):
 		db_index=True,
 	)
 
+	def get_serialized_base(self):
+		response = {
+			'created': str(self.created),
+			'comment': self.comment,
+		}
+		if self.parent is not None: response['parent'] = self.parent.get_serialized_base()
+		return response
+
 class SaveFile(models.Model):
 	author = models.ForeignKey(
 		HistoryUser,

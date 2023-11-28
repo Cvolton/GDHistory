@@ -120,7 +120,7 @@
 					{% for record in level_records|get_item:year %}
 					<tr>
 						<td><a href="{% url 'level' online_id record.pk %}?{% print_filters filters %}">{{ record.real_date|date:"N j, Y" }}</a></td>
-						<td>{{ record.record_type }}{% if record.record_type == "get" %} <small>({{ record.server_response.get_type }})</small>{% endif %}</td>
+						<td>{{ record.record_type }}{% if record.record_type == "get" %} <small>({{ record.server_response.get_type }})</small>{% endif %}{% if record.record_type == "manual" %} <a href="#" onclick="showManual({{ record.manual_submission.pk }}); return false;">🛈</a>{% endif %}</td>
 						<td>{{ record.level_name }}</td>
 						<td>{{ record.downloads }}</td>
 						{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
@@ -161,5 +161,85 @@ Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.
 	</p>
 	{% endif %}
 </div>
+
+<div class="modal" tabindex="-1" id="manualModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Manual Record</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-placeholder">Placeholder text for popup.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+	var manualId = 0;
+
+	var manualModal = document.getElementById('manualModal')
+	manualModal.addEventListener('show.bs.modal', function (event) {
+		var paragraph = document.getElementById('modal-placeholder')
+		paragraph.textContent = 'Loading manual record data...'
+
+		$.getJSON(`/api/v1/manual/${manualId}/`, function(result) {
+			paragraph.textContent = 'test'
+			if(result["success"] === false) {
+				paragraph.textContent = 'Manual submission not found.'
+			} else {
+				paragraph.textContent = ''
+				paragraph.appendChild(renderManual(result))
+			}
+		})
+		.fail(function() { 
+			paragraph.textContent = 'Failed to load manual record info.'
+		});
+	})
+
+	function showManual(id) {
+		manualId = id;
+
+		var modal = new bootstrap.Modal(manualModal, {})
+		modal.show()
+	}
+
+	function renderManual(result) {
+		const span = document.createElement('span')
+
+		const dateText = document.createElement('b')
+		dateText.textContent = 'Date: '
+		const dateContent = document.createElement('span')
+		dateContent.textContent = result.created
+		span.appendChild(dateText)
+		span.appendChild(dateContent)
+		span.appendChild(document.createElement('br'))
+
+		const commentText = document.createElement('b')
+		commentText.textContent = 'Comment: '
+		const commentContent = document.createElement('span')
+		if(result.comment != "") commentContent.textContent = result.comment
+		else commentContent.innerHTML = '<i>(no comment)</i>'
+		span.appendChild(commentText)
+		span.appendChild(commentContent)
+		span.appendChild(document.createElement('br'))
+
+		if(result.parent) {
+			span.appendChild(document.createElement('br'))
+			const separator = document.createElement('span')
+			separator.innerHTML = "<b>Parent record:</b>"
+			span.appendChild(separator)
+			span.appendChild(document.createElement('br'))
+			span.appendChild(renderManual(result.parent))
+		}
+
+		return span
+	}
+
+</script>
 <!-- {{ first_record.level.pk }} -->
 {% endblock %}
