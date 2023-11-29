@@ -72,12 +72,21 @@ class SaveFile(models.Model):
 	#also raw save file with password stripped out stored on the side in a file
 
 	cache_levels_count = models.IntegerField(blank=True, null=True)
+	cache_nonblank_count = models.IntegerField(blank=True, null=True)
 
 	def get_count(self):
 		if self.cache_levels_count: return self.cache_levels_count
 		count = self.levelrecord_set.count()
 		if self.is_processed:
 			self.cache_levels_count = count
+			self.save()
+		return count
+
+	def get_nonblank_count(self):
+		if self.cache_nonblank_count: return self.cache_nonblank_count
+		count = self.levelrecord_set.exclude(level_version=None, game_version=None, level_name=None, downloads=None).count()
+		if self.is_processed:
+			self.cache_nonblank_count = count
 			self.save()
 		return count
 

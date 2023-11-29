@@ -33,13 +33,14 @@ tr:hover, tr:focus-within {
 				{% if show_all %}<th>Uploader</th>{% endif %}
 				<th>Submitted</th>
 				<th>Created</th>
-				<th>Comment</th>
+				<!--<th>Comment</th>-->
 				<th>Is Processed</th>
 				<th>Player Name</th>
 				<th>Player User ID</th>
 				<th>Player Account ID</th>
 				<th>Binary Version</th>
-				<th>Levels</th>
+				<th>Levels<br><small><small>(no&nbsp;blanks)</small></small></th>
+				<th>Levels (all)</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -48,13 +49,14 @@ tr:hover, tr:focus-within {
 				<td>{{ submission.pk }}</td>
 				{% if show_all %}<td>{{ submission.author.user.username }}</td>{% endif %}
 				<td>{{ submission.submitted }}</td>
-				<td>{{ submission.created }}</td>
-				<td>{{ submission.comment }}</td>
+				<td>{{ submission.created |date:"N j, Y" }}</td>
+				<!--<td>{{ submission.comment }}</td>-->
 				<td>{{ submission.is_processed }}</td>
 				<td>{{ submission.player_name }}</td>
 				<td>{{ submission.player_user_id }}</td>
 				<td>{{ submission.player_account_id }}</td>
 				<td>{{ submission.binary_version }}</td>
+				<td>{{ submission.get_nonblank_count }}</td>
 				<td>{{ submission.get_count }}</td>
 			</tr>
 		{% endfor %}

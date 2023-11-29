@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Submit{% endblock title %}
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="comment" class="form-label">Comment</label>
+    <input class="form-control" type="text" id="comment" name="comment">
+  </div>
+  <div class="mb-3">
+    <label for="time" class="form-label">Enter creation date</label>
+    <input class="form-control" type="text" id="time" name="time">
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
