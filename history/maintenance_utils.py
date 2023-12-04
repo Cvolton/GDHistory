@@ -9,15 +9,15 @@ from django.utils import timezone
 def update_is_public():
 	user_whitelist = [21297937, 16, 11094602, 20417551]
 	records = LevelRecord.objects.filter( Q(level__cache_user_id__in=user_whitelist) | Q(level__cache_stars__gt=0) | Q(level__cache_downloads__gte=1000) | Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecordType.GET) | ( Q(record_type=LevelRecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") ) ).filter( Q(level__is_public=None) | Q(level__is_public=False) ).prefetch_related('level')
-	record_count = records.count()
-	for i in range(0,record_count):
-		record = records[0:1]
-		if len(record) < 1:
+	#record_count = records.count()
+	while True:
+		records_limited = records[0:1000]
+		if len(records_limited) < 1:
 			return
-		record = record[0]
-		print(f"{i} / {record_count} - Updating {record.level.online_id}")
-		record.level.set_public(True)
-		record.level.save()
+		for record in records_limited:
+			print(f"is_public - Updating {record.level.online_id}")
+			record.level.set_public(True)
+			record.level.save()
 
 def do_is_public_updating(records):
 	record_count = records.count()
