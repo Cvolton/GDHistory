@@ -482,7 +482,7 @@ class Level(models.Model):
 			self.cache_needs_updating = True
 			self.cache_level_string_available = False
 		
-		if self.cache_needs_updating == True and self.cache_stars > 0 and not self.is_deleted:
+		if self.cache_needs_updating == True and (self.cache_stars > 0 or self.cache_user_id == 16) and not self.is_deleted:
 			self.needs_priority_download = True
 		#self.save()
 	def assign_username(self):
