@@ -195,6 +195,14 @@ def search(request):
 			filters.append("cache_featured < 0")
 			visible_query += f" (negative featured)"
 
+		if 'twoPlayer' in form.cleaned_data and form.cleaned_data['twoPlayer'] is True:
+			filters.append("cache_two_player = true")
+			visible_query += f" (two player)"
+
+		if 'daily' in form.cleaned_data and form.cleaned_data['daily'] is True:
+			filters.append("cache_daily_id > 0")
+			visible_query += f" (was daily)"
+
 		if 'original' in form.cleaned_data and form.cleaned_data['original'] is not None:
 			original_id = form.cleaned_data['original']
 			filters.append(f"(cache_original = {original_id} OR cache_max_original = {original_id})")
@@ -206,6 +214,15 @@ def search(request):
 				filters.append(f"(cache_filter_difficulty > 7)")
 			else: #other filters
 				filters.append(f"(cache_filter_difficulty = {form.cleaned_data['difficulty']})")
+
+		if 'length' in form.cleaned_data and form.cleaned_data['length'] is not None:
+			visible_query += f" (length filter)"
+			length = form.cleaned_data['length']
+			if length == -1: length = 0
+			if length <= 5:
+				filters.append(f"(cache_length = {length})")
+			else:
+				filters.append(f"(cache_length > 5)")
 
 		sort = ['cache_downloads:desc']
 		if 's' in form.cleaned_data:

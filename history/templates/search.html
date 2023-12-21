@@ -66,6 +66,18 @@ tr:hover, tr:focus-within {
 								<option value="12">Extreme Demon</option>
 							</select>
 						</div>
+						<div class="form-check-inline">
+							<select class="form-select form-select-inline" aria-label="Length" id="length">
+								<option selected>Length</option>
+								<option value="-1">Tiny</option>
+								<option value="1">Short</option>
+								<option value="2">Medium</option>
+								<option value="3">Long</option>
+								<option value="4">XL</option>
+								<option value="5">Platformer</option>
+								<option value="6">Unknown</option>
+							</select>
+						</div>
 						<div class="form-check form-check-inline">
 							<input type="checkbox" class="form-check-input" id="ratedCheck" {% if filters|get_item:"rated" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'rated' %}' ">
 							<label class="form-check-label" for="ratedCheck">Star only</label>
@@ -105,6 +117,14 @@ tr:hover, tr:focus-within {
 						<div class="form-check form-check-inline">
 							<input type="checkbox" class="form-check-input" id="negativefeaturedCheck" {% if filters|get_item:"negativefeatured" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'negativefeatured' %}' ">
 							<label class="form-check-label" for="negativefeaturedCheck">Negative featured value</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="dailyCheck" {% if filters|get_item:"daily" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'daily' %}' ">
+							<label class="form-check-label" for="dailyCheck">Was daily</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="checkbox" class="form-check-input" id="twoplayerCheck" {% if filters|get_item:"twoPlayer" %}checked{% endif %} onchange="window.location.href = '?p=1{% print_filters_toggled filters 'twoPlayer' %}' ">
+							<label class="form-check-label" for="twoplayerCheck">Two player</label>
 						</div>
 					</p>
 				</div>
@@ -151,6 +171,10 @@ tr:hover, tr:focus-within {
 <script>
 document.getElementById('difficulty').addEventListener('change', function() {
 	window.location.href = '?p=1{% print_filters_without filters 'difficulty' %}&difficulty=' + this.value
+});
+
+document.getElementById('length').addEventListener('change', function() {
+	window.location.href = '?p=1{% print_filters_without filters 'length' %}&length=' + this.value
 });
 </script>
 
