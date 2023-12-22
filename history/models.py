@@ -395,6 +395,9 @@ class Level(models.Model):
 	cache_max_two_player = models.IntegerField(db_index=True, default=False)
 	cache_original = models.IntegerField(default=0, db_index=True)
 	cache_max_original = models.IntegerField(default=0, db_index=True)
+	cache_min_game_version = models.IntegerField(default=0, db_index=True)
+	cache_max_game_version = models.IntegerField(default=0, db_index=True)
+	cache_game_version = models.IntegerField(default=0, db_index=True)
 
 	cache_needs_revalidation = models.BooleanField(db_index=True, default=False)
 	cache_needs_search_update = models.BooleanField(db_index=True, default=False)
@@ -527,6 +530,7 @@ class Level(models.Model):
 			self.cache_demon = record.demon or 0
 			self.cache_auto = record.auto or 0
 			self.cache_demon_type = record.demon_type or 0
+			self.cache_game_version = record.game_version or 0
 			self.cache_stars = record.stars or 0
 			self.cache_user_id = record.user_id or 0
 			self.cache_main_difficulty = 0 if int(self.cache_rating) == 0 else int(self.cache_rating_sum) / int(self.cache_rating)
@@ -581,7 +585,7 @@ class Level(models.Model):
 
 	def recalculate_maximums(self):
 		print("recalculating maximums")
-		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'))
+		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'), Max('game_version'), Min('game_version'))
 		self.cache_max_stars = maximums['stars__max'] or 0
 		#self.cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
 		self.cache_max_featured = maximums['feature_score__max'] or 0
@@ -589,6 +593,8 @@ class Level(models.Model):
 		self.cache_max_two_player = maximums['two_player__max'] or 0
 		self.cache_max_original = maximums['original__max'] or 0
 		self.cache_daily_id = maximums['daily_id__max'] or 0
+		self.cache_min_game_version = maximums['game_version__min'] or 0
+		self.cache_max_game_version = maximums['game_version__max'] or 0
 		print("set maximums, not saved")
 
 		if self.cache_max_stars > 0:
