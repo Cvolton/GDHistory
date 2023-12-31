@@ -49,7 +49,7 @@
 				</tr>
 				<tr>
 					<th>Featured</th>
-					<td class="align-right">{% if first_record.feature_score > 0 %}✅{% if first_record.epic %} (Epic){% endif %}{% else %}❌{% endif %}</td>
+					<td class="align-right">{% if first_record.feature_score > 0 %}✅{% if first_record.epic %} ({% print_epic first_record.epic %}){% endif %}{% else %}❌{% endif %}</td>
 				</tr>				<tr>
 					<th>Length</th>
 					<td class="align-right">{% length first_record.length %}</td>
@@ -126,7 +126,7 @@
 						{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
 						<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
-Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({% display_number record.stars %}*)</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="Epic"> 🔥</a>{% endif %}</td>
+Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({% display_number record.stars %}*)</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="{% print_epic record.epic %}"> {% print_epic_fires record.epic '🔥' %}</a>{% endif %}</td>
 						<!--<td>{{ record.stars }}</td>-->
 						<td>{{ record.level_version }}</td>
 						<td>{% if record.real_user_record and record.real_user_record.username %}

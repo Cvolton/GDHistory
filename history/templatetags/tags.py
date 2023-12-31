@@ -192,3 +192,23 @@ def print_cache_stars(level):
 		return f"[{result}]"
 	else:
 		return ""
+
+@register.simple_tag
+def print_epic(epic):
+	if epic > 3:
+		return f"Mythic+ [{epic}]"
+	if epic == 3:
+		return "Mythic"
+	if epic == 2:
+		return "Legendary"
+	if epic == 1:
+		return "Epic"
+	if epic < 1:
+		return "Not Epic"
+
+@register.simple_tag
+def print_epic_fires(epic, character):
+	string = ""
+	for i in range(0, epic):
+		string += character
+	return string
