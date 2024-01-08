@@ -159,7 +159,7 @@ tr:hover, tr:focus-within {
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% timestamp_to_printable_date level.cache_submitted_timestamp %}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_downloads }}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_likes }}</a></td>
-				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% difficulty level.cache_rating_sum level.cache_rating level.cache_demon level.cache_auto level.cache_demon_type %} ({% display_number level.cache_stars %}*) <sup>{% print_cache_stars level %}</sup></a></td>
+				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% difficulty level.cache_rating_sum level.cache_rating level.cache_demon level.cache_auto level.cache_demon_type %} ({% display_number level.cache_stars %}{% star_character level.cache_length %}) <sup>{% print_cache_stars level %}</sup></a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.cache_username %}{{ level.cache_username }}{% else %}-{% endif %}</a></td>
 				<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.cache_level_string_available %}✅ {% if level.cache_available_versions > 0 %}({{level.cache_available_versions}}x){% endif %} {% if level.cache_needs_updating %}(old){% endif %}{% else %}❌{% endif %}</a></td>
 			</tr>

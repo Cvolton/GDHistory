@@ -212,3 +212,8 @@ def print_epic_fires(epic, character):
 	for i in range(0, epic):
 		string += character
 	return string
+
+@register.simple_tag
+def star_character(length):
+	if length == 5: return " ☾"
+	else: return "*"

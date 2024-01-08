@@ -4,7 +4,7 @@
 {% load tags %}
 {% block title %}{{ first_record.level_name }}{% endblock title %}
 
-{% block description %}By {% if first_record.real_user_record %}{% user_record_to_username first_record.real_user_record %}{% else %}Unknown{% endif %} - {% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}*)
+{% block description %}By {% if first_record.real_user_record %}{% user_record_to_username first_record.real_user_record %}{% else %}Unknown{% endif %} - {% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}{% star_character first_record.length %})
 {{ first_record.downloads }} downloads | {% if first_record.dislikes %}{{ first_record.likes|sub:first_record.dislikes }}{% else %}{{ first_record.likes }}{% endif %} likes
 {{ records_count }} records | {{ level_string_count }} versions
 {% endblock description %}
@@ -45,7 +45,7 @@
 				</tr>
 				<tr>
 					<th>Difficulty</th>
-					<td class="align-right">{% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}*)</td>
+					<td class="align-right">{% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}{% star_character first_record.length %})</td>
 				</tr>
 				<tr>
 					<th>Featured</th>
@@ -126,7 +126,7 @@
 						{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
 						<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
-Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({% display_number record.stars %}*)</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="{% print_epic record.epic %}"> {% print_epic_fires record.epic '🔥' %}</a>{% endif %}</td>
+Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({% display_number record.stars %}{% star_character record.length %})</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="{% print_epic record.epic %}"> {% print_epic_fires record.epic '🔥' %}</a>{% endif %}</td>
 						<!--<td>{{ record.stars }}</td>-->
 						<td>{{ record.level_version }}</td>
 						<td>{% if record.real_user_record and record.real_user_record.username %}
