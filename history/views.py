@@ -61,6 +61,7 @@ def view_level(request, online_id=None, record_id=None):
 	level_strings = {}
 	level_string_count = 0
 	for record in level_records:
+		record.upgrade_data()
 		if record.real_date is None:
 			continue
 		if record.real_date.year not in records:

@@ -993,6 +993,7 @@ class LevelRecord(models.Model):
 		self.save()
 
 	def get_serialized_base(self):
+		self.upgrade_data()
 		response = self.__dict__.copy()
 
 		del response['_prefetched_objects_cache']
@@ -1018,6 +1019,40 @@ class LevelRecord(models.Model):
 		response['real_user_record'] = None if self.real_user_record is None else self.real_user_record.get_serialized_base()
 		response['song'] = None if self.song is None else self.song.get_serialized_base()
 		return response
+
+	def upgrade_data(self):
+		changed = False
+
+		#2.200 additions
+		if '57' in self.unprocessed_data:
+			self.timestamp = int(self.unprocessed_data['57'])
+			del self.unprocessed_data['57']
+			changed = True
+		if '52' in self.unprocessed_data:
+			self.song_ids = self.unprocessed_data['52']
+			del self.unprocessed_data['52']
+			changed = True
+		if '53' in self.unprocessed_data: 
+			print("has sfxid")
+			self.sfx_ids = self.unprocessed_data['53']
+			del self.unprocessed_data['53']
+			changed = True
+		if 'k95' in self.unprocessed_data: 
+			self.timestamp = int(self.unprocessed_data['k95'])
+			del self.unprocessed_data['k95']
+			changed = True
+		if 'k104' in self.unprocessed_data: 
+			self.song_ids = self.unprocessed_data['k104']
+			del self.unprocessed_data['k104']
+			changed = True
+		if 'k105' in self.unprocessed_data: 
+			self.sfx_ids = self.unprocessed_data['k105']
+			del self.unprocessed_data['k105']
+			changed = True
+
+		#saving
+		if changed:
+			self.save()
 
 	class Meta:
 		indexes = [
