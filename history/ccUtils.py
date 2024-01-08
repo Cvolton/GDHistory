@@ -217,7 +217,10 @@ def create_data_from_level_record(record, double_base64 = False, is_saved = Fals
 		'k66': record.requested_stars,
 		'k67': record.extra_string,
 		'k80': record.seconds_spent_editing,
-		'k81': record.seconds_spent_editing_copies
+		'k81': record.seconds_spent_editing_copies,
+		'k95': record.timestamp,
+		'k104': record.song_ids,
+		'k105': record.sfx_ids
 	}
 
 	data_saved = {
