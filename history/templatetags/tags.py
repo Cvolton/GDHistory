@@ -217,3 +217,11 @@ def print_epic_fires(epic, character):
 def star_character(length):
 	if length == 5: return " ☾"
 	else: return "*"
+
+@register.simple_tag
+def working_time(time):
+	return str(datetime.timedelta(seconds=time))
+
+@register.simple_tag
+def approx_verification(timestamp):
+	return working_time(round(timestamp / 240, 3))[:-3]

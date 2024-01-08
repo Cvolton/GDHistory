@@ -81,11 +81,18 @@
 			<b>Coins:</b> {% display_number first_record.coins %} {% if first_record.coins_verified %}(Verified){% endif %}<br>
 			{% if first_record.requested_stars %}<b>Requested Stars:</b> {{ first_record.requested_stars }}<br>{% endif %}
 			{% if first_record.original %}<b>Original:</b> {{ first_record.original }}<br>{% endif %}
-			<b>Feature Score:</b> {{ first_record.feature_score }}<br><br>
+			<b>Feature Score:</b> {{ first_record.feature_score }}<br>
+			{% if first_record.seconds_spent_editing > 1 %}<br><b>Time spent editing:</b> {% working_time first_record.seconds_spent_editing %}{% endif %}
+			{% if first_record.seconds_spent_editing_copies > 2 %}<br><b>Time spent editing (copies):</b> {% working_time first_record.seconds_spent_editing_copies %}{% endif %}
+			{% if first_record.timestamp %}<br><b>Verification time:</b> {{ first_record.timestamp }} steps (approx. {% approx_verification first_record.timestamp %}){% endif %}
+			<br>
 		</div>
-		<a data-bs-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">
-			More info
-		</a>
+		<div>
+			<a data-bs-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">
+				More info</a>
+			|
+			<a href="{% url 'search' %}?original={{ online_id }}">
+				See copies</a></div>
 	</p>
 	<hr />
 </div>
