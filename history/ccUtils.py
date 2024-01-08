@@ -139,6 +139,9 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			seconds_spent_editing = assign_key_no_pop(data, 'k80'),
 			seconds_spent_editing_copies = assign_key_no_pop(data, 'k81'),
 			original = assign_key_no_pop(data, 'k42'),
+			timestamp = assign_key_no_pop(data, 'k95'),
+			song_ids = assign_key_no_pop(data, 'k104'),
+			sfx_ids = assign_key_no_pop(data, 'k105'),
 			record_type = record_type
 		)
 	except:
@@ -177,6 +180,9 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			seconds_spent_editing = assign_key(data, 'k80'),
 			seconds_spent_editing_copies = assign_key(data, 'k81'),
 			original = assign_key(data, 'k42'),
+			timestamp = assign_key(data, 'k95'),
+			song_ids = assign_key(data, 'k104'),
+			sfx_ids = assign_key(data, 'k105'),
 			record_type = record_type,
 			unprocessed_data = data
 		)

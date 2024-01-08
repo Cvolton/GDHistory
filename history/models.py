@@ -696,18 +696,18 @@ class Level(models.Model):
 			'is_deleted': bool(self.is_deleted),
 			'cache_level_name': self.cache_level_name,
 			'cache_submitted': self.cache_submitted,
-			'cache_submitted_timestamp': int(submitted_date.timestamp()),
+			'cache_submitted_timestamp': int(submitted_date.timestamp()) if submitted_date else None,
 			'cache_downloads': int(self.cache_downloads),
 			'cache_likes': int(self.cache_likes),
 			'cache_rating_sum': int(self.cache_rating_sum),
 			'cache_rating': int(self.cache_rating),
 			'cache_demon': bool(self.cache_demon),
 			'cache_auto': bool(self.cache_auto),
-			'cache_demon_type': int(self.cache_demon_type),
+			'cache_demon_type': int(self.cache_demon_type) if self.cache_demon_type else None,
 			'cache_stars': int(self.cache_stars),
 			'cache_username': self.cache_username,
 			'cache_level_string_available': bool(self.cache_level_string_available),
-			'cache_user_id': int(self.cache_user_id),
+			'cache_user_id': int(self.cache_user_id) if self.cache_user_id else None,
 			'cache_daily_id': int(self.cache_daily_id),
 			'cache_needs_updating': bool(self.cache_needs_updating),
 			'cache_available_versions': int(self.cache_available_versions),
@@ -958,6 +958,9 @@ class LevelRecord(models.Model):
 	relative_upload_date = models.CharField(blank=True, null=True, max_length=255) #28 #in the real world <= 10
 	relative_update_date = models.CharField(blank=True, null=True, max_length=255) #29 #in the real world <= 10
 	original = models.IntegerField(blank=True, null=True) #k42
+	timestamp = models.IntegerField(blank=True, null=True) #57
+	song_ids = models.TextField(blank=True, null=True) #52 #k104
+	sfx_ids = models.TextField(blank=True, null=True) #53 #k105
 
 	song = models.ForeignKey(
 		Song,
