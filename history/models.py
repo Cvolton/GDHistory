@@ -1025,7 +1025,7 @@ class LevelRecord(models.Model):
 		changed = False
 
 		#2.200 additions
-		if '57' in self.unprocessed_data:
+		if '57' in self.unprocessed_data and self.unprocessed_data['57'] != "":
 			self.timestamp = int(self.unprocessed_data['57'])
 			del self.unprocessed_data['57']
 			changed = True
@@ -1033,8 +1033,7 @@ class LevelRecord(models.Model):
 			self.song_ids = self.unprocessed_data['52']
 			del self.unprocessed_data['52']
 			changed = True
-		if '53' in self.unprocessed_data: 
-			print("has sfxid")
+		if '53' in self.unprocessed_data:
 			self.sfx_ids = self.unprocessed_data['53']
 			del self.unprocessed_data['53']
 			changed = True
