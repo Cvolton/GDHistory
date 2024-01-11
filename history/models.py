@@ -1029,6 +1029,9 @@ class LevelRecord(models.Model):
 			self.timestamp = int(self.unprocessed_data['57'])
 			del self.unprocessed_data['57']
 			changed = True
+		elif '57' in self.unprocessed_data and self.unprocessed_data['57'] == "":
+			del self.unprocessed_data['57']
+			changed = True
 		if '52' in self.unprocessed_data:
 			self.song_ids = self.unprocessed_data['52']
 			del self.unprocessed_data['52']
