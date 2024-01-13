@@ -234,7 +234,7 @@ def recalculate_daily_records():
 
 	records["Weekly"] = []
 	#TODO: do not hardcode years
-	for i in range(2016, 2024):
+	for i in range(2016, 2025):
 		records[i] = []
 		#records[f"Weekly {i}"] = []
 
@@ -249,7 +249,8 @@ def recalculate_daily_records():
 			elif record.cache_daily_id < 1493: records[2020].append(record) #estimated - unable to determine if off by 20 or 21 from said list, assuming 20; this was wrong, it's 21
 			elif record.cache_daily_id < 1858: records[2021].append(record)
 			elif record.cache_daily_id < 2223: records[2022].append(record)
-			else: records[2023].append(record)
+			elif record.cache_daily_id < 2590: records[2023].append(record)
+			else: records[2024].append(record)
 		else: records["Weekly"].append(record)
 
 	cache.set('daily', records, None)
