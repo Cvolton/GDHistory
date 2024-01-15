@@ -16,9 +16,10 @@
 </div>
 
 <div class="row">
-	<b>GET /api/v1/level/{level_id}/ <i>or</i> GET /api/v1/level/{level_id}/brief</b> 
+	<b>GET /api/v1/level/{level_id}/ <i>or</i> GET /api/v1/level/{level_id}/{mode}</b> 
 	<p>Returns informations about the level and its level records. Do note that for some fields it is not consistent between records whether they return Null for their default values or the actual values themselves.
-	<br>Returns <code>{"success": false}</code> if the given level does not have any records.</p>
+	<br>Returns <code>{"success": false}</code> if the given level does not have any records.
+	<br>Mode can be brief to hide all level records (recommended if you dont need them) or dupes to enable duplicate records (not recommended).</p>
 </div>
 
 <div class="row">

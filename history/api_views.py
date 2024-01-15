@@ -50,6 +50,9 @@ def level_info(request, online_id=None, view_mode="normal"):
 	response = level.get_serialized_base()
 
 	if view_mode != "brief":
+		if view_mode != "dupes":
+			all_levels = all_levels.filter(cache_is_dupe=False)
+
 		level_records = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
 		level_strings = {}
 		response['level_string_count'] = 0
