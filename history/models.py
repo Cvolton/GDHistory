@@ -618,7 +618,7 @@ class Level(models.Model):
 		highest_downloads_with_levelstring = 0
 		highest_downloads_with_levelstring_record = None
 
-		for record in self.levelrecord_set.filter(cache_is_dupe=False).order_by('downloads'):
+		for record in self.levelrecord_set.filter(cache_is_dupe=False).prefetch_related('real_user_record__user').order_by('downloads'):
 			record.upgrade_data()
 			if not record.real_user_record:
 				record.create_user()
@@ -652,8 +652,6 @@ class Level(models.Model):
 
 		self.recalculate_maximums()
 
-		#best_record = best_record.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created'))
-
 		best_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) ).order_by('-downloads')
 
 		best_record_download = best_record.filter(Q(record_type=LevelRecordType.DOWNLOAD) | Q(record_type=LevelRecordType.GET))[:1]
@@ -671,19 +669,6 @@ class Level(models.Model):
 		self.update_with_record(best_record, real_date, True)
 
 		self.verify_needs_updating()
-
-		#set username
-		"""best_record = best_record[0]
-		self.cache_username = best_record.username
-		if best_record.username is None or best_record.username == '-':
-			user_record = GDUser.objects.filter(online_id=self.cache_user_id)[:1]
-			if len(user_record) > 0:
-				self.cache_username = user_record[0].cache_username
-				print("Setting username from user record")
-			else:
-				print(":(((( Unable to set username")"""
-
-		#needs updating field
 
 		self.save()
 
