@@ -12,6 +12,7 @@ class MiscConstants:
 	UNLISTED_EXPLOIT_FIX_TIME = make_aware(datetime.fromtimestamp(1637719800)) #2021-11-24 02:10:00+00:00
 	ELEMENT_111_RG = 498620
 	LAST_FULL_SCRAPE_ID = 80250000
+	SONG_ID_ZERO = 3115 #internal song id for online song id 0, MUST BE ADJUSTED FOR LOCAL INSTANCES
 
 class SongNames:
 	PRACTICE = [

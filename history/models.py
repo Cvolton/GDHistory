@@ -9,6 +9,7 @@ from django.db.models import Min, Max, Q
 from django.db.models.functions import Coalesce
 
 from . import utils
+from .constants import MiscConstants
 
 from datetime import datetime
 import os
@@ -458,10 +459,10 @@ class Level(models.Model):
 	def verify_needs_updating(self):
 		print("verifying needs updating")
 
-		data_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')
+		data_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').order_by('-downloads')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
-			best_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) ).prefetch_related('level_string').prefetch_related('song').order_by('-downloads')[:1][0]
+			best_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) ).prefetch_related('level_string').order_by('-downloads')[:1][0]
 
 			level_strings = {}
 			for record in data_record:
@@ -471,16 +472,16 @@ class Level(models.Model):
 
 			data_record = data_record[0]
 			if best_record.description != data_record.description and not best_record.downloads == data_record.downloads: self.cache_needs_updating = True
-			if (best_record.official_song or 0) != (data_record.official_song or 0): self.cache_needs_updating = True
-			if (best_record.song != data_record.song) and not ((data_record.song is None and best_record.song.online_id == 0) or (best_record.song is None and data_record.song.online_id == 0)): self.cache_needs_updating = True
-			if (best_record.level_version or 0) != (data_record.level_version or 0): self.cache_needs_updating = True
-			if (best_record.game_version or 0) != (data_record.game_version or 0): self.cache_needs_updating = True
-			if (best_record.length or 0) != (data_record.length or 0): self.cache_needs_updating = True
-			if (best_record.two_player or 0) != (data_record.two_player or 0): self.cache_needs_updating = True
-			if (best_record.objects_count or 0) != (data_record.objects_count or 0): self.cache_needs_updating = True
-			if (best_record.coins or 0) != (data_record.coins or 0): self.cache_needs_updating = True
-			if (best_record.requested_stars or 0) != (data_record.requested_stars or 0): self.cache_needs_updating = True
-			if (best_record.original or 0) != (data_record.original or 0): self.cache_needs_updating = True
+			elif (best_record.official_song or 0) != (data_record.official_song or 0): self.cache_needs_updating = True
+			elif (best_record.song_id != data_record.song_id) and not ((data_record.song_id is None and best_record.song_id == MiscConstants.SONG_ID_ZERO) or (best_record.song_id is None and data_record.song_id == MiscConstants.SONG_ID_ZERO)): self.cache_needs_updating = True
+			elif (best_record.level_version or 0) != (data_record.level_version or 0): self.cache_needs_updating = True
+			elif (best_record.game_version or 0) != (data_record.game_version or 0): self.cache_needs_updating = True
+			elif (best_record.length or 0) != (data_record.length or 0): self.cache_needs_updating = True
+			elif (best_record.two_player or 0) != (data_record.two_player or 0): self.cache_needs_updating = True
+			elif (best_record.objects_count or 0) != (data_record.objects_count or 0): self.cache_needs_updating = True
+			elif (best_record.coins or 0) != (data_record.coins or 0): self.cache_needs_updating = True
+			elif (best_record.requested_stars or 0) != (data_record.requested_stars or 0): self.cache_needs_updating = True
+			elif (best_record.original or 0) != (data_record.original or 0): self.cache_needs_updating = True
 		else:
 			self.cache_needs_updating = True
 			self.cache_level_string_available = False
