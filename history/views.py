@@ -6,7 +6,7 @@ from django.db.models.functions import Coalesce
 
 from datetime import datetime
 
-from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString, HistoryUser
+from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString, HistoryUser, ManualSubmission
 from .forms import UploadFileForm, SearchForm, LevelForm
 from . import ccUtils, serverUtils, tasks, utils, meili_utils
 
@@ -350,6 +350,20 @@ def my_submissions(request, show_all=None):
 	}
 
 	return render(request, 'my_submissions.html', context)
+
+@login_required
+def my_manuals(request, show_all=None):
+	submissions = ManualSubmission.objects.order_by('created').prefetch_related("author").filter(parent__id=None)
+	if not (show_all):# and request.user.is_superuser):
+		user = HistoryUser.objects.get(user=request.user)
+		submissions = submissions.filter(author=user)
+
+	context = {
+		'submissions': submissions,
+		'show_all': show_all
+	}
+
+	return render(request, 'my_manuals.html', context)
 
 def api_documentation(request):
 	return render(request, 'api.html')

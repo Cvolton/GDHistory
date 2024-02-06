@@ -55,6 +55,15 @@ class ManualSubmission(models.Model):
 		if self.parent is not None: response['parent'] = self.parent.get_serialized_base()
 		return response
 
+	def get_level_count(self):
+		#TODO: optimize
+		return self.levelrecord_set.count()
+
+	def get_children_count(self):
+		#TODO: optimize
+		return self.manualsubmission_set.count()
+
+
 class SaveFile(models.Model):
 	author = models.ForeignKey(
 		HistoryUser,

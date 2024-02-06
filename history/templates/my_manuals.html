@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% load tags %}
+{% block title %}My submissions{% endblock title %}
+{% block content %}
+<style>
+td > a:first-child {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	z-index: 0;
+	padding: .5rem !important;
+}
+td > a:first-child:focus {
+	outline: 0;
+}
+td {
+	padding: 0px !important;
+}
+tr:hover, tr:focus-within {
+	background: #f2f3ff;
+	outline: none;
+}
+</style>
+<div class="row">
+	<p class="lead">My manual submissions</p>
+</div>
+<div class="row">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>PK</th>
+				{% if show_all %}<th>Uploader</th>{% endif %}
+				<th>Comment</th>
+				<th>Submitted</th>
+				<th>Created</th>
+				<th>Children</th>
+				<th>Levels</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for submission in submissions %}
+			<tr>
+				<td>{{ submission.pk }}</td>
+				{% if show_all %}<td>{{ submission.author.user.username }}</td>{% endif %}
+				<td>{{ submission.comment }}</td>
+				<td>{{ submission.submitted }}</td>
+				<td>{{ submission.created |date:"N j, Y" }}</td>
+				<td>{{ submission.get_level_count }}</td>
+				<td>{{ submission.get_children_count }}</td>
+				<td>Details</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}
