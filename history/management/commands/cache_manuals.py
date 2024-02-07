@@ -7,7 +7,7 @@ class Command(BaseCommand):
 	help = 'Revalidates user cache'
 
 	def handle(self, *args, **options):
-		manuals = ManualSubmission.objects.all()
+		manuals = ManualSubmission.objects.filter(parent_id=None)
 		manual_count = manuals.count()
 		for i,manual in enumerate(manuals):
 			print(f"{i} / {manual_count} - Updating {manual.id}")
