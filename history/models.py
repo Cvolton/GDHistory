@@ -47,6 +47,10 @@ class ManualSubmission(models.Model):
 		db_index=True,
 	)
 
+	cache_level_count = models.IntegerField(blank=True, null=True)
+	cache_full_level_count = models.IntegerField(blank=True, null=True)
+	cache_children_count = models.IntegerField(blank=True, null=True)
+
 	def get_serialized_base(self):
 		response = {
 			'created': str(self.created),
@@ -56,12 +60,35 @@ class ManualSubmission(models.Model):
 		return response
 
 	def get_level_count(self):
+		if self.cache_level_count is not None:
+			return self.cache_level_count
 		#TODO: optimize
-		return self.levelrecord_set.count()
+		self.cache_level_count = self.levelrecord_set.count()
+		self.save()
+		print(f"level count: {self.cache_level_count}")
+		return self.cache_level_count
+
+	def get_full_level_count(self):
+		if self.cache_full_level_count is not None:
+			return self.cache_full_level_count
+
+		count = self.get_level_count()
+		for submission in self.manualsubmission_set.all():
+			count += submission.get_full_level_count()
+		#TODO: optimize
+		print(self)
+		print(count)
+		self.cache_full_level_count = count
+		self.save()
+		return count
 
 	def get_children_count(self):
+		if self.cache_children_count is not None:
+			return self.cache_children_count
 		#TODO: optimize
-		return self.manualsubmission_set.count()
+		self.cache_children_count = self.manualsubmission_set.count()
+		self.save()
+		return self.cache_children_count
 
 
 class SaveFile(models.Model):

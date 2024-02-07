@@ -35,7 +35,8 @@ tr:hover, tr:focus-within {
 				<th>Submitted</th>
 				<th>Created</th>
 				<th>Children</th>
-				<th>Levels</th>
+				<th>Levels (direct)</th>
+				<th>Levels (all)</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -44,11 +45,12 @@ tr:hover, tr:focus-within {
 			<tr>
 				<td>{{ submission.pk }}</td>
 				{% if show_all %}<td>{{ submission.author.user.username }}</td>{% endif %}
-				<td>{{ submission.comment }}</td>
+				<td><a data-toggle="tooltip" title="{{ submission.comment }}">{{ submission.comment |truncatechars:50 }}</a></td>
 				<td>{{ submission.submitted }}</td>
 				<td>{{ submission.created |date:"N j, Y" }}</td>
-				<td>{{ submission.get_level_count }}</td>
 				<td>{{ submission.get_children_count }}</td>
+				<td>{{ submission.get_level_count }}</td>
+				<td>{{ submission.get_full_level_count }}</td>
 				<td>Details</td>
 			</tr>
 		{% endfor %}
