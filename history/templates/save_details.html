@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% load tags %}
+{% block title %}My submissions{% endblock title %}
+{% block content %}
+<div class="row">
+	<p class="lead">Save file detail</p>
+	<p><b>Player:</b> {{ save_file.player_name }} ({{ save_file.player_user_id }}/{{ save_file.player_account_id }})<br>
+	<b>Date:</b> {{ save_file.created }}<br>
+	<b>Uploaded:</b> {{ save_file.submitted }}<br>
+	<b>Binary version:</b> {{ save_file.binary_version }}<br>
+	<b>Processing:</b> {% if save_file.is_processed %}Finished ✅{% else %}Not done ❌{% endif %}<br>
+	{%if save_file.comment %}<b>Comment:</b> {{ save_file.comment }}<br>{% endif %}</p>
+	<p><b>Total records:</b> {{ save_file.get_count }}<br>
+	<b>Total non-blank records:</b> {{ save_file.get_nonblank_count }}</p>
+</div>
+<div class="row">
+	<p class="lead">Level records</p>
+</div>
+<div class="row">
+	<div class="tab-content" id="myTabContent" style="padding-left: 0px; padding-right: 0px">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Level ID</th>
+					<th>Name</th>
+					<th>Downloads</th>
+					<th>Likes</th>
+					<th>Difficulty</th>
+					<!--<th>Stars</th>-->
+					<th>Version</th>
+					<th>Creator</th>
+					<th>Update</th>
+					<th>Data Available</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for record in level_records %}
+				<tr>
+					<td><a href="{% url 'level' record.level.online_id record.pk %}?{% print_filters filters %}">{{ record.level.online_id }}</a></td>
+					<td>{{ record.level_name }}</td>
+					<td>{{ record.downloads }}</td>
+					{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
+Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
+					<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
+Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({% display_number record.stars %}{% star_character record.length %})</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="{% print_epic record.epic %}"> {% print_epic_fires record.epic '🔥' %}</a>{% endif %}</td>
+					<!--<td>{{ record.stars }}</td>-->
+					<td>{{ record.level_version }}</td>
+					<td>{% if record.real_user_record and record.real_user_record.username %}
+							{{ record.real_user_record.username }}
+						{% elif record.username and not record.real_user_record %}
+							{{ record.username }} 
+								<a data-toggle="tooltip" title="This record does not have a user ID assigned.">❌</a>
+						{% else %}
+								<a data-toggle="tooltip" title="This record does not provide the creator's username. If one is shown, it comes from other records in the GDHistory system.">-
+									{% if record.real_user_record and record.real_user_record.user.cache_username %}
+										<small> ({% user_record_to_username record.real_user_record %})</small>
+									{% endif %}
+								</a>
+						{% endif %}
+						{% if record.real_user_record and record.real_user_record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}</td>
+					<td>{% game_version record.game_version %}</td>
+					<td>{% if record.level_string %}✅{%if record.level.is_public %} <a href="{% url 'download_record' record.level.online_id record.pk %}">(.gmd)</a>{% endif %} - {% print_file_size record.level_string.get_file_size %}{% else %}❌{% endif %}</td>
+					<!-- pk: {{ record.pk }}, levelstring: {{ record.level_string }} -->
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="row">
+	<p class="align-center">
+		<a href="{% url 'submission' save_file.pk %}{{ page|sub:1 }}/" class="btn btn-danger {% if page == minimum_page_button %}disabled{% endif %}" role="button">&lt;</a>
+		{% for button in page_buttons %}
+			<a href="{% url 'submission' save_file.pk %}{{ button }}/" class="btn {% if button == page %}btn-primary{% else %}btn-light{% endif %}" role="button">{{ button }}</a>
+		{% endfor %}
+		<a href="{% url 'submission' save_file.pk %}{{ page|add:1 }}/" class="btn btn-danger {% if page == maximum_page_button %}disabled{% endif %}" role="button">&gt;</a>
+	</p>
+</div>
+{% endblock %}

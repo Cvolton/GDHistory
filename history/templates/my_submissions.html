@@ -24,6 +24,7 @@ tr:hover, tr:focus-within {
 </style>
 <div class="row">
 	<p class="lead">My submissions</p>
+	<p>Click a submission for more details</p>
 </div>
 <div class="row">
 	<table class="table table-striped">
@@ -46,18 +47,18 @@ tr:hover, tr:focus-within {
 		<tbody>
 		{% for submission in submissions %}
 			<tr>
-				<td>{{ submission.pk }}</td>
-				{% if show_all %}<td>{{ submission.author.user.username }}</td>{% endif %}
-				<td>{{ submission.submitted }}</td>
-				<td>{{ submission.created |date:"N j, Y" }}</td>
-				<!--<td>{{ submission.comment }}</td>-->
-				<td>{{ submission.is_processed }}</td>
-				<td>{{ submission.player_name }}</td>
-				<td>{{ submission.player_user_id }}</td>
-				<td>{{ submission.player_account_id }}</td>
-				<td>{{ submission.binary_version }}</td>
-				<td>{{ submission.get_nonblank_count }}</td>
-				<td>{{ submission.get_count }}</td>
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.pk }}</a></td>
+				{% if show_all %}<td><a href="{% url 'submission' submission.pk %}">{{ submission.author.user.username }}</a></td>{% endif %}
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.submitted |date:"N j, Y" }}</a></td>
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.created |date:"N j, Y" }}</a></td>
+				<!--<td><a href="{% url 'submission' submission.pk %}">{{ submission.comment }}</a></td>-->
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.is_processed }}</a></td>
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.player_name }}</a></td>
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.player_user_id }}</a></td>
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.player_account_id }}</a></td>
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.binary_version }}</a></td>
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.get_nonblank_count }}</a></td>
+				<td><a href="{% url 'submission' submission.pk %}">{{ submission.get_count }}</a></td>
 			</tr>
 		{% endfor %}
 		</tbody>
