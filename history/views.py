@@ -365,6 +365,19 @@ def my_manuals(request, show_all=None):
 
 	return render(request, 'my_manuals.html', context)
 
+@login_required
+def view_manual(request, manual_id=None):
+	try:
+		manual = ManualSubmission.objects.get(pk=manual_id)
+	except:
+		return render(request, 'error.html', {'error': 'Submission not found in our database'})
+
+	context = {
+		'manual': manual
+	}
+
+	return render(request, 'manual_details.html', context)
+
 def api_documentation(request):
 	return render(request, 'api.html')
 

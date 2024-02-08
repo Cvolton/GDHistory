@@ -3,25 +3,6 @@
 {% load tags %}
 {% block title %}My submissions{% endblock title %}
 {% block content %}
-<style>
-td > a:first-child {
-	display: block;
-	text-decoration: none;
-	color: inherit;
-	z-index: 0;
-	padding: .5rem !important;
-}
-td > a:first-child:focus {
-	outline: 0;
-}
-td {
-	padding: 0px !important;
-}
-tr:hover, tr:focus-within {
-	background: #f2f3ff;
-	outline: none;
-}
-</style>
 <div class="row">
 	<p class="lead">My manual submissions</p>
 </div>
@@ -51,7 +32,7 @@ tr:hover, tr:focus-within {
 				<td>{{ submission.get_children_count }}</td>
 				<td>{{ submission.get_level_count }}</td>
 				<td>{{ submission.get_full_level_count }}</td>
-				<td>Details</td>
+				<td><a href="{% url 'manual' submission.pk %}">Details</a></td>
 			</tr>
 		{% endfor %}
 		</tbody>

@@ -11,6 +11,7 @@ urlpatterns = [
     path('level/<online_id>/', views.view_level, name='level'),
     path('level/<online_id>/<record_id>/', views.view_level, name='level'),
     path('level/<online_id>/<record_id>/download/', views.download_record, name='download_record'),
+    path('manual/<manual_id>/', views.view_manual, name='manual'),
     path('my_submissions/', views.my_submissions, name='my_submissions'),
     path('my_submissions/<show_all>/', views.my_submissions, name='all_submissions'),
     path('my_manuals/', views.my_manuals, name='my_manuals'),

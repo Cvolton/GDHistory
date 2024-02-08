@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% load tags %}
+{% block title %}My submissions{% endblock title %}
+{% block content %}
+<div class="row">
+	<p class="lead">Manual submission detail</p>
+</div>
+<div class="row">
+	<p>Date: {{ manual.submitted }}</p>
+	<p>Comment: {{ manual.comment }}</p>
+</div>
+<div class="row">
+	<p class="lead">Manual submissions</p>
+</div>
+<div class="row">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>PK</th>
+				{% if show_all %}<th>Uploader</th>{% endif %}
+				<th>Comment</th>
+				<th>Submitted</th>
+				<th>Created</th>
+				<th>Children</th>
+				<th>Levels (direct)</th>
+				<th>Levels (all)</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for submission in manual.manualsubmission_set.all %}
+			<tr>
+				<td>{{ submission.pk }}</td>
+				{% if show_all %}<td>{{ submission.author.user.username }}</td>{% endif %}
+				<td><a data-toggle="tooltip" title="{{ submission.comment }}">{{ submission.comment |truncatechars:50 }}</a></td>
+				<td>{{ submission.submitted }}</td>
+				<td>{{ submission.created |date:"N j, Y" }}</td>
+				<td>{{ submission.get_children_count }}</td>
+				<td>{{ submission.get_level_count }}</td>
+				<td>{{ submission.get_full_level_count }}</td>
+				<td><a href="{% url 'manual' submission.pk %}">Details</a></td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
+<div class="row">
+	<p class="lead">Level records</p>
+</div>
+<div class="row">
+	<div class="tab-content" id="myTabContent" style="padding-left: 0px; padding-right: 0px">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Level ID</th>
+					<th>Name</th>
+					<th>Downloads</th>
+					<th>Likes</th>
+					<th>Difficulty</th>
+					<!--<th>Stars</th>-->
+					<th>Version</th>
+					<th>Creator</th>
+					<th>Update</th>
+					<th>Data Available</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for record in manual.levelrecord_set.all %}
+				<tr>
+					<td><a href="{% url 'level' record.level.online_id record.pk %}?{% print_filters filters %}">{{ record.level.online_id }}</a></td>
+					<td>{{ record.level_name }}</td>
+					<td>{{ record.downloads }}</td>
+					{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
+Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
+					<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
+Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({% display_number record.stars %}{% star_character record.length %})</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="{% print_epic record.epic %}"> {% print_epic_fires record.epic '🔥' %}</a>{% endif %}</td>
+					<!--<td>{{ record.stars }}</td>-->
+					<td>{{ record.level_version }}</td>
+					<td>{% if record.real_user_record and record.real_user_record.username %}
+							{{ record.real_user_record.username }}
+						{% elif record.username and not record.real_user_record %}
+							{{ record.username }} 
+								<a data-toggle="tooltip" title="This record does not have a user ID assigned.">❌</a>
+						{% else %}
+								<a data-toggle="tooltip" title="This record does not provide the creator's username. If one is shown, it comes from other records in the GDHistory system.">-
+									{% if record.real_user_record and record.real_user_record.user.cache_username %}
+										<small> ({% user_record_to_username record.real_user_record %})</small>
+									{% endif %}
+								</a>
+						{% endif %}
+						{% if record.real_user_record and record.real_user_record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}</td>
+					<td>{% game_version record.game_version %}</td>
+					<td>{% if record.level_string %}✅{%if record.level.is_public %} <a href="{% url 'download_record' record.level.online_id record.pk %}">(.gmd)</a>{% endif %} - {% print_file_size record.level_string.get_file_size %}{% else %}❌{% endif %}</td>
+					<!-- pk: {{ record.pk }}, levelstring: {{ record.level_string }} -->
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}
