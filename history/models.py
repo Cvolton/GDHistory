@@ -181,6 +181,7 @@ class GDUser(models.Model):
 		if len(username_record) > 0:
 			self.cache_username = username_record[0].username
 			self.cache_username_created = username_record[0].cache_created
+			self.cache_account_id = username_record[0].account_id
 			print("Setting username from user record")
 			if self.cache_username == 'Player':
 				non_player_username_record = username_record_set.exclude(username='Player')[:1]
@@ -569,7 +570,7 @@ class Level(models.Model):
 			self.cache_demon_type = record.demon_type or 0
 			self.cache_game_version = record.game_version or 0
 			self.cache_stars = record.stars or 0
-			self.cache_user_id = record.user_id or 0
+			self.cache_user_id = record.user_id or self.cache_user_id
 			self.cache_main_difficulty = 0 if int(self.cache_rating) == 0 else int(self.cache_rating_sum) / int(self.cache_rating)
 			self.cache_blank_name = (self.cache_level_name is None)
 			check_level_string = True
@@ -596,8 +597,9 @@ class Level(models.Model):
 					self.cache_filter_difficulty = 11 - 5 + int(self.cache_demon_type)
 
 
-			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-':
+			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-' and record.real_user_record.user_id != 0 and record.real_user_record.user_id is not None:
 				self.cache_username = record.real_user_record.username
+				self.cache_user_id = record.real_user_record.user_id
 
 		if record.daily_id is not None and int(record.daily_id) > 0:
 			changed = True
@@ -641,6 +643,13 @@ class Level(models.Model):
 			print("set minimums, not saved")
 		else:
 			self.cache_min_stars = 0
+
+		if self.cache_user_id is None or self.cache_user_id == 0:
+			print("recalculating user id")
+			user_id_set = self.levelrecord_set.filter(cache_is_dupe=False, stars__gt=0).aggregate(Max('user_id'))
+			self.cache_user_id = user_id_set['user_id__max']
+			print("set user id, not saved")
+
 
 		self.cache_rating_changed = (self.cache_stars != self.cache_max_stars) or (self.cache_min_stars != self.cache_stars) or (self.cache_min_stars != self.cache_max_stars)
 
