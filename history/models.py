@@ -599,7 +599,7 @@ class Level(models.Model):
 
 			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-' and record.real_user_record.user_id != 0 and record.real_user_record.user_id is not None:
 				self.cache_username = record.real_user_record.username
-				self.cache_user_id = record.real_user_record.user_id
+				self.cache_user_id = record.real_user_record.user.online_id
 
 		if record.daily_id is not None and int(record.daily_id) > 0:
 			changed = True
