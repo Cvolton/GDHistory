@@ -854,6 +854,8 @@ class LevelString(models.Model):
 		import base64, zlib
 		content = self.load_file_content()
 
+		if content is None: return None
+
 		if content.startswith('kS'):
 			return content.encode('windows-1252')
 		
