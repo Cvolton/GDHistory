@@ -655,7 +655,7 @@ class Level(models.Model):
 
 	def dedup_records(self):
 		"""This ensures there is only one record of each level version with cache_is_dupe set to False. The record with the highest amount of downloads is also kept."""
-		print("deduplicating records")
+		#print("deduplicating records")
 
 		record_strings = set()
 		records_to_update = set()
@@ -684,9 +684,9 @@ class Level(models.Model):
 			record_strings.add(current_record_string)
 
 
-			print(f"{record} - {current_record_string} - {record.cache_is_dupe}")
+			#print(f"{record} - {current_record_string} - {record.cache_is_dupe}")
 
-		print("deduplicating records - updating db")
+		#print("deduplicating records - updating db")
 		if highest_downloads_record in records_to_update: records_to_update.remove(highest_downloads_record)
 		if highest_downloads_with_levelstring_record in records_to_update: records_to_update.remove(highest_downloads_with_levelstring_record)
 		self.levelrecord_set.bulk_update(records_to_update, ['cache_is_dupe'], batch_size=1000)
