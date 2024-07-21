@@ -11,6 +11,8 @@ register = template.Library()
 
 @register.simple_tag
 def print_file_size(size):
+	if size is None: return "Corrupted"
+
 	size_KB = size / 1024
 	size_MB = size_KB / 1024
 	if size_MB > 1: return f"{size_MB:.2f} MB"
