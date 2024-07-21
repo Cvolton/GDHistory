@@ -69,22 +69,14 @@ def create_level_string(level_string):
 	level_string = level_string.encode('windows-1252', errors='xmlcharrefreplace')
 	sha256 = hashlib.sha256(level_string).hexdigest()
 	try:
-		return LevelString.objects.get(sha256=sha256)
-	except:
-		requires_base64 = False
-		if level_string[:2] == b'eJ' or level_string[:2] == b'H4':
-			try:
-				level_string = base64.b64decode(level_string, altchars='-_')
-				requires_base64 = True
-			except:
-				#unable to decode, store levelstring as is
-				print("unable to decode levelstring")
-
-		record = LevelString(sha256=sha256, requires_base64=requires_base64)
-		record.save()
-		f = open(record.get_file_path(), "wb")
-		f.write(level_string)
-		f.close()
+		level_string_object = LevelString.objects.get(sha256=sha256)
+		file_size = level_string_object.get_file_size()
+		if file_size is None or file_size == 0:
+			record.write_string(level_string)
+		return level_string_object
+	except Exception as error:
+		record = LevelString(sha256=sha256)
+		record.write_string(level_string)
 		return record
 
 def robtop_unxor(string, key):

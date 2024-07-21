@@ -835,6 +835,23 @@ class LevelString(models.Model):
 			os.mkdir(directory)
 		return f"{directory}/{self.sha256}"
 
+	def write_string(self, level_string):
+		import base64
+
+		self.requires_base64 = False
+		if level_string[:2] == b'eJ' or level_string[:2] == b'H4':
+			try:
+				level_string = base64.b64decode(level_string, altchars='-_')
+				self.requires_base64 = True
+			except:
+				#unable to decode, store levelstring as is
+				print("unable to decode levelstring")
+
+		f = open(self.get_file_path(), "wb")
+		f.write(level_string)
+		f.close()
+		self.calculate_file_size()
+
 	def load_file_content(self):
 		import base64
 
@@ -886,7 +903,10 @@ class LevelString(models.Model):
 		return self.decompressed_sha256
 
 	def calculate_file_size(self):
-		self.file_size = len(self.load_file_content())
+		content = self.load_file_content()
+		if content is None: return None
+
+		self.file_size = len(content)
 		if self.calculate_decompressed_string():
 			self.decompressed_file_size = len(self.calculate_decompressed_string())
 		self.save()
