@@ -9,7 +9,7 @@ from django.utils.timezone import make_aware
 
 from datetime import datetime, timedelta
 
-from .models import LevelRecord, LevelDateEstimation, GDUserRecord, ManualSubmission
+from .models import LevelRecord, LevelDateEstimation, GDUserRecord, GDUser, ManualSubmission
 from . import ccUtils, serverUtils, tasks, utils, constants, meili_utils
 from .forms import AdvancedSearchForm
 
@@ -71,13 +71,15 @@ def level_info(request, online_id=None, view_mode="normal"):
 def user_info(request, online_id=None, view_mode="normal"):
 	all_users = GDUserRecord.objects.all()
 
-	user_records = all_users.filter(user__online_id=online_id).prefetch_related('user').order_by('-cache_created')
-	if view_mode == "brief":
-		user_records = user_records[:1]
-	if len(user_records) == 0:
+	try:
+		user = GDUser.objects.get(online_id=online_id)
+	except:
 		return JsonResponse({'success': False}, status=404)
 
-	user = user_records[0].user
+	if view_mode != "brief":
+		user_records = all_users.filter(user_id=user.pk).order_by('-cache_created')
+		if len(user_records) == 0:
+			return JsonResponse({'success': False}, status=404)
 
 	response = user.get_serialized_base()
 
