@@ -58,6 +58,7 @@ def level_info(request, online_id=None, view_mode="normal"):
 		response['level_string_count'] = 0
 		response['records'] = []
 		for record in level_records:
+			record.upgrade_data()
 			response['records'].append(record.get_serialized_full())
 
 			if record.level_string is not None and record.level_string.pk not in level_strings:
