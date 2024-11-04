@@ -225,6 +225,7 @@ def recalculate_daily_records():
 	records = {}
 
 	records["Weekly"] = []
+	records["Event"] = []
 	#TODO: do not hardcode years
 	for i in range(2016, 2025):
 		records[i] = []
@@ -243,7 +244,9 @@ def recalculate_daily_records():
 			elif record.cache_daily_id < 2223: records[2022].append(record)
 			elif record.cache_daily_id < 2590: records[2023].append(record)
 			else: records[2024].append(record)
-		else: records["Weekly"].append(record)
+		else:
+			if record.cache_daily_id < 200000: records["Weekly"].append(record)
+			else: records["Event"].append(record)
 
 	cache.set('daily', records, None)
 	return records
