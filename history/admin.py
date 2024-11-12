@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import HistoryUser, SaveFile, ServerResponse, Level, LevelRecord, Song, SongRecord, LevelString, GDUser, GDUserRecord, LevelDateEstimation
+from .models import HistoryUser, SaveFile, ServerResponse, Level, LevelRecord, Song, SongRecord, LevelString, GDUser, GDUserRecord, LevelDateEstimation, ManualSubmission
 
 # Register your models here.
 admin.site.register(HistoryUser)
@@ -13,3 +13,4 @@ admin.site.register(LevelString)
 admin.site.register(Song)
 admin.site.register(SongRecord)
 admin.site.register(LevelDateEstimation)
+admin.site.register(ManualSubmission)
