@@ -12,7 +12,7 @@
 				<form id="estimator">
 					<div class="mb-3">
 						<label for="online_id" class="form-label">Level ID</label>
-						<input class="form-control" type="text" id="online_id" name="online_id">
+						<input class="form-control" type="number" id="online_id" name="online_id">
 					</div>
 					<button type="submit" class="btn btn-primary">Estimate</button>
 				</form>
@@ -32,6 +32,20 @@
 				</form>
 			</div>
 		</div>
+        <div class="card mt-3">
+            <div class="card-header lead">
+                Timestamp to level ID
+            </div>
+            <div class="card-body">
+                <form id="timestamp-to-id-estimator">
+                    <div class="mb-3">
+                        <label for="online_timestamp" class="form-label">Timestamp</label>
+                        <input class="form-control" type="number" id="online_timestamp" name="online_timestamp" min="1356998400">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Estimate</button>
+                </form>
+            </div>
+        </div>
 	</div>
 	<div class="col mb-3">
 		<div class="card mt-1">
@@ -117,6 +131,22 @@
 		.fail(() => this.onLoadFailed());
 	});
 
-	
+    const timestampToId = document.getElementById('timestamp-to-id-estimator');
+
+    timestampToId.addEventListener('submit', (event) => {
+        event.preventDefault();
+        $('#result-pane').remove();
+        $('#result-card').append(`
+			<span id="result-pane">
+				<p>Loading...</p>
+			</span>`);
+
+        online_timestamp = timestampToId.elements['online_timestamp'];
+        $.getJSON(`/api/v1/date/timestamp/${online_timestamp.value}/`, (result) => onLoadComplete(result))
+            .fail(() => this.onLoadFailed());
+    });
+
+
+
 </script>
 {% endblock %}
