@@ -646,7 +646,7 @@ class Level(models.Model):
 
 		if self.cache_user_id is None or self.cache_user_id == 0:
 			print("recalculating user id")
-			user_id_set = self.levelrecord_set.filter(cache_is_dupe=False, stars__gt=0).aggregate(Max('user_id'))
+			user_id_set = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('user_id'))
 			self.cache_user_id = user_id_set['user_id__max']
 			print("set user id, not saved")
 
