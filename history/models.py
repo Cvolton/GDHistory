@@ -829,7 +829,7 @@ class LevelString(models.Model):
 	decompressed_file_size = models.IntegerField(blank=True, null=True, db_index=True)
 
 	def get_serialized_base(self):
-		response = {
+		return {
 			'sha256': self.sha256,
 			'decompressed_sha256': self.get_decompressed_sha256(),
 		}
