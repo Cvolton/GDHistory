@@ -7,7 +7,7 @@ from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import make_aware
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 from .models import LevelRecord, LevelDateEstimation, GDUserRecord, GDUser, ManualSubmission
 from . import ccUtils, serverUtils, tasks, utils, constants, meili_utils
@@ -137,18 +137,27 @@ def level_date_estimation(request, online_id):
 def level_date_to_id_estimation(request, online_date):
 	online_date = make_aware(datetime.strptime(online_date, '%Y-%m-%d'))
 
-	low = LevelDateEstimation.objects.filter(estimation__lte=online_date).order_by('-estimation')[:1]
-	high = LevelDateEstimation.objects.filter(estimation__gte=online_date).order_by('estimation')[:1]
+	return time_to_id_estimation(online_date)
+
+@csrf_exempt
+def level_timestamp_to_id_estimation(request, online_timestamp):
+	online_timestamp = make_aware(datetime.fromtimestamp(int(online_timestamp), UTC))
+
+	return time_to_id_estimation(online_timestamp)
+
+def time_to_id_estimation(aware_date):
+	low = LevelDateEstimation.objects.filter(estimation__lte=aware_date).order_by('-estimation')[:1]
+	high = LevelDateEstimation.objects.filter(estimation__gte=aware_date).order_by('estimation')[:1]
 
 	approx = None
 	if low and high and low[0].estimation != high[0].estimation:
 		date_difference = high[0].estimation - low[0].estimation
 		id_difference = high[0].cache_online_id - low[0].cache_online_id
-		requested_date_difference = online_date - low[0].estimation
+		requested_date_difference = aware_date - low[0].estimation
 		percentage = requested_date_difference / date_difference
 		new_id_difference = id_difference * percentage
 		approx = {
-			"estimation": online_date,
+			"estimation": aware_date,
 			"online_id": math.floor(low[0].cache_online_id + new_id_difference)
 		}
 
