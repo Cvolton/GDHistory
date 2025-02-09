@@ -828,6 +828,12 @@ class LevelString(models.Model):
 	file_size = models.IntegerField(blank=True, null=True, db_index=True)
 	decompressed_file_size = models.IntegerField(blank=True, null=True, db_index=True)
 
+	def get_serialized_base(self):
+		response = {
+			'sha256': self.sha256,
+			'decompressed_sha256': self.get_decompressed_sha256(),
+		}
+
 	def get_file_path(self):
 		data_path = utils.get_data_path()
 		directory = f"{data_path}/LevelString/{self.sha256[:2]}"
@@ -1065,6 +1071,7 @@ class LevelRecord(models.Model):
 		del response['level_string_id']
 
 		response['level_string_available'] = self.level_string is not None
+		response['level_string_info'] = self.level_string.get_serialized_base() if self.level_string is not None else None
 
 		return response
 
