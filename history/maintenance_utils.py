@@ -20,6 +20,7 @@ def update_is_public():
 			record.level.save()
 
 def do_is_public_updating(records):
+	records = records[:100000]
 	record_count = records.count()
 	i = 1
 	for record in records:
@@ -31,6 +32,7 @@ def do_is_public_updating(records):
 	LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
 
 def do_search_cache_updating(records, status):
+	records = records[:100000]
 	record_count = records.count()
 	i = 1
 	for record in records:
