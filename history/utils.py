@@ -220,7 +220,7 @@ def recalculate_daily_records():
 	levels = Level.objects.filter(cache_search_available=True, cache_daily_id__gt=0).order_by('cache_daily_id')
 
 	if len(levels) < 1:
-		return render(request, 'error.html', {'error': 'No results found'})
+		return {}
 
 	records = {}
 
@@ -269,7 +269,10 @@ def get_level_id_within_window():
 
 def get_level_id_before(last_date):
 	from history.models import LevelDateEstimation
-	time_estimation = LevelDateEstimation.objects.filter(estimation__lt=last_date).order_by('-estimation')[:1][0]
+	time_estimation = LevelDateEstimation.objects.filter(estimation__lt=last_date).order_by('-estimation')[:1]
+	if len(time_estimation) < 1:
+		return 0
+	time_estimation = time_estimation[0]
 	estimated_id = time_estimation.cache_online_id
 	print(estimated_id)
 	return estimated_id
