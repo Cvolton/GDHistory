@@ -183,7 +183,7 @@ def process_download(response_json):
 		print(f"::: {datetime.now().time()} : Unable to create response")
 		return None
 
-	if response[:2] == '-1' or not response: #level doesn't exist or other error
+	if response[:2] == '-1': #level doesn't exist or other error
 		print(f"::: {datetime.now().time()} : Level deleted")
 		level_object.is_deleted = True
 		level_object.save()
