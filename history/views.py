@@ -13,6 +13,8 @@ from . import ccUtils, serverUtils, tasks, utils, meili_utils
 import math
 import plistlib
 import meilisearch
+from os import sys
+
 
 def index(request):
 	all_levels = LevelRecord.objects.prefetch_related('level').exclude(level_name=None)
@@ -266,7 +268,7 @@ def search(request):
 				})
 			level_results = search_result['hits']
 			level_count = search_result['estimatedTotalHits']
-		except meilisearch.errors.MeiliSearchCommunicationError:
+		except meilisearch.errors.MeilisearchCommunicationError:
 			return render(request, 'error.html', {'error': 'Unable to connect to the search system. Please report this if the issue persists.'})
 		except:
 			print(sys.exc_info())

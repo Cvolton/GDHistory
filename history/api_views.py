@@ -206,8 +206,8 @@ def level_search(request):
 		})
 
 		return JsonResponse(search_result)
-	except meilisearch.errors.MeiliSearchCommunicationError:
-		return JsonResponse({'success': False, 'error': 'MeiliSearchCommunicationError'}, status=500)
+	except meilisearch.errors.MeilisearchCommunicationError:
+		return JsonResponse({'success': False, 'error': 'MeilisearchCommunicationError'}, status=500)
 	except:
 		print(sys.exc_info())
 		return JsonResponse({'success': False, 'error': 'generic'}, status=500)#
