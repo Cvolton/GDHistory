@@ -141,7 +141,7 @@ def level_date_to_id_estimation(request, online_date):
 
 @csrf_exempt
 def level_timestamp_to_id_estimation(request, online_timestamp):
-	online_timestamp = make_aware(datetime.fromtimestamp(int(online_timestamp), UTC))
+	online_timestamp = datetime.fromtimestamp(int(online_timestamp), UTC)
 
 	return time_to_id_estimation(online_timestamp)
 
