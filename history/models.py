@@ -23,13 +23,23 @@ class LevelRecordType(models.TextChoices):
 		MANUAL = 'manual', _('manual')
 
 class HistoryUser(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        db_index=True,
-    )
-    def __str__(self):
-        return self.user.username
+	user = models.OneToOneField(
+		settings.AUTH_USER_MODEL,
+		on_delete=models.CASCADE,
+		db_index=True,
+	)
+	def __str__(self):
+		return self.user.username
+	
+	@staticmethod
+	def get_user(user):
+		try:
+			return HistoryUser.objects.get(user=user)
+		except HistoryUser.DoesNotExist:
+			user = HistoryUser.objects.create(user=user)
+			user.save()
+			return user
+
 
 class ManualSubmission(models.Model):
 	author = models.ForeignKey(

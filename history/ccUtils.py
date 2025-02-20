@@ -287,7 +287,7 @@ def upload_save_file(file, date, user, *args, **kwargs):
 	game_manager['GJA_005'] = '' #gjp2 (2.2)
 
 	save_file = SaveFile(
-		author=HistoryUser.objects.get(user=user),
+		author=HistoryUser.get_user(user),
 		player_name=assign_key_no_pop(game_manager, 'playerName'),
 		player_user_id=assign_key_no_pop(game_manager, 'playerUserID'),
 		player_account_id=assign_key_no_pop(game_manager, 'GJA_003'),

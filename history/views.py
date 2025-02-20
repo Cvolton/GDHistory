@@ -343,7 +343,7 @@ def my_submissions(request, show_all=None):
 	#TODO: optimize this
 	submissions = SaveFile.objects.order_by('created').prefetch_related("author")
 	if not (show_all):# and request.user.is_superuser):
-		user = HistoryUser.objects.get(user=request.user)
+		user = HistoryUser.get_user(request.user)
 		submissions = submissions.filter(author=user)
 
 	context = {
@@ -357,7 +357,7 @@ def my_submissions(request, show_all=None):
 def my_manuals(request, show_all=None):
 	submissions = ManualSubmission.objects.order_by('created').prefetch_related("author").filter(parent__id=None)
 	if not (show_all):# and request.user.is_superuser):
-		user = HistoryUser.objects.get(user=request.user)
+		user = HistoryUser.get_user(request.user)
 		submissions = submissions.filter(author=user)
 
 	context = {
