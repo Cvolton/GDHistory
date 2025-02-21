@@ -1,66 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-    	<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
-        <title>{% block title %}{% endblock title %} - GDHistory</title>
-        <style>
-          .align-right {
-            text-align: right;
-          }
-          .align-center {
-            text-align: center;
-          }
-        </style>
-        <meta property="og:image" content="https://cvolton.eu/gdhistory_placeholder2.webp">
-        <meta property="description" content="{% block description %}{% endblock description %}">
-    </head>
 
-    <body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <title>{% block title %}{% endblock title %} - GDHistory</title>
+  <style>
+    .align-right {
+      text-align: right;
+    }
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'index' %}">GDHistory</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                  <a class="nav-link {% if request.path == '/' %} active {% endif %} " aria-current="page" href="{% url 'index' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link {% if request.path == '/search/' %} active {% endif %} " aria-current="page" href="{% url 'search' %}">Browse</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link {% if request.path == '/daily/' %} active {% endif %} " aria-current="page" href="{% url 'daily' %}">Daily</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link {% if request.path == '/date_estimator/' %} active {% endif %} " aria-current="page" href="{% url 'date_estimator' %}">Date Estimator</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link {% if request.path == '/api/' %} active {% endif %} " aria-current="page" href="{% url 'api' %}">API</a>
-                </li>
-                {%if user.is_authenticated %}
-                <li class="nav-item">
-                  <a class="nav-link {% if request.path == '/upload/' %} active {% endif %}" href="{% url 'upload' %}">Submit</a>
-                </li>
-                {% endif %}
-              </ul>
-              	<form class="d-flex" action="/search">
-                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
-                  <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-            </div>
-          </div>
-        </nav>
+    .align-center {
+      text-align: center;
+    }
+  </style>
+  <meta property="og:image" content="https://cvolton.eu/gdhistory_placeholder2.webp">
+  <meta property="description" content="{% block description %}{% endblock description %}">
+</head>
 
-        <div class="container mt-2">
-          {% block content %}{% endblock content %}
-        </div>
-        
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    </body>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'index' %}">GDHistory</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/' %} active {% endif %} " aria-current="page"
+              href="{% url 'index' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/search/' %} active {% endif %} " aria-current="page"
+              href="{% url 'search' %}">Browse</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/daily/' %} active {% endif %} " aria-current="page"
+              href="{% url 'daily' %}">Daily</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/date_estimator/' %} active {% endif %} " aria-current="page"
+              href="{% url 'date_estimator' %}">Date Estimator</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/api/' %} active {% endif %} " aria-current="page"
+              href="{% url 'api' %}">API</a>
+          </li>
+          {%if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/upload/' %} active {% endif %}"
+              href="{% url 'upload' %}">Submit</a>
+          </li>
+          {% endif %}
+        </ul>
+        <form class="d-flex" action="/search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-2">
+    {% block content %}{% endblock content %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>
