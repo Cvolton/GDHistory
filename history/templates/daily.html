@@ -1,6 +1,4 @@
 {% extends "base.html" %}
-{% load mathfilters %}
-{% load tags %}
 {% block title %}Daily Levels{% endblock title %}
 {% block content %}
 <style>
@@ -52,11 +50,6 @@ tr:hover, tr:focus-within {
 
 		let len = Object.keys(dailies).length
 		for(let [idx, [year, ]] of Object.entries(sortedEntries)) {
-			/*{% for year in level_records %}
-			<li class="nav-item" role="presentation">
-			<button class="nav-link {% if forloop.last %}active{% endif %}" id="y{{year}}-tab" data-bs-toggle="tab" data-bs-target="#y{{year}}" type="button" role="tab" aria-controls="y{{year}}" aria-selected="{% if forloop.last %}true{% endif %}">{{year}}</button>
-			</li>
-			{% endfor %}*/
 			$('#tabList').append(`<li class="nav-item" role="presentation">
 			<button class="nav-link ${idx == len - 1 ? "active" : ""}" id="y${year}-tab" data-bs-toggle="tab" data-bs-target="#y${year}" type="button" role="tab" aria-controls="y${year}" aria-selected="${idx == len - 1 ? "true" : ""}">${year}</button>
 			</li>`)
@@ -103,5 +96,4 @@ tr:hover, tr:focus-within {
 		loadTabs()
 	});
 </script>
-<!-- {{ level.pk }} -->
 {% endblock %}
