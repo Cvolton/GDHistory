@@ -23,27 +23,27 @@
 					<tbody>
 						<tr>
 							<td>Levels in our database:</td>
-							<td class="right"><span id="level-count"></span></td>
+							<td class="right"><span id="level-count">26,500,000</span></td>
 						</tr>
 						<tr>
 							<td>Creators in our database:</td>
-							<td class="right"><span id="gduser-count"></span></td>
+							<td class="right"><span id="gduser-count">5,500,000</span></td>
 						</tr>
 						<tr>
 							<td>Songs in our database:</td>
-							<td class="right"><span id="song-count"></span></td>
+							<td class="right"><span id="song-count">187,900</span></td>
 						</tr>
 						<tr>
 							<td>Submitted save files:</td>
-							<td  class="right"><span id="save-count"></span></td>
+							<td  class="right"><span id="save-count">700</span></td>
 						</tr>
 						<tr>
 							<td>Processed server requests:</td>
-							<td class="right"><span id="request-count"></span></td>
+							<td class="right"><span id="request-count">47,670,000</span></td>
 						</tr>
 						<tr>
 							<td>Stored level strings:</td>
-							<td class="right"><span id="level-string-count"></span></td>
+							<td class="right"><span id="level-string-count">25,470,000</span></td>
 						</tr>
 					</tbody>
 				</table>
@@ -57,11 +57,11 @@
 			</div>
 			<div class="card-body">
 				<table class="table">
-					<tbody>
+					<tbody id="recently-added">
 						{% for record in recently_added %}
 						<tr>
-							<td>{{ record.cache_level_name }}</td>
-							<td><a href="{% url 'level' record.online_id %}">{{ record.online_id }}</a></td>
+							<td><span style="color: #fff">{{ record.level_name }}</span></td>
+							<td><a href="#" onclick="return false"><span style="opacity: 0%">{{ record.online_id }}</span></a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -76,11 +76,11 @@
 			</div>
 			<div class="card-body">
 				<table class="table">
-					<tbody>
+					<tbody id="recently-updated">
 						{% for record in recently_updated %}
 						<tr>
-							<td>{{ record.level_name }}</td>
-							<td><a href="{% url 'level' record.level.online_id %}">{{ record.level.online_id }}</a></td>
+							<td><span style="color: #fff">{{ record.level_name }}</span></td>
+							<td><a href="#" onclick="return false"><span style="opacity: 0%">{{ record.online_id }}</span></a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -140,14 +140,28 @@
 	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	}
 
-	$.getJSON('/api/v1/counts', function(counts) {
-		$('#level-count').append(numberWithCommas(counts.level_count));
-		$('#song-count').append(numberWithCommas(counts.song_count));
-		$('#save-count').append(numberWithCommas(counts.save_count));
-		$('#request-count').append(numberWithCommas(counts.request_count));
-		$('#level-string-count').append(numberWithCommas(counts.level_string_count));
-		$('#gduser-count').append(numberWithCommas(counts.gduser_count));
-		//$('#rg-count').append(`<a data-toggle="tooltip" title="Total RG records (including no data): ${counts.rg_total}">${counts.rg_count}</a>`);
+	$.getJSON('/api/v1/counts/', function(counts) {
+		$('#level-count').replaceWith(numberWithCommas(counts.level_count));
+		$('#song-count').replaceWith(numberWithCommas(counts.song_count));
+		$('#save-count').replaceWith(numberWithCommas(counts.save_count));
+		$('#request-count').replaceWith(numberWithCommas(counts.request_count));
+		$('#level-string-count').replaceWith(numberWithCommas(counts.level_string_count));
+		$('#gduser-count').replaceWith(numberWithCommas(counts.gduser_count));
+		//$('#rg-count').replaceWith(`<a data-toggle="tooltip" title="Total RG records (including no data): ${counts.rg_total}">${counts.rg_count}</a>`);
+	});
+
+	$.getJSON('/api/v1/recent/', function(counts) {
+		$('#recently-added').empty()
+		$('#recently-updated').empty()
+
+		for (var i = 0; i < counts.recently_added.length; i++) {
+			$('#recently-added').append(`<tr><td>${counts.recently_added[i].cache_level_name}</td><td><a href="/level/${counts.recently_added[i].online_id}">${counts.recently_added[i].online_id}</a></td></tr>`)
+		}
+
+		for (var i = 0; i < counts.recently_updated.length; i++) {
+			$('#recently-updated').append(`<tr><td>${counts.recently_added[i].cache_level_name}</td><td><a href="/level/${counts.recently_added[i].online_id}">${counts.recently_added[i].online_id}</a></td></tr>`)
+		}
+		
 	});
 
 	var saveModal = document.getElementById('saveModal')

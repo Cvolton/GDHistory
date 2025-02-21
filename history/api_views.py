@@ -9,7 +9,7 @@ from django.utils.timezone import make_aware
 
 from datetime import datetime, timedelta, UTC
 
-from .models import LevelRecord, LevelDateEstimation, GDUserRecord, GDUser, ManualSubmission
+from .models import LevelRecord, LevelDateEstimation, GDUserRecord, GDUser, ManualSubmission, Level
 from . import ccUtils, serverUtils, tasks, utils, constants, meili_utils
 from .forms import AdvancedSearchForm
 
@@ -25,6 +25,17 @@ def index_counts(request):
 		counts = utils.recalculate_counts()
 
 	return JsonResponse(counts)
+
+@csrf_exempt
+def index_levels(request):
+	all_levels = LevelRecord.objects.prefetch_related('level').exclude(level_name=None)
+	recently_added = Level.objects.order_by('-pk').filter(cache_search_available=True)[:6]
+	recently_updated = all_levels.order_by('-pk').filter(cache_is_public=True)[:6]
+
+	return JsonResponse({
+		'recently_added': [level.get_serialized_base() for level in recently_added],
+		'recently_updated': [level.level.get_serialized_base() for level in recently_updated]
+	})
 
 @csrf_exempt
 def save_level(request, online_id=None):

@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/', views.api_documentation, name='api'),
 
     path('api/v1/counts/', api_views.index_counts, name='api_counts'),
+    path('api/v1/recent/', api_views.index_levels, name='api_recent'),
     path('api/v1/user/<online_id>/', api_views.user_info, name='api_user'),
     path('api/v1/user/<online_id>/<view_mode>/', api_views.user_info, name='api_user'),
     path('api/v1/manual/<pk>/', api_views.manual_info, name='api_manual'),

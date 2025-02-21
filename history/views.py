@@ -13,17 +13,23 @@ from . import ccUtils, serverUtils, tasks, utils, meili_utils
 import math
 import plistlib
 import meilisearch
+import random
 from os import sys
 
 
 def index(request):
-	all_levels = LevelRecord.objects.prefetch_related('level').exclude(level_name=None)
-	recently_added = Level.objects.order_by('-pk').filter(cache_search_available=True)[:6]
-	recently_updated = all_levels.order_by('-pk').filter(cache_is_public=True)[:6]
+	def main_placeholder():
+		placeholders = []
+		for i in range(0,5):
+			placeholders.append({
+				"online_id": "█" * 9,
+				"level_name": "█" * random.randint(5, 10)
+			})
+		return placeholders
 
 	context = {
-		'recently_added': recently_added,
-		'recently_updated': recently_updated
+		'recently_added': main_placeholder(),
+		'recently_updated': main_placeholder()
 	}
 
 	return render(request, 'index.html', context)
