@@ -374,7 +374,6 @@ def view_manual(request, manual_id=None):
 
 	return render(request, 'manual_details.html', context)
 
-@login_required
 def view_submission(request, save_id=None, page=1):
 	results_per_page = 500
 
@@ -383,6 +382,9 @@ def view_submission(request, save_id=None, page=1):
 		save_file = SaveFile.objects.get(pk=save_id)
 	except:
 		return render(request, 'error.html', {'error': 'Submission not found in our database'})
+	
+	if not save_file.is_browsable and not request.user.is_authenticated:
+		return render(request, 'error.html', {'error': 'This submission is not available for public viewing'})
 
 	level_records = save_file.levelrecord_set.prefetch_related('real_user_record').prefetch_related('level').prefetch_related('level_string').order_by('level__online_id')
 	level_record_count = level_records.count()

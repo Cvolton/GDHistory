@@ -109,8 +109,9 @@ class SaveFile(models.Model):
 	)
 	submitted = models.DateTimeField(default=timezone.now)
 	created = models.DateTimeField(default=timezone.now, db_index=True)
-	comment = models.CharField(max_length=255)
+	comment = models.CharField(max_length=255, blank=True, null=True)
 	is_processed = models.BooleanField(default=False)
+	is_browsable = models.BooleanField(default=False)
 
 	player_name = models.TextField(blank=True, null=True)
 	player_user_id = models.IntegerField(blank=True, null=True)
