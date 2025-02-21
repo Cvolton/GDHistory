@@ -169,7 +169,7 @@
 		var paragraph = $('#modal-placeholder')
 		paragraph.text('Queuing level for download')
 
-		$.getJSON(`/api/v1/level/${online_id.value}/save`, function(result) {
+		$.getJSON(`/api/v1/level/${online_id.value}/save/`, function(result) {
 			if(result["success"]) {
 				paragraph.text('Level queued for download. Note that it might take a few hours for the updated record to appear on the website.')
 			} else {

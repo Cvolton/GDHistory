@@ -98,7 +98,7 @@ tr:hover, tr:focus-within {
 		}
 	}
 
-	$.getJSON('/api/v1/daily', (result) => {
+	$.getJSON('/api/v1/daily/', (result) => {
 		dailies = result
 		loadTabs()
 	});
