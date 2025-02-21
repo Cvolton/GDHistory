@@ -23,7 +23,7 @@ class SongNames:
 		"Can't Let Go by DJVI", "Jumper by Waterflame", "Time Machine by Waterflame", "Cycles by DJVI", "xStep by DJVI",
 		"Clutterfunk by Waterflame", "Theory of Everything by DJ Nate", "Electroman Adventures by Waterflame", "Clubstep by DJ Nate", "Electrodynamix by DJ Nate",
 		"Hexagon Force by Waterflame", "Blast Processing by Waterflame", "Theory of Everything 2 by DJ Nate", "Geometrical Dominator by Waterflame", "Deadlocked by F-777",
-		"Fingerdash by MDK"
+		"Fingerdash by MDK", "Dash by MDK", "Explorers by Hinkik"
 	]
 	MELTDOWN = [
 		"The Seven Seas by F-777", "Viking Arena by F-777", "Airborne Robots by F-777"
