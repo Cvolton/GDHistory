@@ -17,6 +17,36 @@
       text-align: center;
     }
   </style>
+  <script type="text/javascript">
+    function demon_type(demon_type_number) {
+      if(!demon_type_number) return ""
+      if(demon_type_number < 3) return "Hard"
+      if(demon_type_number < 7) {
+        type_list = ["Easy", "Medium", "Insane", "Extreme"]
+        return type_list[demon_type_number - 3]
+      }
+      return `Hard (${demon_type_number})`
+    }
+
+    function difficulty(rating_sum, rating, demon, auto, demon_type_number) {
+      if(auto) return "Auto"
+      if(demon) return `${demon_type(demon_type_number)} Demon`
+      if(!rating || !rating_sum) return "N/A"
+
+      diff = rating_sum / rating
+      if(diff < 0) return "N/A"
+      if(diff < 1.5) return "Easy"
+      if(diff < 2.5) return "Normal"
+      if(diff < 3.5) return "Hard"
+      if(diff < 4.5) return "Harder"
+      if(diff < 5.5) return "Insane"
+    }
+
+    function display_number(number) {
+      if(number == null) return "0"
+      return number
+    }
+  </script>
   <meta property="og:image" content="https://cvolton.eu/gdhistory_placeholder2.webp">
   <meta property="description" content="{% block description %}{% endblock description %}">
 </head>

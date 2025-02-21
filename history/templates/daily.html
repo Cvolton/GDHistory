@@ -28,45 +28,80 @@ tr:hover, tr:focus-within {
 
 <div class="row pt-0">
 
-	<ul class="nav nav-tabs" id="myTab" role="tablist">
-		{% for year in level_records %}
-		<li class="nav-item" role="presentation">
-		<button class="nav-link {% if year not in level_records %}disabled{% endif %} {% if forloop.last %}active{% endif %}" id="y{{year}}-tab" data-bs-toggle="tab" data-bs-target="#y{{year}}" type="button" role="tab" aria-controls="y{{year}}" aria-selected="{% if forloop.last %}true{% endif %}">{{year}}</button>
-		</li>
-		{% endfor %}
+	<ul class="nav nav-tabs" id="tabList" role="tablist">
+		
 	</ul>
-	<div class="tab-content" id="myTabContent" style="padding-left: 0px; padding-right: 0px">
-		{% for year in reversed_records %}
-		<div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="y{{year}}" role="tabpanel" aria-labelledby="y{{year}}-tab">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>ID</th>
-						<th>Name</th>
-						<th>Difficulty</th>
-						<th>Creator</th>
-						<th>Data Available</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for level in level_records|get_item:year %}
-					<tr>
-						<!-- pk: {{ level.pk }} -->
-						<td><a href="{% url 'level' level.online_id %}">{{ level.cache_daily_id }}</a></td>
-						<td><a href="{% url 'level' level.online_id %}">{{ level.online_id }}</a></td>
-						<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{{ level.cache_level_name }}</a></td>
-						<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% difficulty level.cache_rating_sum level.cache_rating level.cache_demon level.cache_auto level.cache_demon_type %} ({% display_number level.cache_stars %}*)</a></td>
-						<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.cache_username %}{{ level.cache_username }}{% else %}-{% endif %}</a></td>
-						<td><a href="{% url 'level' level.online_id %}" tabindex="-1">{% if level.cache_level_string_available %}✅{% else %}❌{% endif %}</a></td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-		{% endfor %}
+	<div class="tab-content" id="tabContent" style="padding-left: 0px; padding-right: 0px">
+		
 	</div>
 
 </div>
+
+<script type="text/javascript">
+	dailies = {}
+
+	function loadTabs() {
+		const sortedEntries = Object.entries(dailies).sort(([keyA], [keyB]) => {
+		const isNumA = !isNaN(keyA);
+		const isNumB = !isNaN(keyB);
+
+		if (isNumA && !isNumB) return 1;  // Numbers go after letters
+		if (!isNumA && isNumB) return -1; // Letters come first
+		return !keyA.localeCompare(keyB, undefined, { numeric: true });
+		});
+
+		let len = Object.keys(dailies).length
+		for(let [idx, [year, ]] of Object.entries(sortedEntries)) {
+			/*{% for year in level_records %}
+			<li class="nav-item" role="presentation">
+			<button class="nav-link {% if forloop.last %}active{% endif %}" id="y{{year}}-tab" data-bs-toggle="tab" data-bs-target="#y{{year}}" type="button" role="tab" aria-controls="y{{year}}" aria-selected="{% if forloop.last %}true{% endif %}">{{year}}</button>
+			</li>
+			{% endfor %}*/
+			$('#tabList').append(`<li class="nav-item" role="presentation">
+			<button class="nav-link ${idx == len - 1 ? "active" : ""}" id="y${year}-tab" data-bs-toggle="tab" data-bs-target="#y${year}" type="button" role="tab" aria-controls="y${year}" aria-selected="${idx == len - 1 ? "true" : ""}">${year}</button>
+			</li>`)
+		}
+
+		for(let [idx, [year, content]] of Object.entries(sortedEntries.reverse())) {
+			let tabContent = ""
+
+			
+			tabContent += `<div class="tab-pane fade ${idx == 0 ? "show active" : ""}" id="y${year}" role="tabpanel" aria-labelledby="y${year}-tab">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Difficulty</th>
+							<th>Creator</th>
+							<th>Data Available</th>
+						</tr>
+					</thead>
+					<tbody>`
+
+			for(let level of content) {
+				tabContent += `<tr>
+							<td><a href="/level/${level.online_id}/">${level.cache_daily_id}</a></td>
+							<td><a href="/level/${level.online_id}/">${level.online_id}</a></td>
+							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_level_name}</a></td>
+							<td><a href="/level/${level.online_id}/" tabindex="-1">${difficulty(level.cache_rating_sum, level.cache_rating, level.cache_demon, level.cache_auto, level.cache_demon_type)} (${display_number(level.cache_stars)}*)</a></td>
+							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_username ? level.cache_username : "-"}</a></td>
+							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_level_string_available ? "✅" : "❌"}</a></td>
+						</tr>`
+			}
+				tabContent += `</tbody>
+				</table>
+			</div>`
+
+			$('#tabContent').append(tabContent)
+		}
+	}
+
+	$.getJSON('/api/v1/daily', (result) => {
+		dailies = result
+		loadTabs()
+	});
+</script>
 <!-- {{ level.pk }} -->
 {% endblock %}
