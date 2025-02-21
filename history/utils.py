@@ -235,19 +235,19 @@ def recalculate_daily_records():
 	for record in levels:
 		if record.cache_daily_id is None: continue
 		if record.cache_daily_id < 100000:
-			if record.cache_daily_id < 12: records[2016].append(record)
-			elif record.cache_daily_id < 385: records[2017].append(record)
-			elif record.cache_daily_id < 752: records[2018].append(record) #estimated - 2019 start: Code by Anubis + 5
-			elif record.cache_daily_id < 1124: records[2019].append(record) #estimated - Both Suiteki and True Damage are off by 18 on this list: https://geometry-dash.fandom.com/es/wiki/Daily_Level/Niveles_1101_-_1200, therefore Overdoze's ID should be 1106+1
-			elif record.cache_daily_id < 1493: records[2020].append(record) #estimated - unable to determine if off by 20 or 21 from said list, assuming 20; this was wrong, it's 21
-			elif record.cache_daily_id < 1858: records[2021].append(record)
-			elif record.cache_daily_id < 2223: records[2022].append(record)
-			elif record.cache_daily_id < 2590: records[2023].append(record)
-			elif record.cache_daily_id < 2958: records[2024].append(record)
-			else: records[2025].append(record)
+			if record.cache_daily_id < 12: records[2016].append(record.get_serialized_base())
+			elif record.cache_daily_id < 385: records[2017].append(record.get_serialized_base())
+			elif record.cache_daily_id < 752: records[2018].append(record.get_serialized_base()) #estimated - 2019 start: Code by Anubis + 5
+			elif record.cache_daily_id < 1124: records[2019].append(record.get_serialized_base()) #estimated - Both Suiteki and True Damage are off by 18 on this list: https://geometry-dash.fandom.com/es/wiki/Daily_Level/Niveles_1101_-_1200, therefore Overdoze's ID should be 1106+1
+			elif record.cache_daily_id < 1493: records[2020].append(record.get_serialized_base()) #estimated - unable to determine if off by 20 or 21 from said list, assuming 20; this was wrong, it's 21
+			elif record.cache_daily_id < 1858: records[2021].append(record.get_serialized_base())
+			elif record.cache_daily_id < 2223: records[2022].append(record.get_serialized_base())
+			elif record.cache_daily_id < 2590: records[2023].append(record.get_serialized_base())
+			elif record.cache_daily_id < 2958: records[2024].append(record.get_serialized_base())
+			else: records[2025].append(record.get_serialized_base())
 		else:
-			if record.cache_daily_id < 200000: records["Weekly"].append(record)
-			else: records["Event"].append(record)
+			if record.cache_daily_id < 200000: records["Weekly"].append(record.get_serialized_base())
+			else: records["Event"].append(record.get_serialized_base())
 
 	cache.set('daily', records, None)
 	return records

@@ -210,4 +210,8 @@ def level_search(request):
 		return JsonResponse({'success': False, 'error': 'MeilisearchCommunicationError'}, status=500)
 	except:
 		print(sys.exc_info())
-		return JsonResponse({'success': False, 'error': 'generic'}, status=500)#
+		return JsonResponse({'success': False, 'error': 'generic'}, status=500)
+	
+@csrf_exempt
+def daily(request):
+	return JsonResponse(utils.get_daily_records())
