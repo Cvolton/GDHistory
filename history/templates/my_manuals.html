@@ -4,7 +4,8 @@
 {% block title %}My submissions{% endblock title %}
 {% block content %}
 <div class="row">
-	<p class="lead">My manual submissions</p>
+	<p class="lead">{% if not show_all %}My{% else %}All{% endif %} manual submissions</p>
+	{% if not show_all %}<p><a href="all">See all submissions</a>{% endif %}</p>
 </div>
 <div class="row">
 	<table class="table table-striped">

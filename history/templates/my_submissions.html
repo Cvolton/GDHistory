@@ -23,8 +23,9 @@ tr:hover, tr:focus-within {
 }
 </style>
 <div class="row">
-	<p class="lead">My submissions</p>
-	<p>Click a submission for more details</p>
+	<p class="lead">{% if not show_all %}My{% else %}All{% endif %} submissions</p>
+	<p>Click a submission for more details
+	{% if not show_all %}<br><a href="all">See all submissions</a>{% endif %}</p>
 </div>
 <div class="row">
 	<table class="table table-striped">
