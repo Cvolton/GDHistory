@@ -250,18 +250,13 @@ def recalculate_daily_records():
 			else: records["Event"].append(record)
 
 	cache.set('daily', records, None)
-	cache.set('reversed_daily', reversed(records))
 	return records
 
 def get_daily_records():
 	records = cache.get('daily')
-	reversed_records = cache.get('reversed_daily')
-	if records is None or reversed_records is None:
+	if records is None:
 		return recalculate_daily_records()
-	return {
-		'level_records': records,
-		'reversed_records': reversed_records
-	}
+	return records
 
 def recalculate_everything():
 	recalculate_counts()

@@ -305,7 +305,13 @@ def search(request):
 		return render(request, 'error.html', {'error': 'Invalid search query'})
 
 def daily(request):
-	return render(request, 'daily.html', utils.get_daily_records())
+	records = utils.get_daily_records()
+
+	context = {
+		'level_records': records,
+		'reversed_records': reversed(records)
+	}
+	return render(request, 'daily.html', context)
 
 def login_page_placeholder(request):
 		return render(request, 'error.html', {'error': 'This feature is not available yet.'})
