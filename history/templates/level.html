@@ -322,10 +322,10 @@
 		const tdSource = td(record.record_type)
 
 		if(record.record_type == "get") {
-			tdSource.appendChild(make_small(`(${record.server_response.get_type})`))
+			tdSource.appendChild(make_small(`(${record.response_get_type})`))
 		} else if(record.record_type == "manual") {
 			tdSource.appendChild(make_link("🛈", "#", () => {
-				showManual(record.manual_submission.pk)
+				showManual(record.manual_submission_id)
 				return false
 			}))
 		}
