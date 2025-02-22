@@ -87,7 +87,7 @@ function epic_fires(epic, character) {
 
 function game_version(version) {
     if (!version) return "None"
-    if (version > 18) return `${version / 10}`
+    if (version > 18) return (version / 10).toFixed(1)
     if (version == 18) return "1.81"
     if (version == 11) return "1.80"
     if (version == 10) return "1.7"
