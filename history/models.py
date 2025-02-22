@@ -454,6 +454,13 @@ class Level(models.Model):
 
 	needs_priority_download = models.BooleanField(db_index=True, default=False)
 
+	best_record = models.ForeignKey(
+		"LevelRecord",
+		on_delete=models.SET_NULL,
+		blank=True, null=True,
+		related_name='best_record_level',
+	)
+
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 	class Meta:
 		indexes = [
@@ -722,6 +729,8 @@ class Level(models.Model):
 			return
 
 		best_record = best_record[0]
+		self.best_record = best_record
+
 		real_date = best_record.server_response.created if best_record.server_response else best_record.manual_submission.created if best_record.manual_submission else best_record.save_file.aggregate(oldest=Min('created'))['oldest']
 
 		self.update_with_record(best_record, real_date, True)
@@ -779,6 +788,16 @@ class Level(models.Model):
 		level_dict = self.get_serialized_base()
 		level_dict['cache_submitted'] = str(level_dict['cache_submitted'])
 		return level_dict
+	
+	def get_best_record(self):
+		if self.best_record: return self.best_record
+		
+		all_levels = self.levelrecord_set.order_by('-downloads')[:1]
+		if len(all_levels) < 1:
+			return None
+		self.best_record = all_levels[0]
+		self.save()
+		return self.best_record
 
 	def save(self, *args, **kwargs):
 		self.cache_needs_search_update = True

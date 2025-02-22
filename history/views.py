@@ -37,26 +37,24 @@ def index(request):
 
 def view_level(request, online_id=None, record_id=None):
 	level = utils.get_level_object(online_id, True)
-	if level is None or (not (request.user.is_authenticated and request.user.is_superuser) and not (level.is_public or int(online_id) < utils.get_level_id_within_window())) or level.levelrecord_set.count() == 0:
+	if level is None or (not (request.user.is_authenticated and request.user.is_superuser) and not (level.is_public or int(online_id) < utils.get_level_id_within_window())):
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
-	all_levels = level.levelrecord_set.prefetch_related('real_user_record')
-
 	if record_id is not None:
-		all_levels = all_levels.filter(pk=record_id)
+		try:
+			first_record = LevelRecord.objects.get(pk=record_id)
+			if first_record.level != level: raise Exception
+		except:
+			return render(request, 'error.html', {'error': 'Level record does not belong to this level'})
 	else:
-		all_levels = all_levels.filter(cache_is_dupe=False).order_by('-downloads')
-
-	first_record = all_levels[:1]
-	if len(first_record) < 1:
-		return render(request, 'error.html', {'error': 'No records found for this level or level record does not belong to this level'})
-	
-	first_record = first_record[0]
+		first_record = level.get_best_record()
+		if not first_record:
+			return render(request, 'error.html', {'error': 'Level not found in our database'})
 
 	if level.cache_needs_revalidation:
 		tasks.revalidate_cache_level.delay(level.online_id)
 
-	context = {'online_id': online_id, 'record_id': record_id, 'first_record': first_record}
+	context = {'online_id': online_id, 'record_id': record_id, 'first_record': first_record, 'comment': level.comment, 'pk': level.pk}
 
 	return render(request, 'level.html', context)
 

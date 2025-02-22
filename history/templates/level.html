@@ -19,9 +19,9 @@
 	}
 </style>
 <div class="row">
-	{% if first_record.level.comment %}
+	{% if comment %}
 	  <div class="alert alert-info" role="alert">
-	    {{ first_record.level.comment }}
+	    {{ comment }}
 	  </div>
 	{% endif %}
 	<p class="lead">Showing data for level {{ online_id }}<span id="as-seen-on"></span></p>
@@ -514,5 +514,5 @@ Rating denominator: ${record.rating}`)
 	}
 
 </script>
-<!-- {{ first_record.level.pk }} -->
+<!-- {{ pk }} -->
 {% endblock %}
