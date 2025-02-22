@@ -306,10 +306,10 @@
 			return a
 		}
 		
-		function make_small(text, title) {
+		function make_small(text, title = null) {
 			const small = document.createElement('small')
 			small.textContent = text
-			small.title = title
+			if(title) small.title = title
 			return small
 		}
 
@@ -319,7 +319,7 @@
 			//window.scrollTo(0, 0);
 		}))
 
-		const tdSource = td(record.record_type)
+		const tdSource = td(`${record.record_type} `)
 
 		if(record.record_type == "get") {
 			tdSource.appendChild(make_small(`(${record.response_get_type})`))
