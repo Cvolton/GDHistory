@@ -62,7 +62,9 @@ def level_info(request, online_id=None, view_mode="normal"):
 
 	if view_mode != "brief":
 		response['dupes_shown'] = view_mode == "dupes"
-		if view_mode != "dupes":
+		if view_mode == "dupes_only":
+			all_levels = all_levels.filter(cache_is_dupe=True)
+		elif view_mode != "dupes":
 			response['dupes_present'] = all_levels.filter(cache_is_dupe=True)[:1].count() > 0
 			all_levels = all_levels.filter(cache_is_dupe=False)
 

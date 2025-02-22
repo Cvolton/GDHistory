@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -39,8 +40,6 @@ def view_level(request, online_id=None, record_id=None):
 	if level is None or (not (request.user.is_authenticated and request.user.is_superuser) and not (level.is_public or int(online_id) < utils.get_level_id_within_window())) or level.levelrecord_set.count() == 0:
 		return render(request, 'error.html', {'error': 'Level not found in our database'})
 
-	form = LevelForm(request.GET or None)
-
 	all_levels = level.levelrecord_set.prefetch_related('real_user_record')
 
 	if record_id is not None:
@@ -57,7 +56,7 @@ def view_level(request, online_id=None, record_id=None):
 	if level.cache_needs_revalidation:
 		tasks.revalidate_cache_level.delay(level.online_id)
 
-	context = {'online_id': online_id, 'record_id': record_id, 'filters': form.cleaned_data if form.is_valid() else [], 'first_record': first_record}
+	context = {'online_id': online_id, 'record_id': record_id, 'first_record': first_record}
 
 	return render(request, 'level.html', context)
 

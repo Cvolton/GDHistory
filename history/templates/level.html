@@ -92,7 +92,7 @@
 <script type="text/javascript">
 	const urlParams = new URLSearchParams(window.location.search)
 
-	let showDupes = "{{ filters.dupes }}" == "True" || urlParams.has('dupes')
+	let showDupes = urlParams.has('dupes')
 	let levelData = {}
 	let nonBlankRecords = []
 	let recordsByDownloads = []
@@ -101,14 +101,35 @@
 	let tabs = []
 	let forcedRecord = {{ record_id|default:"null" }}
 	let displayedRecord = null
-	$.getJSON(`/api/v1/level/{{ online_id }}/${showDupes ? "dupes/" : ""}`, (result) => {
+	$.getJSON(`/api/v1/level/{{ online_id }}/`, (result) => {
 		levelData = result
 		nonBlankRecords = result.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads))
 		loadRecords(urlParams.has('blanks') ? result.records : nonBlankRecords)
+		if(showDupes) loadDupes()
 	})
 	.fail(function() { 
 		$('#main-level-name').text('Failed to load level info.')
 	});
+
+	function loadWithBlanks() {
+		urlParams.set('blanks', true)
+		window.history.pushState({}, "", `?${urlParams.toString()}`)
+		loadRecords(levelData.records)
+	}
+
+	function loadDupes() {
+		$('#dupes-message').html(`Loading duplicate records...`)
+		$.getJSON(`/api/v1/level/{{ online_id }}/dupes_only/`, (result) => {
+			levelData.dupes_shown = true
+			nonBlankRecords.push(...result.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads)))
+			levelData.records.push(...result.records)
+
+			loadRecords(urlParams.has('blanks') ? levelData.records : nonBlankRecords)
+		})
+		.fail(function() { 
+			$('#dupes-message').html(`Failed to load duplicate records. <a href="?dupes=true">Retry</a>`)
+		});
+	}
 
 	function loadRecords(records) {
 		let unsortedRecordsByDecompressedSha = {}
@@ -118,9 +139,13 @@
 		if(forcedRecord) {
 			bestRecord = recordsByDownloads.find(record => record.id == forcedRecord)
 			if(!bestRecord) {
-				// cancel redirect if location is already the one below
-				let url = `/level/${levelData.online_id}/${forcedRecord}/?dupes=true&blanks=true`
-				if(window.location.href != url) window.location.href = url
+				if(!urlParams.has('blanks')) {
+					return loadWithBlanks()
+				} else if(!levelData.dupes_shown && !showDupes) {
+					forceLoadDupes()
+				} else if(!showDupes) {
+					alert("Record not found.")
+				}
 			}
 		}
 		if(!bestRecord) {
@@ -157,8 +182,16 @@
 
 	function showDupesMessage() {
 		if(levelData.dupes_present && !levelData.dupes_shown) {
-			$('#dupes-message').html(`Possibly duplicate records were hidden. <a href="?dupes=true">Show hidden records</a>`)
+			$('#dupes-message').html(`Possibly duplicate records were hidden. <a href="?dupes=true" onclick="forceLoadDupes(); return false;">Show hidden records</a>`)
+		} else if(levelData.dupes_shown) {
+			$('#dupes-message').html(``)
 		}
+	}
+
+	function forceLoadDupes() {
+		urlParams.set('dupes', true)
+		window.history.pushState({}, "", `?${urlParams.toString()}`)
+		loadDupes()
 	}
 
 	function displayRecord(bestRecord, changeUrl = true, asSeenOn = true) {
