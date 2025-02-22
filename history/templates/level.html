@@ -111,9 +111,13 @@
 		$('#main-level-name').text('Failed to load level info.')
 	});
 
-	function loadWithBlanks() {
+	addEventListener("popstate", function (e) {
+		window.location.reload()
+	})
+
+	function loadWithBlanks(replaceState = false) {
 		urlParams.set('blanks', true)
-		window.history.pushState({}, "", `?${urlParams.toString()}`)
+		replaceState ? window.history.replaceState({}, "", `?${urlParams.toString()}`) : window.history.pushState({}, "", `?${urlParams.toString()}`)
 		loadRecords(levelData.records)
 	}
 
@@ -141,9 +145,9 @@
 			bestRecord = recordsByDownloads.find(record => record.id == forcedRecord)
 			if(!bestRecord) {
 				if(!urlParams.has('blanks')) {
-					return loadWithBlanks()
+					return loadWithBlanks(true)
 				} else if(!levelData.dupes_shown && !showDupes) {
-					forceLoadDupes()
+					forceLoadDupes(true)
 					waitForRecord = true
 				} else if(!showDupes) {
 					alert("Record not found.")
@@ -192,9 +196,9 @@
 		}
 	}
 
-	function forceLoadDupes() {
+	function forceLoadDupes(replaceState = false) {
 		urlParams.set('dupes', true)
-		window.history.pushState({}, "", `?${urlParams.toString()}`)
+		replaceState ? window.history.replaceState({}, "", `?${urlParams.toString()}`) : window.history.pushState({}, "", `?${urlParams.toString()}`)
 		loadDupes()
 	}
 
@@ -423,6 +427,12 @@ Rating denominator: ${record.rating}`)
 
 		return tr
 	}
+
+	addEventListener("popstate", function (e) {
+		if(e.state) {
+			displayRecord(displayedRecord, false, false)
+		}
+	})
 </script>
 
 <div class="modal" tabindex="-1" id="manualModal">
