@@ -136,6 +136,7 @@
 
 		recordsByDownloads = records.sort((a, b) => b.downloads - a.downloads)
 		let bestRecord = null
+		let waitForRecord = false
 		if(forcedRecord) {
 			bestRecord = recordsByDownloads.find(record => record.id == forcedRecord)
 			if(!bestRecord) {
@@ -143,12 +144,13 @@
 					return loadWithBlanks()
 				} else if(!levelData.dupes_shown && !showDupes) {
 					forceLoadDupes()
+					waitForRecord = true
 				} else if(!showDupes) {
 					alert("Record not found.")
 				}
 			}
 		}
-		if(!bestRecord) {
+		if(!bestRecord && !waitForRecord) {
 			bestRecord = recordsByDownloads[0]
 		}
 
@@ -176,8 +178,10 @@
 
 		prepareTabs()
 		loadTabs()
-		showDupesMessage()
-		displayRecord(bestRecord, false, !!forcedRecord)
+		if(!waitForRecord) {
+			showDupesMessage()
+			displayRecord(bestRecord, false, !!forcedRecord)
+		}
 	}
 
 	function showDupesMessage() {
