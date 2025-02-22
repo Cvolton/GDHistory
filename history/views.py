@@ -41,15 +41,12 @@ def view_level(request, online_id=None, record_id=None):
 
 	form = LevelForm(request.GET or None)
 
-	all_levels = level.levelrecord_set
+	all_levels = level.levelrecord_set.prefetch_related('real_user_record')
 
 	if record_id is not None:
 		all_levels = all_levels.filter(pk=record_id)
 	else:
-		level_records_unfiltered = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
-		if not (request.method == 'GET' and form.is_valid() and form.cleaned_data['blanks']):
-			level_records = level_records_unfiltered.exclude(level_version=None, game_version=None, level_name=None, downloads=None)
-		all_levels = all_levels.filter(cache_is_public=True).order_by('-downloads')[:1]
+		all_levels = all_levels.order_by('-downloads')
 
 	first_record = all_levels[:1]
 	if len(first_record) < 1:
