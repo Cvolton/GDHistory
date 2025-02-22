@@ -46,7 +46,7 @@ def view_level(request, online_id=None, record_id=None):
 	if record_id is not None:
 		all_levels = all_levels.filter(pk=record_id)
 	else:
-		all_levels = all_levels.order_by('-downloads')
+		all_levels = all_levels.filter(cache_is_dupe=False).order_by('-downloads')
 
 	first_record = all_levels[:1]
 	if len(first_record) < 1:
