@@ -142,7 +142,7 @@
 
 		for(let record of records) {
 			if(!record.level_string_info) continue
-			sha = record.level_string_info.decompressed_sha ? record.level_string_info.decompressed_sha256 : record.level_string_info.sha256
+			sha = record.level_string_info.decompressed_sha256 ? record.level_string_info.decompressed_sha256 : record.level_string_info.sha256
 			if(unsortedRecordsByDecompressedSha[sha] && unsortedRecordsByDecompressedSha[sha].rel_date < record.real_date) continue
 			unsortedRecordsByDecompressedSha[sha] = record
 
