@@ -146,7 +146,7 @@
 			if(unsortedRecordsByDecompressedSha[sha] && unsortedRecordsByDecompressedSha[sha].rel_date < record.real_date) continue
 			unsortedRecordsByDecompressedSha[sha] = record
 
-			recordsByDecompressedSha = Object.values(unsortedRecordsByDecompressedSha).sort((a, b) => b.real_date - a.real_date)
+			recordsByDecompressedSha = Object.values(unsortedRecordsByDecompressedSha).sort((a, b) => new Date(b.real_date) - new Date(a.real_date))
 		}
 
 		prepareTabs()
