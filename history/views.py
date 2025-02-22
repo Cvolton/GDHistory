@@ -57,9 +57,6 @@ def view_level(request, online_id=None, record_id=None):
 	
 	first_record = first_record[0]
 
-	if not first_record.real_user_record:
-		first_record.create_user()
-
 	if level.cache_needs_revalidation:
 		tasks.revalidate_cache_level.delay(level.online_id)
 
