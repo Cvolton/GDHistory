@@ -360,7 +360,7 @@ Rating denominator: ${record.rating}`)
 		} else {
 			tdCreator = td("-", null, "This record does not provide the creator's username. If one is shown, it comes from other records in the GDHistory system.")
 			if(record.cached_user_info) {
-				tdCreator.appendChild(make_small(`(${record.cached_user_info})`))
+				tdCreator.appendChild(make_small(` (${cached_username(record.cached_user_info)})`))
 			} else {
 				tdCreator.appendChild(make_small("❌", "This record does not have a user ID assigned."))
 			}
