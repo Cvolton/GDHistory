@@ -43,72 +43,27 @@ def view_level(request, online_id=None, record_id=None):
 
 	all_levels = level.levelrecord_set
 
-	level_records_unfiltered = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
-
-	if request.method == 'GET' and form.is_valid() and form.cleaned_data['blanks']:
-		level_records = level_records_unfiltered
+	if record_id is not None:
+		all_levels = all_levels.filter(pk=record_id)
 	else:
-		level_records = level_records_unfiltered.exclude(level_version=None, game_version=None, level_name=None, downloads=None)
+		level_records_unfiltered = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
+		if not (request.method == 'GET' and form.is_valid() and form.cleaned_data['blanks']):
+			level_records = level_records_unfiltered.exclude(level_version=None, game_version=None, level_name=None, downloads=None)
+		all_levels = all_levels.filter(cache_is_public=True).order_by('-downloads')[:1]
 
-	if request.method == 'GET' and form.is_valid() and form.cleaned_data['dupes']:
-		dupes_shown = True
-		dupes_present = True
-		level_records = level_records
-	else:
-		dupes_shown = False
-		dupes_present = level.levelrecord_set.filter(cache_is_dupe=True)[:1].count()
-		level_records = level_records.filter(cache_is_dupe=False)
-
-	#tasks.download_level_task.delay(online_id)
-
-	record_belongs = False
-	first_record = None
-
-	records = {}
-	distinct_records = []
-	level_strings = {}
-	level_string_count = 0
-	for record in level_records:
-		record.upgrade_data()
-		if record.real_date is None:
-			continue
-		if record.real_date.year not in records:
-			records[record.real_date.year] = []
-		records[record.real_date.year].append(record)
-
-		if record.level_string is not None and record.level_string.get_decompressed_sha256() not in level_strings:
-			level_string_count += 1
-			level_strings[record.level_string.get_decompressed_sha256()] = True
-			distinct_records.append(record)
-
-		if str(record.pk) == str(record_id):
-			record_belongs = True
-			first_record = record
-
-	if len(records) == 0 and level_records_unfiltered.count() > 0:
-			return render(request, 'error_blanks.html')
-
-	if first_record is None:
-		first_record = level_records[0]
+	first_record = all_levels[:1]
+	if len(first_record) < 1:
+		return render(request, 'error.html', {'error': 'No records found for this level or level record does not belong to this level'})
+	
+	first_record = first_record[0]
 
 	if not first_record.real_user_record:
 		first_record.create_user()
 
 	if level.cache_needs_revalidation:
 		tasks.revalidate_cache_level.delay(level.online_id)
-	
-	if record_id is not None and not record_belongs:
-		return render(request, 'error.html', {'error': 'Level record does not belong to this level'})
 
-	years = []
-	for i in range(min(records), max(records)+1):
-		years.append(i)
-
-	if distinct_records:
-		years.insert(0, -1)
-		records[-1] = distinct_records
-
-	context = {'level_records': records, 'record_id': record_id, 'first_record': first_record, 'online_id': online_id, 'years': years, 'records_count': level_records.count(), 'level_string_count': level_string_count, 'dupes_shown': dupes_shown, 'dupes_present': dupes_present, 'filters': form.cleaned_data if form.is_valid() else []}
+	context = {'online_id': online_id, 'record_id': record_id, 'filters': form.cleaned_data if form.is_valid() else [], 'first_record': first_record}
 
 	return render(request, 'level.html', context)
 

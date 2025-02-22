@@ -362,7 +362,8 @@ class Song(models.Model):
 		record = {
 			'online_id': self.online_id,
 			'song_name': self.cache_song_name,
-			'arist_name': self.cache_artist_name
+			'artist_name': self.cache_artist_name,
+			'arist_name': 'DEPRECATED FIELD USE artist_name WITHOUT THE TYPO'
 		}
 		return record
 
@@ -736,6 +737,7 @@ class Level(models.Model):
 		response = {
 			'online_id': int(self.online_id),
 			'comment': self.comment,
+			'is_public': bool(self.is_public),
 			'is_deleted': bool(self.is_deleted),
 			'cache_level_name': self.cache_level_name,
 			'cache_submitted': self.cache_submitted,
@@ -843,6 +845,7 @@ class LevelString(models.Model):
 		return {
 			'sha256': self.sha256,
 			'decompressed_sha256': self.get_decompressed_sha256(),
+			'file_size': self.get_file_size()
 		}
 
 	def get_file_path(self):
@@ -1089,6 +1092,7 @@ class LevelRecord(models.Model):
 	def get_serialized_full(self):
 		response = self.get_serialized_base()
 		response['real_user_record'] = None if self.real_user_record is None else self.real_user_record.get_serialized_base()
+		response['cached_user_info'] = None if self.real_user_record is None else self.real_user_record.user.get_serialized_base()
 		response['song'] = None if self.song is None else self.song.get_serialized_base()
 		return response
 

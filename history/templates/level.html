@@ -14,6 +14,9 @@
 	.round-border {
 		border-radius: 5px;
 	}
+	.highlighted-record {
+		background-color: #fff3cd;
+	}
 </style>
 <div class="row">
 	{% if first_record.level.comment %}
@@ -21,7 +24,7 @@
 	    {{ first_record.level.comment }}
 	  </div>
 	{% endif %}
-	<p class="lead">Showing data for level {{ online_id }}{% if record_id %}, as seen on {{ first_record.real_date|date:"N j, Y" }}{% endif %}</p>
+	<p class="lead">Showing data for level {{ online_id }}<span id="as-seen-on"></span></p>
 </div>
 <div class="row gap-1">
 	<div class="col round-border" style="background-color: #2c3034">
@@ -29,38 +32,38 @@
 			<table class="table table-dark table-striped">
 				<tr>
 					<th>Level Name</th>
-					<td class="align-right">{{ first_record.level_name }}</td>
+					<td class="align-right" id="main-level-name"></td>
 				</tr>
 				<tr>
 					<th>Author</th>
-					<td class="align-right">{% if first_record.real_user_record %}<a href="{% url 'search' %}?userID={{ first_record.real_user_record.user.online_id }}">{% user_record_to_username first_record.real_user_record %}</a>{% else %}Unknown{% endif %}</td>
+					<td class="align-right" id="main-author"></td>
 				</tr>
 				<tr>
 					<th>Downloads</th>
-					<td class="align-right">{{ first_record.downloads }}</td>
+					<td class="align-right" id="main-downloads"></td>
 				</tr>
 				<tr>
 					<th>Likes</th>
-					<td class="align-right">{% if first_record.dislikes %}{{ first_record.likes|sub:first_record.dislikes }}{% else %}{{ first_record.likes }}{% endif %}</td>
+					<td class="align-right" id="main-likes"></td>
 				</tr>
 				<tr>
 					<th>Difficulty</th>
-					<td class="align-right">{% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}{% star_character first_record.length %})</td>
+					<td class="align-right" id="main-difficulty"></td>
 				</tr>
 				<tr>
 					<th>Featured</th>
-					<td class="align-right">{% if first_record.feature_score > 0 %}✅{% if first_record.epic %} ({% print_epic first_record.epic %}){% endif %}{% else %}❌{% endif %}</td>
+					<td class="align-right" id="main-featured"></td>
 				</tr>				<tr>
 					<th>Length</th>
-					<td class="align-right">{% length first_record.length %}</td>
+					<td class="align-right" id="main-length"></td>
 				</tr>
 				<tr>
 					<th>Saved records</th>
-					<td class="align-right">{{ records_count }}</td>
+					<td class="align-right" id="main-record-count"></td>
 				</tr>
 				<tr>
 					<th>Saved versions</th>
-					<td class="align-right">{{ level_string_count }}</td>
+					<td class="align-right" id="main-levelstring-count"></td>
 				</tr>
 			</table>
 		</div>
@@ -69,105 +72,321 @@
 		<img class="round-border" style="max-width:100%;max-height:100%;aspect-ratio: 16/9;" src="https://cvolton.eu/gdhistory_placeholder2.webp">
 	</div>
 </div>
-<div class="row pt-3">
-	<p>
-		{% if first_record.description_encrypted %}<b>Warning:</b> Description decoding failed{% endif %}
-		<b>Description:</b> {% if first_record.description %}{{ first_record.description }}{% else %}(No description provided.){% endif %}
-		<br><b>Song:</b> {% if first_record.song and first_record.song.online_id != 0 %}{{ first_record.song.cache_song_name }} by {{ first_record.song.cache_artist_name }} (ID: {{ first_record.song.online_id }}){% else %}{% song_name first_record.official_song first_record.game_version %} (ID: {{ first_record.official_song }}){% endif %}
-		<div class="collapse" id="collapseDescription">
-			{% if first_record.song and first_record.song.online_id != 0 and first_record.official_song > 0 %}<b>Official Song:</b> {% song_name first_record.official_song first_record.game_version %} (ID: {{ first_record.official_song }})<br>{% endif %}
-			<b>Password:</b> {% level_password first_record.password %}<br>
-			{% if first_record.objects_count %}<b>Objects:</b> {{ first_record.objects_count }}<br>{% endif %}
-			<b>Coins:</b> {% display_number first_record.coins %} {% if first_record.coins_verified %}(Verified){% endif %}<br>
-			{% if first_record.requested_stars %}<b>Requested Stars:</b> {{ first_record.requested_stars }}<br>{% endif %}
-			{% if first_record.original %}<b>Original:</b> {{ first_record.original }}<br>{% endif %}
-			<b>Feature Score:</b> {{ first_record.feature_score }}<br>
-			{% if first_record.seconds_spent_editing > 1 %}<br><b>Time spent editing:</b> {% working_time first_record.seconds_spent_editing %}{% endif %}
-			{% if first_record.seconds_spent_editing_copies > 2 %}<br><b>Time spent editing (copies):</b> {% working_time first_record.seconds_spent_editing_copies %}{% endif %}
-			{% if first_record.timestamp %}<br><b>Verification time:</b> {{ first_record.timestamp }} steps (approx. {% approx_verification first_record.timestamp %}){% endif %}
+
+<div class="row pt-3" id="main-description">
+	<hr />
+</div>
+
+<div class="row pt-0">
+	<ul class="nav nav-tabs" id="tabList" role="tablist">
+		
+	</ul>
+	<div class="tab-content" id="tabContent" style="padding-left: 0px; padding-right: 0px">
+
+	</div>
+</div>
+
+<p id="dupes-message"></p>
+<p id="blanks-message"></p>
+
+<script type="text/javascript">
+	const urlParams = new URLSearchParams(window.location.search)
+
+	let showDupes = "{{ filters.dupes }}" == "True" || urlParams.has('dupes')
+	let levelData = {}
+	let nonBlankRecords = []
+	let recordsByDownloads = []
+	let recordsByYears = {}
+	let recordsByDecompressedSha = []
+	let tabs = []
+	let forcedRecord = {{ record_id|default:"null" }}
+	let displayedRecord = null
+	$.getJSON(`/api/v1/level/{{ online_id }}/${showDupes ? "dupes/" : ""}`, (result) => {
+		levelData = result
+		nonBlankRecords = result.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads))
+		loadRecords(urlParams.has('blanks') ? result.records : nonBlankRecords)
+	})
+	.fail(function() { 
+		$('#main-level-name').text('Failed to load level info.')
+	});
+
+	function loadRecords(records) {
+		let unsortedRecordsByDecompressedSha = {}
+
+		recordsByDownloads = records.sort((a, b) => b.downloads - a.downloads)
+		let bestRecord = null
+		if(forcedRecord) {
+			bestRecord = recordsByDownloads.find(record => record.id == forcedRecord)
+			if(!bestRecord) {
+				// cancel redirect if location is already the one below
+				let url = `/level/${levelData.online_id}/${forcedRecord}/?dupes=true&blanks=true`
+				if(window.location.href != url) window.location.href = url
+			}
+		}
+		if(!bestRecord) {
+			bestRecord = recordsByDownloads[0]
+		}
+
+		recordsByYears = records.reduce((acc, record) => {
+			date = new Date(record.real_date)
+			if(!acc[date.getFullYear()]) acc[date.getFullYear()] = []
+			acc[date.getFullYear()].push(record)
+			return acc
+		}, {})
+
+		years = Object.keys(recordsByYears)
+		years.sort()
+		for(let i = years[0]; i < years[years.length - 1]; i++) {
+			if(!recordsByYears[i]) recordsByYears[i] = []
+		}
+
+		for(let record of records) {
+			if(!record.level_string_info) continue
+			sha = record.level_string_info.decompressed_sha ? record.level_string_info.decompressed_sha256 : record.level_string_info.sha256
+			if(unsortedRecordsByDecompressedSha[sha] && unsortedRecordsByDecompressedSha[sha].rel_date < record.real_date) continue
+			unsortedRecordsByDecompressedSha[sha] = record
+
+			recordsByDecompressedSha = Object.values(unsortedRecordsByDecompressedSha).sort((a, b) => b.real_date - a.real_date)
+		}
+
+		prepareTabs()
+		loadTabs()
+		showDupesMessage()
+		displayRecord(bestRecord, false, !!forcedRecord)
+	}
+
+	function showDupesMessage() {
+		if(levelData.dupes_present && !levelData.dupes_shown) {
+			$('#dupes-message').html(`Possibly duplicate records were hidden. <a href="?dupes=true">Show hidden records</a>`)
+		}
+	}
+
+	function displayRecord(bestRecord, changeUrl = true, asSeenOn = true) {
+		displayedRecord = bestRecord
+		if(changeUrl) {
+			history.pushState({}, "", `/level/${levelData.online_id}/${bestRecord.id}/${window.location.search}`)
+		}
+		if(asSeenOn) {
+			$('#as-seen-on').html(`, as seen on ${record_date(bestRecord.real_date)} ${record_time(bestRecord.real_date)}`)
+		}
+		$('#main-level-name').text(bestRecord.level_name)
+		$('#main-author').html(bestRecord.real_user_record ? `<a href="{% url 'search' %}?userID=${bestRecord.real_user_record.user_id}">${bestRecord.real_user_record.username}</a>` : "Unknown")
+		$('#main-downloads').text(bestRecord.downloads)
+		$('#main-likes').text(bestRecord.likes)
+		$('#main-difficulty').text(difficulty_text(bestRecord))
+		$('#main-featured').text(print_featured(bestRecord))
+		$('#main-length').text(level_length(bestRecord.length))
+		$('#main-record-count').text(recordsByDownloads.length)
+		$('#main-levelstring-count').text(levelData.level_string_count)
+
+		displayDescription(bestRecord)
+		highlightRecord(bestRecord)
+	}
+
+	function displayDescription(bestRecord) {
+		let descriptionHtml = `<p>${bestRecord.descriptionEncoded ? "<b>Warning:</b> Description decoding failed<br>" : ""}
+			<b>Description:</b> ${bestRecord.description ? bestRecord.description : "(No description provided.)"}<br>
+			<b>Song:</b> ${bestRecord.song && bestRecord.song.online_id != 0 ? `${bestRecord.song.song_name} by ${bestRecord.song.artist_name} (ID: ${bestRecord.song.online_id})` : `${official_song_name(bestRecord.official_song, bestRecord.game_version)} (ID: ${bestRecord.official_song})`}</p>`
+		
+		descriptionHtml += `<div class="collapse" id="collapseDescription">
+			${bestRecord.song && bestRecord.song.online_id != 0 && bestRecord.official_song > 0 ? `<b>Official Song:</b> ${official_song_name(bestRecord.official_song, bestRecord.game_version)} (ID: ${bestRecord.official_song})<br>` : ""}
+			<b>Password:</b> ${level_password(bestRecord.password)}<br>
+			${bestRecord.objects_count ? `<b>Objects:</b> ${bestRecord.objects_count}<br>` : ""}
+			<b>Coins:</b> ${display_number(bestRecord.coins)} ${bestRecord.coins_verified ? "(Verified)" : ""}<br>
+			${bestRecord.requested_stars ? `<b>Requested Stars:</b> ${bestRecord.requested_stars}<br>` : ""}
+			${bestRecord.original ? `<b>Original:</b> ${bestRecord.original}<br>` : ""}
+			<b>Feature Score:</b> ${bestRecord.feature_score}<br>
+			${bestRecord.seconds_spent_editing > 1 ? `<br><b>Time spent editing:</b> ${working_time(bestRecord.seconds_spent_editing)}` : ""}
+			${bestRecord.seconds_spent_editing_copies > 2 ? `<br><b>Time spent editing (copies):</b> ${working_time(bestRecord.seconds_spent_editing_copies)}` : ""}
+			${bestRecord.timestamp ? `<br><b>Verification time:</b> ${bestRecord.timestamp} steps (approx. ${approx_verification(bestRecord.timestamp)})` : ""}
 			<br>
-		</div>
-		<div>
+		</div>`
+
+		descriptionHtml += `<div>
 			<a data-bs-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">
 				More info</a>
 			|
-			<a href="{% url 'search' %}?original={{ online_id }}">
-				See copies</a></div>
-	</p>
-	<hr />
-</div>
-<div class="row pt-0">
-	<ul class="nav nav-tabs" id="myTab" role="tablist">
-		{% for year in years %}
-		<li class="nav-item" role="presentation">
-		<button class="nav-link {% if year not in level_records %}disabled{% endif %} {% if forloop.last %}active{% endif %}" id="y{{year}}-tab" data-bs-toggle="tab" data-bs-target="#y{{year}}" type="button" role="tab" aria-controls="y{{year}}" aria-selected="{% if forloop.last %}true{% endif %}">{% if year == -1 %}Saved Versions{% else %}{{year}}{% endif %}</button>
-		</li>
-		{% endfor %}
-	</ul>
-	<div class="tab-content" id="myTabContent" style="padding-left: 0px; padding-right: 0px">
-		{% for year in level_records %}
-		<div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="y{{year}}" role="tabpanel" aria-labelledby="y{{year}}-tab">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>Saved on</th>
-						<th>Source</th>
-						<th>Name</th>
-						<th>Downloads</th>
-						<th>Likes</th>
-						<th>Difficulty</th>
-						<!--<th>Stars</th>-->
-						<th>Version</th>
-						<th>Creator</th>
-						<th>Update</th>
-						<th>Data Available</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for record in level_records|get_item:year %}
-					<tr>
-						<td><a href="{% url 'level' online_id record.pk %}?{% print_filters filters %}">{{ record.real_date|date:"N j, Y" }}</a></td>
-						<td>{{ record.record_type }}{% if record.record_type == "get" %} <small>({{ record.server_response.get_type }})</small>{% endif %}{% if record.record_type == "manual" %} <a href="#" onclick="showManual({{ record.manual_submission.pk }}); return false;">🛈</a>{% endif %}</td>
-						<td>{{ record.level_name }}</td>
-						<td>{{ record.downloads }}</td>
-						{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
-Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
-						<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
-Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({% display_number record.stars %}{% star_character record.length %})</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="{% print_epic record.epic %}"> {% print_epic_fires record.epic '🔥' %}</a>{% endif %}</td>
-						<!--<td>{{ record.stars }}</td>-->
-						<td>{{ record.level_version }}</td>
-						<td>{% if record.real_user_record and record.real_user_record.username %}
-								{{ record.real_user_record.username }}
-							{% elif record.username and not record.real_user_record %}
-								{{ record.username }} 
-									<a data-toggle="tooltip" title="This record does not have a user ID assigned.">❌</a>
-							{% else %}
-									<a data-toggle="tooltip" title="This record does not provide the creator's username. If one is shown, it comes from other records in the GDHistory system.">-
-										{% if record.real_user_record and record.real_user_record.user.cache_username %}
-											<small> ({% user_record_to_username record.real_user_record %})</small>
-										{% endif %}
-									</a>
-							{% endif %}
-							{% if record.real_user_record and record.real_user_record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}</td>
-						<td>{% game_version record.game_version %}</td>
-						<td>{% if record.level_string %}✅{%if record.level.is_public %} <a href="{% url 'download_record' online_id record.pk %}">(.gmd)</a>{% endif %} - {% print_file_size record.level_string.get_file_size %}{% else %}❌{% endif %}</td>
-						<!--<td><a class="btn btn-primary" href="{% url 'level' online_id record.pk %}" role="button">Details</a></td>-->
-						<!--<td><a href="{% url 'level' online_id record.pk %}">Details</a></td>-->
-						<!-- pk: {{ record.pk }}, levelstring: {{ record.level_string }} -->
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-		{% endfor %}
-	</div>
+			<a href="{% url 'search' %}?original=${levelData.online_id}">
+				See copies</a></div>`
 
-	{% if not dupes_shown and dupes_present %}
-	<p>
-		Possibly duplicate records were hidden. <a href="?dupes=true">Show hidden records</a>
-	</p>
-	{% endif %}
-</div>
+		descriptionHtml += "<p></p><hr>"
+		$('#main-description').html(descriptionHtml)
+	}
+
+	function highlightRecord(record) {
+		$('.highlighted-record').removeClass('highlighted-record')
+		$(`.row-record-${record.id}`).addClass('highlighted-record')
+	}
+
+	function prepareTabs() {
+		tabs = []
+		if(recordsByDecompressedSha.length > 0) tabs.push({displayName: "Saved Versions", name: "saved-ver", content: recordsByDecompressedSha})
+		for(let [year, records] of Object.entries(recordsByYears)) {
+			tabs.push({displayName: year, name: year, content: records})
+		}
+		tabs.push({displayName: "By Downloads", name: "by-downloads", content: recordsByDownloads})
+	}
+
+	function loadTabs() {
+		let tabsHtml = ""
+		let tabsContentHtml = ""
+		let len = tabs.length
+		for(let [idx, tab] of Object.entries(tabs)) {
+			tabsHtml += `<li class="nav-item" role="presentation">
+			<button class="nav-link ${idx == len - 1 ? "active" : ""}" id="y${tab.name}-tab" data-bs-toggle="tab" data-bs-target="#y${tab.name}" type="button" role="tab" aria-controls="y${tab.name}" aria-selected="${idx == len - 1 ? "true" : ""}">${tab.displayName}</button>
+			</li>`
+		}
+
+		for(let [idx, tab] of Object.entries(tabs.reverse())) {
+			tabsContentHtml += `<div class="tab-pane fade ${idx == 0 ? "show active" : ""}" id="y${tab.name}" role="tabpanel" aria-labelledby="y${tab.name}-tab">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Saved on</th>
+							<th>Source</th>
+							<th>Name</th>
+							<th>Downloads</th>
+							<th>Likes</th>
+							<th>Difficulty</th>
+							<!--<th>Stars</th>-->
+							<th>Version</th>
+							<th>Creator</th>
+							<th>Update</th>
+							<th>Data Available</th>
+						</tr>
+					</thead>
+					<tbody id="y${tab.name}-content">
+					</tbody>
+				</table>
+			</div>
+			`
+		}
+		$('#tabList').html(tabsHtml)
+		$('#tabContent').html(tabsContentHtml)
+		for(let [idx, tab] of Object.entries(tabs.reverse())) {
+			for(let record of tab.content) {
+				document.getElementById(`y${tab.name}-content`).appendChild(renderRecord(record))
+			}
+		}
+	}
+
+	function renderRecord(record) {
+		const tr = document.createElement('tr')
+		tr.classList.add(`row-record-${record.id}`)
+
+		function td(text, link, tooltip, onclick) {
+			const td = document.createElement('td')
+			if(link) {
+				td.appendChild(make_link(text, link, onclick))
+			} else if(tooltip) {
+				td.appendChild(make_tooltip(tooltip, text))
+			} else {
+				td.textContent = text
+			}
+			return td
+		}
+
+		function make_tooltip(title, text) {
+			const a = document.createElement('a')
+			a.title = title
+			a.textContent = text
+			return a
+		}
+
+		function make_link(text, link, onclick = null) {
+			const a = document.createElement('a')
+			a.href = link
+			a.textContent = text
+			if(onclick) a.addEventListener('click', (e) => {
+				e.preventDefault()
+				e.stopPropagation()
+				onclick()
+				return false
+			})
+			return a
+		}
+		
+		function make_small(text, title) {
+			const small = document.createElement('small')
+			small.textContent = text
+			small.title = title
+			return small
+		}
+
+		tr.appendChild(td(record_date(record.real_date), `/level/${levelData.online_id}/${record.id}/`, null, () => {
+			console.log(record.id)
+			displayRecord(record)
+			//window.scrollTo(0, 0);
+		}))
+
+		const tdSource = td(record.record_type)
+
+		if(record.record_type == "get") {
+			tdSource.appendChild(make_small(`(${record.server_response.get_type})`))
+		} else if(record.record_type == "manual") {
+			tdSource.appendChild(make_link("🛈", "#", () => {
+				showManual(record.manual_submission.pk)
+				return false
+			}))
+		}
+		tr.appendChild(tdSource)
+
+		tr.appendChild(td(record.level_name))
+		tr.appendChild(td(record.downloads))
+		tr.appendChild(
+			td(record.dislikes ? (record.likes || 0) - record.dislikes : record.likes, 
+			null, 
+			record.dislikes ? `Likes: ${record.likes} Dislikes: ${record.dislikes}` : null)
+		)
+
+		const tdDifficulty = td(difficulty_text(record), null, `Rating sum: ${record.rating_sum}
+Rating denominator: ${record.rating}`)
+		if(record.feature_score > 0) {
+			tdDifficulty.appendChild(make_tooltip("Featured", " ✅"))
+		}
+		if(record.epic > 0) {
+			tdDifficulty.appendChild(make_tooltip(epic_string(record.epic), epic_fires(record.epic, '🔥')))
+		}
+		tr.appendChild(tdDifficulty)
+
+		tr.appendChild(td(record.level_version))
+
+		let tdCreator = null
+		if(record.real_user_record?.username) {
+			tdCreator = (td(record.real_user_record.username))
+		} else if(record.username && !record.real_user_record) {
+			tdCreator = td(record.username)
+			tdCreator.appendChild(make_small("❌", "This record does not have a user ID assigned."))
+		} else {
+			tdCreator = td("-", null, "This record does not provide the creator's username. If one is shown, it comes from other records in the GDHistory system.")
+			if(record.cached_user_info) {
+				tdCreator.appendChild(make_small(`(${record.cached_user_info})`))
+			} else {
+				tdCreator.appendChild(make_small("❌", "This record does not have a user ID assigned."))
+			}
+		}
+		if(record.real_user_record?.account_id) {
+			tdCreator.appendChild(make_tooltip("Registered", " ✔️"))
+		}
+		tr.appendChild(tdCreator)
+
+		tr.appendChild(td(game_version(record.game_version)))
+
+		const tdDataAvailable = td("")
+		if(record.level_string_available) {
+			tdDataAvailable.textContent = "✅ "
+			if(levelData.is_public) {
+				tdDataAvailable.appendChild(make_link("(.gmd)", `/download/record/${levelData.online_id}/${record.id}/`))
+			}
+			tdDataAvailable.appendChild(make_tooltip(null, ` - ${print_file_size(record.level_string_info?.file_size)}`))
+		} else {
+			tdDataAvailable.textContent = "❌"
+		}
+		tr.appendChild(tdDataAvailable)
+
+		return tr
+	}
+</script>
 
 <div class="modal" tabindex="-1" id="manualModal">
   <div class="modal-dialog modal-dialog-centered modal-lg">
