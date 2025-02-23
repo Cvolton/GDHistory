@@ -216,7 +216,9 @@ def search(request):
 				sort = [f"cache_stars{order_marker}", f"cache_filter_difficulty{order_marker}", "cache_downloads:desc"]
 			elif order in allowed_sorts:
 				primary_parameter = f"{allowed_sorts[order]}{order_marker}"
-				sort = [primary_parameter, "cache_downloads:desc"]
+				sort = [primary_parameter]
+				if not primary_parameter.startswith("cache_downloads"):
+					sort.append("cache_downloads:desc")
 
 		#level_results = levels[start_offset:end_offset]
 
