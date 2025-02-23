@@ -300,8 +300,8 @@ def upload_save_file(file, date, user, *args, **kwargs):
 	plistlib.dump(game_manager, f)
 	f.close()
 
-	if not kwargs.get('skip_processing', False):
-		process_save_file.delay(save_file.pk)
+	#if not kwargs.get('skip_processing', False):
+	#	process_save_file.delay(save_file.pk)
 
 @shared_task
 def process_save_file(save_id):
