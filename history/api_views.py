@@ -247,3 +247,7 @@ def level_search(request):
 @csrf_exempt
 def daily(request):
 	return JsonResponse(utils.get_daily_records())
+
+@csrf_exempt
+def daily_current_year(request):
+	return JsonResponse(utils.get_daily_records_current_year())

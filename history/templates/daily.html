@@ -36,9 +36,7 @@ tr:hover, tr:focus-within {
 </div>
 
 <script type="text/javascript">
-	dailies = {}
-
-	function loadTabs() {
+	function loadTabs(dailies) {
 		const sortedEntries = Object.entries(dailies).sort(([keyA], [keyB]) => {
 		const isNumA = !isNaN(keyA);
 		const isNumB = !isNaN(keyB);
@@ -49,14 +47,17 @@ tr:hover, tr:focus-within {
 		});
 
 		let len = Object.keys(dailies).length
-		for(let [idx, [year, ]] of Object.entries(sortedEntries)) {
-			$('#tabList').append(`<li class="nav-item" role="presentation">
-			<button class="nav-link ${idx == len - 1 ? "active" : ""}" id="y${year}-tab" data-bs-toggle="tab" data-bs-target="#y${year}" type="button" role="tab" aria-controls="y${year}" aria-selected="${idx == len - 1 ? "true" : ""}">${year}</button>
-			</li>`)
+		let tabList = ""
+		for(let [idx, [year, content]] of Object.entries(sortedEntries)) {
+			tabList += `<li class="nav-item" role="presentation">
+			<button class="nav-link ${idx == len - 1 ? "active" : ""} ${content.length > 0 ? "" : "disabled"}" id="y${year}-tab" data-bs-toggle="tab" data-bs-target="#y${year}" type="button" role="tab" aria-controls="y${year}" aria-selected="${idx == len - 1 ? "true" : ""}">${year}</button>
+			</li>`
 		}
 
+		$('#tabList').html(tabList)
+
+		let tabContent = ""
 		for(let [idx, [year, content]] of Object.entries(sortedEntries.reverse())) {
-			let tabContent = ""
 
 			
 			tabContent += `<div class="tab-pane fade ${idx == 0 ? "show active" : ""}" id="y${year}" role="tabpanel" aria-labelledby="y${year}-tab">
@@ -86,14 +87,15 @@ tr:hover, tr:focus-within {
 				tabContent += `</tbody>
 				</table>
 			</div>`
-
-			$('#tabContent').append(tabContent)
 		}
+		$('#tabContent').html(tabContent)
 	}
 
-	$.getJSON('/api/v1/daily/', (result) => {
-		dailies = result
-		loadTabs()
+	$.getJSON('/api/v1/daily/current_year/', (result) => {
+		loadTabs(result)
+		$.getJSON('/api/v1/daily/', (result) => {
+			loadTabs(result)
+		});
 	});
 </script>
 {% endblock %}

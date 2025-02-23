@@ -252,10 +252,23 @@ def recalculate_daily_records():
 	cache.set('daily', records, None)
 	return records
 
+def recalculate_daily_records_current_year():
+	records = get_daily_records()
+	for record in records:
+		if record == 2025: continue
+		records[record] = []
+	cache.set('daily_current_year', records, None)
+
 def get_daily_records():
 	records = cache.get('daily')
 	if records is None:
 		return recalculate_daily_records()
+	return records
+
+def get_daily_records_current_year():
+	records = cache.get('daily_current_year')
+	if records is None:
+		return recalculate_daily_records_current_year()
 	return records
 
 def recalculate_everything():

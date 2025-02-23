@@ -202,7 +202,7 @@ def search(request):
 				'last_seen': 'cache_submitted_timestamp',
 				'downloads': 'cache_downloads',
 				'likes': 'cache_likes',
-				'difficulty': 'cache_stars', #TODO: sort demons
+				'difficulty': 'cache_stars',
 				'username': 'cache_username',
 				'user_id': 'cache_user_id',
 				'versions': 'cache_available_versions',
