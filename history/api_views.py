@@ -201,12 +201,12 @@ def time_to_id_estimation(aware_date):
 	
 	return JsonResponse(response)
 
+@csrf_exempt
 def level_search(request):
 	def sort_filter(value):
 		return ":asc" in value or ":desc" in value
 
 	form = AdvancedSearchForm(request.GET or None)
-	print()
 
 	#initial data gathering
 	if form.is_valid():

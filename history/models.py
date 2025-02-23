@@ -839,11 +839,13 @@ class LevelDateEstimation(models.Model):
 		self.save()
 
 	def get_serialized_base(self):
+		if not self.cache_online_id: self.save()
+
 		response = {
 			'created': self.created,
 			'relative_upload_date': self.relative_upload_date,
 			'estimation': self.estimation,
-			'online_id': self.level.online_id
+			'online_id': self.cache_online_id
 		}
 		return response
 
