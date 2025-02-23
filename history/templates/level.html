@@ -312,7 +312,7 @@
 		let len = tabs.length
 		for(let [idx, tab] of Object.entries(tabs)) {
 			tabsHtml += `<li class="nav-item" role="presentation">
-			<button class="nav-link ${idx == len - 1 ? "active" : ""}" id="y${tab.name}-tab" data-bs-toggle="tab" data-bs-target="#y${tab.name}" type="button" role="tab" aria-controls="y${tab.name}" aria-selected="${idx == len - 1 ? "true" : ""}">${tab.displayName}</button>
+			<button class="nav-link ${idx == len - 1 ? "active" : ""} ${tab.content.length > 0 ? "" : "disabled"}" id="y${tab.name}-tab" data-bs-toggle="tab" data-bs-target="#y${tab.name}" type="button" role="tab" aria-controls="y${tab.name}" aria-selected="${idx == len - 1 ? "true" : ""}">${tab.displayName}</button>
 			</li>`
 		}
 
