@@ -117,20 +117,37 @@ def process_levels_in_submission(level_list, record_type, submission):
 
 		level_object.revalidate_cache()
 
-def upload_submission(file, user):
+def upload_submission_delayed(data, user):
 	data_path = get_data_path()
+
+	content = json.load(data)
+
+	os.makedirs(f"{data_path}/ManualSubmission-Delayed/{user.pk}", exist_ok=True)
+	with open(f"{data_path}/ManualSubmission-Delayed/{user.pk}/{data}", "w") as f:
+		json.dump(content, f)
+
+def process_delayed_submissions():
+	data_path = get_data_path()
+	directory = f"{data_path}/ManualSubmission-Delayed/"
+	users = os.listdir(directory)
+	for user in users:
+		user_object = HistoryUser.objects.get(pk=user)
+		files = os.listdir(f"{directory}/{user}")
+		for file in files:
+			with open(f"{directory}/{user}/{file}", "r") as f:
+				data = json.load(f)
+				upload_submission_data(data, user_object, None, True)
+				os.remove(f"{directory}/{user}/{file}")
+
+def upload_submission(file, user):
 
 	content = json.load(file)
 
-	submission_id = upload_submission_data(content, user)
-
-	f = open(f"{data_path}/ManualSubmission/{submission_id}", "w")
-	json.dump(content, f)
-	f.close()
+	upload_submission_data(content, user, None, True)
 
 	return True
 
-def upload_submission_data(data, user, parent=None):
+def upload_submission_data(data, user, parent=None, save_file=False):
 	submission = ManualSubmission(
 		author = user,
 		created = data['created'],
@@ -139,6 +156,13 @@ def upload_submission_data(data, user, parent=None):
 	)
 
 	submission.save()
+
+	if save_file:
+		data_path = get_data_path()
+
+		f = open(f"{data_path}/ManualSubmission/{submission.pk}", "w")
+		json.dump(data, f)
+		f.close()
 
 	if "levels" in data:
 		process_levels_in_submission(data['levels'], LevelRecordType.MANUAL, submission)

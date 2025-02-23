@@ -3,22 +3,18 @@
 {% block content %}
 <div class="row justify-content-md-center">
 	<div class="col mb-3 col-lg-9">
-    <p><b>Related pages: </b><a href="{% url 'my_submissions' %}">My Submissions</a> | <a href="{% url 'my_manuals' %}">My Manuals</a> | <a href="{% url 'upload_submission' %}">Upload Manual Submission</a></p>
+    <p><b>Related pages: </b><a href="{% url 'my_submissions' %}">My Submissions</a> | <a href="{% url 'my_manuals' %}">My Manuals</a> | <a href="{% url 'upload' %}">Submit Save File</a></p>
     <p></p>
 		<div class="card">
 			<div class="card-header lead">
-				Save File Submitter
+				Manual Submission File Submitter
 			</div>
 			<div class="card-body">
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="mb-3">
-            <label for="file" class="form-label">Upload save file</label>
+            <label for="file" class="form-label">Upload file</label>
             <input class="form-control" type="file" id="file" name="file">
-          </div>
-          <div class="mb-3">
-            <label for="time" class="form-label">Enter creation date</label>
-            <input class="form-control" type="date" id="time" name="time" min="2013-01-01">
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>

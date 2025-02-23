@@ -7,8 +7,10 @@ from django.db.models.functions import Coalesce
 
 from datetime import datetime
 
+from history import jsonUtils
+
 from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString, HistoryUser, ManualSubmission
-from .forms import UploadFileForm, SearchForm, LevelForm
+from .forms import UploadFileForm, SearchForm, LevelForm, UploadSubmissionForm
 from . import ccUtils, serverUtils, tasks, utils, meili_utils
 
 import math
@@ -66,6 +68,15 @@ def upload(request):
 		return render(request, 'error_success.html', {'error': 'good'})
 	else:
 		return render(request, 'upload.html')
+
+@login_required
+def upload_submission(request):
+	form = UploadSubmissionForm(request.POST or None, request.FILES or None)
+	if request.method == 'POST' and form.is_valid():
+		jsonUtils.upload_submission_delayed(request.FILES['file'], HistoryUser.get_user(request.user))
+		return render(request, 'error_success.html', {'error': "good but it'll take a few minutes before it shows up in the list"})
+	else:
+		return render(request, 'upload_submission.html')
 
 def debug(request, online_id):
 	Level.objects.get(online_id=online_id).revalidate_cache()

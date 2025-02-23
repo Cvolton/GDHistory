@@ -6,6 +6,7 @@ from . import views, api_views
 urlpatterns = [
     path('', views.index, name='index'),
     path('upload/', views.upload, name='upload'),
+    path('upload_submission/', views.upload_submission, name='upload_submission'),
     path('search/', views.search, name='search'),
     path('daily/', views.daily, name='daily'),
     path('level/<online_id>/', views.view_level, name='level'),
