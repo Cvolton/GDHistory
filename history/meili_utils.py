@@ -18,18 +18,12 @@ def update_settings():
 
 	attribute_list = [
 		'online_id',
-		'comment',
 		'is_deleted',
 		'cache_level_name',
 		'cache_submitted',
 		'cache_submitted_timestamp',
 		'cache_downloads',
 		'cache_likes',
-		'cache_rating_sum',
-		'cache_rating',
-		'cache_demon',
-		'cache_auto',
-		'cache_demon_type',
 		'cache_stars',
 		'cache_username',
 		'cache_level_string_available',
