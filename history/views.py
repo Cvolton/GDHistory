@@ -38,18 +38,18 @@ def index(request):
 def view_level(request, online_id=None, record_id=None):
 	level = utils.get_level_object(online_id, True)
 	if level is None or (not (request.user.is_authenticated and request.user.is_superuser) and not (level.is_public or int(online_id) < utils.get_level_id_within_window())):
-		return render(request, 'error.html', {'error': 'Level not found in our database'})
+		return render(request, 'error.html', {'error': 'Level not found in our database'}, status=404)
 
 	if record_id is not None:
 		try:
 			first_record = LevelRecord.objects.get(pk=record_id)
 			if first_record.level != level: raise Exception
 		except:
-			return render(request, 'error.html', {'error': 'Level record does not belong to this level'})
+			return render(request, 'error.html', {'error': 'Level record does not belong to this level'}, status=403)
 	else:
 		first_record = level.get_best_record()
 		if not first_record:
-			return render(request, 'error.html', {'error': 'Level not found in our database'})
+			return render(request, 'error.html', {'error': 'Level not found in our database'}, status=404)
 
 	if level.cache_needs_revalidation:
 		tasks.revalidate_cache_level.delay(level.online_id)
@@ -230,10 +230,10 @@ def search(request):
 			level_results = search_result['hits']
 			level_count = search_result['estimatedTotalHits']
 		except meilisearch.errors.MeilisearchCommunicationError:
-			return render(request, 'error.html', {'error': 'Unable to connect to the search system. Please report this if the issue persists.'})
+			return render(request, 'error.html', {'error': 'Unable to connect to the search system. Please report this if the issue persists.'}, status=500)
 		except:
 			print(sys.exc_info())
-			return render(request, 'error.html', {'error': 'An error with the search system has occured. Please report this if the issue persists.'})
+			return render(request, 'error.html', {'error': 'An error with the search system has occured. Please report this if the issue persists.'}, status=500)
 
 		if len(level_results) < 1:
 			return render(request, 'error.html', {'error': 'No results found'})
