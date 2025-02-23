@@ -95,13 +95,13 @@
 
 	let showDupes = urlParams.has('dupes')
 	let levelData = {}
-	let nonBlankRecords = []
 	let recordsByDownloads = []
 	let recordsByYears = {}
 	let recordsByDecompressedSha = []
 	let tabs = []
 	let forcedRecord = {{ record_id|default:"null" }}
 	let displayedRecord = null
+	let loadDupesStartFrom = 0
 
 	startLoading()
 	startLoadingRecords()
@@ -116,12 +116,17 @@
 		});
 	}
 
+	function loadAllRecords(fullLoad = true) {
+		loadRecords(
+			urlParams.has('blanks') ? levelData.records : levelData.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads))
+		, fullLoad)
+	}
+
 	function startLoadingRecords() {
 		$.getJSON(`/api/v1/level/{{ online_id }}/`, (result) => {
 			levelData = result
-			nonBlankRecords = result.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads))
-			loadRecords(urlParams.has('blanks') ? result.records : nonBlankRecords)
-			if(showDupes) loadDupes()
+			setTimeout(() => loadAllRecords(), 1)
+			if(showDupes) setTimeout(() => loadDupes(), 2)
 		})
 		.fail(function() { 
 			$('#main-level-name').text('Failed to load level info.')
@@ -139,20 +144,30 @@
 	}
 
 	function loadDupes() {
+		let maxRecords = 500
+
 		$('#dupes-message').html(`<img src="{% static 'loading-grey.svg' %}" width="25px">&nbsp;&nbsp;Loading duplicate records...`)
-		$.getJSON(`/api/v1/level/{{ online_id }}/dupes_only/`, (result) => {
+		$.getJSON(`/api/v1/level/{{ online_id }}/dupes_only/?count=${maxRecords}&start_from=${loadDupesStartFrom}`, (result) => {
 			levelData.dupes_shown = true
-			nonBlankRecords.push(...result.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads)))
 			levelData.records.push(...result.records)
 
-			loadRecords(urlParams.has('blanks') ? levelData.records : nonBlankRecords)
+			if(result.records.length == maxRecords) {
+				setTimeout(() => loadAllRecords(false), 1)
+				setTimeout(() => {
+					loadDupesStartFrom = result.records[result.records.length - 1].id
+					loadDupes()
+				}, 2)
+			} else {
+				loadAllRecords(true)
+			}
 		})
-		.fail(function() { 
+		.fail(function() {
+			loadAllRecords(true)
 			$('#dupes-message').html(`Failed to load duplicate records. <a href="?dupes=true">Retry</a>`)
 		});
 	}
 
-	function loadRecords(records) {
+	function loadRecords(records, fullLoad = true) {
 		let unsortedRecordsByDecompressedSha = {}
 
 		recordsByDownloads = records.sort((a, b) => b.downloads - a.downloads)
@@ -198,9 +213,13 @@
 		}
 
 		prepareTabs()
-		loadTabs()
+		setTimeout(() => {
+			loadTabs(fullLoad)
+			if(!waitForRecord && fullLoad) showDupesMessage()
+			if(!waitForRecord) displayRecord(bestRecord, false, !!forcedRecord)
+		}, 1)
+
 		if(!waitForRecord) {
-			showDupesMessage()
 			displayRecord(bestRecord, false, !!forcedRecord)
 		}
 	}
@@ -287,7 +306,7 @@
 		tabs.push({displayName: "By Downloads", name: "by-downloads", content: recordsByDownloads})
 	}
 
-	function loadTabs() {
+	function loadTabs(fullLoad = true) {
 		let tabsHtml = ""
 		let tabsContentHtml = ""
 		let len = tabs.length
@@ -324,8 +343,13 @@
 		$('#tabList').html(tabsHtml)
 		$('#tabContent').html(tabsContentHtml)
 		for(let [idx, tab] of Object.entries(tabs.reverse())) {
-			for(let record of tab.content) {
-				document.getElementById(`y${tab.name}-content`).appendChild(renderRecord(record))
+			let tabContent = document.getElementById(`y${tab.name}-content`)
+			let content = tab.content
+			if(!fullLoad) {
+				content = content.slice(0, 20)
+			}
+			for(let record of content) {
+				tabContent.appendChild(renderRecord(record))
 			}
 		}
 	}

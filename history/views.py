@@ -2,16 +2,14 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.db.models import Count, Min, Max, Q
-from django.db.models.functions import Coalesce
 
 from datetime import datetime
 
 from history import jsonUtils
 
-from .models import Level, LevelRecord, Song, SaveFile, ServerResponse, LevelString, HistoryUser, ManualSubmission
-from .forms import UploadFileForm, SearchForm, LevelForm, UploadSubmissionForm
-from . import ccUtils, serverUtils, tasks, utils, meili_utils
+from .models import Level, LevelRecord, SaveFile, HistoryUser, ManualSubmission
+from .forms import UploadFileForm, SearchForm, UploadSubmissionForm
+from . import ccUtils, tasks, utils, meili_utils
 
 import math
 import plistlib

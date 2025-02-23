@@ -34,6 +34,10 @@ class LevelForm(forms.Form):
 	blanks = forms.BooleanField(label='Show blanks', required=False)
 	dupes = forms.BooleanField(label='Show dupes', required=False)
 
+class ApiLevelForm(forms.Form):
+	start_from = forms.IntegerField(label='Record ID to start from', required=False)
+	count = forms.IntegerField(label='Record count', required=False)
+
 class AdvancedSearchForm(forms.Form):
 	query = forms.CharField(label='Query', required=False)
 	limit = forms.IntegerField(label='Limit', required=False)

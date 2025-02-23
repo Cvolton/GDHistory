@@ -1,20 +1,15 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
-from django.db.models import Count, Min, Max, Q
-from django.db.models.functions import Coalesce
+from django.http import JsonResponse
 from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import make_aware
 
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, UTC
 
 from .models import LevelRecord, LevelDateEstimation, GDUserRecord, GDUser, ManualSubmission, Level
-from . import ccUtils, serverUtils, tasks, utils, constants, meili_utils
-from .forms import AdvancedSearchForm
+from . import utils, constants, meili_utils
+from .forms import AdvancedSearchForm, ApiLevelForm
 
 import math
-import plistlib
 import meilisearch
 import sys
 
@@ -68,7 +63,17 @@ def level_info(request, online_id=None, view_mode="normal"):
 			response['dupes_present'] = all_levels.filter(cache_is_dupe=True)[:1].count() > 0
 			all_levels = all_levels.filter(cache_is_dupe=False)
 
-		level_records = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('-real_date')
+		level_records = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('pk')
+		
+		form = ApiLevelForm(request.GET or None)
+		if form.is_valid():
+			start_from = form.cleaned_data['start_from']
+			count = form.cleaned_data['count']
+			if start_from is not None:
+				level_records = level_records.filter(pk__gt=start_from)
+			if count is not None:
+				level_records = level_records[:count]
+
 		level_strings = {}
 		response['level_string_count'] = 0
 		response['records'] = []
