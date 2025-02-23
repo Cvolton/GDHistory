@@ -790,7 +790,7 @@ class Level(models.Model):
 		return level_dict
 	
 	def get_best_record(self):
-		if self.best_record: return self.best_record
+		if self.best_record is not None: return self.best_record
 		
 		all_levels = self.levelrecord_set.order_by('-downloads')[:1]
 		if len(all_levels) < 1:
@@ -1089,8 +1089,8 @@ class LevelRecord(models.Model):
 		self.upgrade_data()
 		response = self.__dict__.copy()
 
-		del response['_prefetched_objects_cache']
-		del response['_state']
+		if '_prefetched_objects_cache' in response: del response['_prefetched_objects_cache']
+		if '_state' in response: del response['_state']
 		del response['unprocessed_data']
 		del response['username']
 		del response['user_id']

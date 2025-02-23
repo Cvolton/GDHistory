@@ -84,6 +84,18 @@ def level_info(request, online_id=None, view_mode="normal"):
 	return JsonResponse(response)
 
 @csrf_exempt
+def level_record(request, online_id=None, record_id=None):
+	try:
+		level = utils.get_level_object(online_id, True)
+		if not level.is_public and not (request.user.is_authenticated and request.user.is_superuser): raise Exception
+
+		record = level.levelrecord_set.get(pk=record_id) if record_id is not None else level.get_best_record()
+		if record is None: raise Exception
+		return JsonResponse(record.get_serialized_full())
+	except:
+		return JsonResponse({'success': False}, status=404)
+
+@csrf_exempt
 def user_info(request, online_id=None, view_mode="normal"):
 	all_users = GDUserRecord.objects.all()
 

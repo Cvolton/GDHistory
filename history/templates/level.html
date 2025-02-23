@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% include "level_record.html" %}
 {% load mathfilters %}
+{% load static %}
 {% load tags %}
 {% block title %}{{ first_record.level_name }}{% endblock title %}
 
@@ -32,7 +33,7 @@
 			<table class="table table-dark table-striped">
 				<tr>
 					<th>Level Name</th>
-					<td class="align-right" id="main-level-name">Loading level data...</td>
+					<td class="align-right" id="main-level-name"></td>
 				</tr>
 				<tr>
 					<th>Author</th>
@@ -101,15 +102,31 @@
 	let tabs = []
 	let forcedRecord = {{ record_id|default:"null" }}
 	let displayedRecord = null
-	$.getJSON(`/api/v1/level/{{ online_id }}/`, (result) => {
-		levelData = result
-		nonBlankRecords = result.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads))
-		loadRecords(urlParams.has('blanks') ? result.records : nonBlankRecords)
-		if(showDupes) loadDupes()
-	})
-	.fail(function() { 
-		$('#main-level-name').text('Failed to load level info.')
-	});
+
+	startLoading()
+
+	function startLoading() {
+		$('#main-level-name').text('')
+		$.getJSON(`/api/v1/level/{{ online_id }}/record/${forcedRecord ? `${forcedRecord}/` : ""}`, function(result) {
+			displayRecord(result, false, false)
+			startLoadingRecords()
+		})
+		.fail(function() { 
+			paragraph.textContent = 'Failed to load manual record info.'
+		});
+	}
+
+	function startLoadingRecords() {
+		$.getJSON(`/api/v1/level/{{ online_id }}/`, (result) => {
+			levelData = result
+			nonBlankRecords = result.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads))
+			loadRecords(urlParams.has('blanks') ? result.records : nonBlankRecords)
+			if(showDupes) loadDupes()
+		})
+		.fail(function() { 
+			$('#main-level-name').text('Failed to load level info.')
+		});
+	}
 
 	addEventListener("popstate", function (e) {
 		window.location.reload()
@@ -122,7 +139,7 @@
 	}
 
 	function loadDupes() {
-		$('#dupes-message').html(`Loading duplicate records...`)
+		$('#dupes-message').html(`<img src="{% static 'loading-grey.svg' %}" width="25px">&nbsp;&nbsp;Loading duplicate records...`)
 		$.getJSON(`/api/v1/level/{{ online_id }}/dupes_only/`, (result) => {
 			levelData.dupes_shown = true
 			nonBlankRecords.push(...result.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads)))
@@ -208,7 +225,7 @@
 			history.pushState({}, "", `/level/${levelData.online_id}/${bestRecord.id}/${window.location.search}`)
 		}
 		if(asSeenOn) {
-			$('#as-seen-on').html(`, as seen on ${record_date(bestRecord.real_date)} ${record_time(bestRecord.real_date)}`)
+			$('#as-seen-on').html(bestRecord.real_date ? `, as seen on ${record_date(bestRecord.real_date)} ${record_time(bestRecord.real_date)}` : ``)
 		}
 		$('#main-level-name').text(bestRecord.level_name)
 		$('#main-author').html(bestRecord.real_user_record ? `<a href="{% url 'search' %}?userID=${bestRecord.real_user_record.user_id}">${bestRecord.real_user_record.username}</a>` : "Unknown")
@@ -217,8 +234,10 @@
 		$('#main-difficulty').text(difficulty_text(bestRecord))
 		$('#main-featured').text(print_featured(bestRecord))
 		$('#main-length').text(level_length(bestRecord.length))
-		$('#main-record-count').text(recordsByDownloads.length)
-		$('#main-levelstring-count').text(levelData.level_string_count)
+		if(recordsByDownloads.length > 0) {
+			$('#main-record-count').text(recordsByDownloads.length)
+			$('#main-levelstring-count').text(levelData.level_string_count)
+		}
 
 		displayDescription(bestRecord)
 		highlightRecord(bestRecord)
