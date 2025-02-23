@@ -104,12 +104,12 @@
 	let displayedRecord = null
 
 	startLoading()
+	startLoadingRecords()
 
 	function startLoading() {
 		$('#main-level-name').text('')
 		$.getJSON(`/api/v1/level/{{ online_id }}/record/${forcedRecord ? `${forcedRecord}/` : ""}`, function(result) {
-			displayRecord(result, false, false)
-			startLoadingRecords()
+			if(!displayedRecord) displayRecord(result, false, false)
 		})
 		.fail(function() { 
 			paragraph.textContent = 'Failed to load manual record info.'
