@@ -29,6 +29,7 @@ function display_number(number) {
 
 function level_length(number) {
     const lengths = ["Tiny", "Short", "Medium", "Long", "XL", "Plat."]
+    if(!number) number = 0
     if (number >= lengths.length || number < 0) return `Unknown (${number})`
     return lengths[number]
 }
