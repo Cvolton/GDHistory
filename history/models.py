@@ -1117,6 +1117,7 @@ class LevelRecord(models.Model):
 		response['song'] = None if self.song is None else self.song.get_serialized_base()
 		response['response_get_type'] = self.server_response.get_type if self.server_response is not None else None
 		response['manual_submission_id'] = self.manual_submission.pk if self.manual_submission is not None else None
+		response['real_date'] = self.get_real_date()
 		return response
 
 	def upgrade_data(self):
@@ -1154,6 +1155,12 @@ class LevelRecord(models.Model):
 		#saving
 		if changed:
 			self.save()
+
+	def get_real_date(self):
+		if self.server_response: return self.server_response.created
+		if self.manual_submission: return self.manual_submission.created
+		if self.save_file.count() > 0: return self.save_file.order_by('-created')[:1][0].created
+		return None
 
 	class Meta:
 		indexes = [

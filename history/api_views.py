@@ -63,7 +63,8 @@ def level_info(request, online_id=None, view_mode="normal"):
 			response['dupes_present'] = all_levels.filter(cache_is_dupe=True)[:1].count() > 0
 			all_levels = all_levels.filter(cache_is_dupe=False)
 
-		level_records = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('pk')
+		#level_records = utils.annotate_record_set_with_date(all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')).order_by('pk')
+		level_records = all_levels.prefetch_related('manual_submission').prefetch_related('server_response').prefetch_related('level').prefetch_related('level_string').prefetch_related('real_user_record__user')
 		
 		form = ApiLevelForm(request.GET or None)
 		if form.is_valid():
