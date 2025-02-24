@@ -247,7 +247,7 @@
 			$('#as-seen-on').html(bestRecord.real_date ? `, as seen on ${record_date(bestRecord.real_date)} ${record_time(bestRecord.real_date)}` : ``)
 		}
 		$('#main-level-name').text(bestRecord.level_name)
-		$('#main-author').html(bestRecord.real_user_record ? `<a href="{% url 'search' %}?userID=${bestRecord.real_user_record.user_id}">${bestRecord.real_user_record.username ? bestRecord.real_user_record.username : cached_username(record.cached_user_info)}</a>` : "Unknown")
+		$('#main-author').html(bestRecord.real_user_record ? `<a href="{% url 'search' %}?userID=${bestRecord.real_user_record.user_id}">${bestRecord.real_user_record.username ? bestRecord.real_user_record.username : cached_username(bestRecord.cached_user_info)}</a>` : "Unknown")
 		$('#main-downloads').text(bestRecord.downloads)
 		$('#main-likes').text(bestRecord.likes)
 		$('#main-difficulty').text(difficulty_text(bestRecord))
