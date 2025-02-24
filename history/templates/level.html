@@ -460,7 +460,7 @@ Rating denominator: ${record.rating}`)
 		if(record.level_string_available) {
 			tdDataAvailable.textContent = "✅ "
 			if(levelData.is_public) {
-				tdDataAvailable.appendChild(make_link("(.gmd)", `/download/record/${levelData.online_id}/${record.id}/`))
+				tdDataAvailable.appendChild(make_link("(.gmd)", `/level/${levelData.online_id}/${record.id}/download/`))
 			}
 			tdDataAvailable.appendChild(make_tooltip(null, ` - ${print_file_size(record.level_string_info?.file_size)}`))
 		} else {
