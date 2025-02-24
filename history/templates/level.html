@@ -144,7 +144,7 @@
 	}
 
 	function loadDupes() {
-		let maxRecords = 500
+		let maxRecords = 100
 
 		$('#dupes-message').html(`<img src="{% static 'loading-grey.svg' %}" width="25px">&nbsp;&nbsp;Loading duplicate records...`)
 		$.getJSON(`/api/v1/level/{{ online_id }}/dupes_only/?count=${maxRecords}&start_from=${loadDupesStartFrom}`, (result) => {
