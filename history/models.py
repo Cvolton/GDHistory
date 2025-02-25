@@ -260,31 +260,8 @@ class GDUserRecord(models.Model):
 		db_index=True,
 	)
 
-	record_type = models.CharField(
-		max_length=8,
-		choices=LevelRecordType.choices,
-	)
-
 	account_id = models.IntegerField(blank=True, null=True) #k60
-	username = models.CharField(blank=True, null=True, max_length=255, db_index=True) #k5 #in the real world <= 15
-
-	save_file = models.ManyToManyField(
-		SaveFile,
-	)
-
-	server_response = models.ForeignKey(
-		ServerResponse,
-		on_delete=models.CASCADE,
-		blank=True, null=True,
-		db_index=True,
-	)
-
-	manual_submission = models.ForeignKey(
-		ManualSubmission,
-		on_delete=models.CASCADE,
-		blank=True, null=True,
-		db_index=True,
-	)
+	username = models.CharField(blank=True, null=True, max_length=255, db_collation='utf8mb4_bin', db_index=True) #k5 #in the real world <= 15
 
 	cache_created = models.DateTimeField(blank = True, null=True, db_index=True)
 
@@ -300,6 +277,11 @@ class GDUserRecord(models.Model):
 		response = self.get_serialized_base()
 		response['cache_created'] = self.cache_created
 		return response
+	
+	class Meta:
+		constraints = [
+			models.UniqueConstraint(fields=['user_id', 'username', 'account_id'], name='hello')
+		]
 
 class Song(models.Model):
 	online_id = models.IntegerField(unique=True, db_index=True)
@@ -1080,7 +1062,7 @@ class LevelRecord(models.Model):
 		if self.save_file.count() > 0: record_date = self.save_file.order_by('-created')[:1][0].created
 		
 		user_object = utils.get_user_object(self.user_id)
-		user_record = utils.create_user_record(user_object, self.account_id, self.username, record_date, self.server_response, self.save_file, self.record_type)
+		user_record = utils.create_user_record(user_object, self.account_id, self.username, record_date)
 		if user_object is not None: user_object.update_with_record(user_record)
 
 		self.real_user_record = user_record

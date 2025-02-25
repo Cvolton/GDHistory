@@ -145,24 +145,20 @@ def get_user_object(user_id):
 		user_object.save()
 	return user_object
 
-def create_user_record(user_object, account_id, username, date, server_response, save_file, record_type):
+def create_user_record(user_object, account_id, username, date):
 	if user_object is None: return None
 
-	from .models import GDUserRecord, ServerResponse, SaveFile, LevelRecord
+	from .models import GDUserRecord
 
 	try:
 		record = GDUserRecord.objects.get(user=user_object,
 			username = username, 
 			account_id = account_id,
-			server_response = server_response,
-			record_type = record_type
 		)
 	except:
 		record = GDUserRecord(user=user_object,
 			username = username, 
 			account_id = account_id,
-			server_response = server_response,
-			record_type = record_type
 		)
 		record.save()
 
@@ -180,7 +176,7 @@ def create_user_record(user_object, account_id, username, date, server_response,
 	if date is not None and ((record.cache_created is not None and parsed_date < parsed_cache) or record.cache_created is None):
 		record.cache_created = parsed_date
 		record.save()
-	record.save_file.add(*(save_file.all()))
+	
 	return record
 
 def get_level_object(level_id, validate_id_range=False):
