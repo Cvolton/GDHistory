@@ -6,10 +6,10 @@ class Command(BaseCommand):
 	help = 'Deletes all GDUserRecords'
 
 	def add_arguments(self, parser):
-		parser.add_argument('levels', nargs='+')
+		parser.add_argument('levels', type=int)
 
 	def handle(self, *args, **options):
-		record_count = options['levels'][0]
+		record_count = options['levels']
 		i = 0
 		while GDUserRecord.objects.all()[:1].count() > 0:
 			print(f"Deleting {record_count} records, iteration {i}")
