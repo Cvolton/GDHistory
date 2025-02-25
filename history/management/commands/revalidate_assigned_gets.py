@@ -6,7 +6,7 @@ from django.db.models import Q
 import math
 
 class Command(BaseCommand):
-	help = 'Revalidates level cache'
+	help = 'Revalidates assigned get types'
 
 	def handle(self, *args, **options):
 		responses = ServerResponse.objects.filter(endpoint__startswith='getGJLevel')
