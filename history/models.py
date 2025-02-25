@@ -1060,7 +1060,7 @@ class LevelRecord(models.Model):
 
 		record_date = None
 		if self.server_response: record_date = self.server_response.created
-		if self.save_file.count() > 0: record_date = self.save_file.order_by('-created')[:1][0].created
+		if self.save_file.count() > 0: record_date = self.save_file.order_by('created')[:1][0].created
 		
 		user_object = utils.get_user_object(self.user_id)
 		user_record = utils.create_user_record(user_object, self.account_id, self.username, record_date)
@@ -1146,7 +1146,7 @@ class LevelRecord(models.Model):
 	def get_real_date(self):
 		if self.server_response: return self.server_response.created
 		if self.manual_submission: return self.manual_submission.created
-		if self.save_file.count() > 0: return self.save_file.order_by('-created')[:1][0].created
+		if self.save_file.count() > 0: return self.save_file.order_by('created')[:1][0].created
 		return None
 
 	class Meta:
