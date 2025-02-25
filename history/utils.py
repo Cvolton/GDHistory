@@ -176,6 +176,10 @@ def create_user_record(user_object, account_id, username, date):
 	if date is not None and ((record.cache_created is not None and parsed_date < parsed_cache) or record.cache_created is None):
 		record.cache_created = parsed_date
 		record.save()
+
+	if date is not None and ((record.cache_created is not None and parsed_date > parsed_cache) or record.cache_last_seen is None):
+		record.cache_last_seen = parsed_date
+		record.save()
 	
 	return record
 
