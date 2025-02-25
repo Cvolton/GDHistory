@@ -9,7 +9,7 @@ class Command(BaseCommand):
 		parser.add_argument('levels', nargs='+')
 
 	def handle(self, *args, **options):
-		record_count = options['levels']
+		record_count = options['levels'][0]
 		i = 0
 		while GDUserRecord.objects.all()[:1].count() > 0:
 			print(f"Deleting {record_count} records, iteration {i}")
