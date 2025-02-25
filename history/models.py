@@ -362,8 +362,7 @@ class Song(models.Model):
 		record = {
 			'online_id': self.online_id,
 			'song_name': self.cache_song_name,
-			'artist_name': self.cache_artist_name,
-			'arist_name': 'DEPRECATED FIELD USE artist_name WITHOUT THE TYPO'
+			'artist_name': self.cache_artist_name
 		}
 		return record
 
@@ -753,11 +752,11 @@ class Level(models.Model):
 			'cache_submitted_timestamp': int(submitted_date.timestamp()) if submitted_date else None,
 			'cache_downloads': int(self.cache_downloads),
 			'cache_likes': int(self.cache_likes),
-			'cache_rating_sum': int(self.cache_rating_sum),
-			'cache_rating': int(self.cache_rating),
-			'cache_demon': bool(self.cache_demon),
-			'cache_auto': bool(self.cache_auto),
-			'cache_demon_type': int(self.cache_demon_type) if self.cache_demon_type else None,
+			#'cache_rating_sum': int(self.cache_rating_sum),
+			#'cache_rating': int(self.cache_rating),
+			#'cache_demon': bool(self.cache_demon),
+			#'cache_auto': bool(self.cache_auto),
+			#'cache_demon_type': int(self.cache_demon_type) if self.cache_demon_type else None,
 			'cache_stars': int(self.cache_stars),
 			'cache_username': self.cache_username,
 			'cache_level_string_available': bool(self.cache_level_string_available),

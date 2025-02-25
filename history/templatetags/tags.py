@@ -227,3 +227,10 @@ def working_time(time):
 @register.simple_tag
 def approx_verification(timestamp):
 	return working_time(round(timestamp / 240, 3))[:-3]
+
+@register.simple_tag
+def filter_difficulty(number):
+	values = ["Auto", "Easy", "Normal", "Hard", "Harder", "Insane", "Demon", "Easy Demon", "Medium Demon", "Hard Demon", "Insane Demon", "Extreme Demon"]
+	if number > len(values) or number < -1: return "Unknown"
+	if number <= 0: return "N/A"
+	return values[number - 1]
