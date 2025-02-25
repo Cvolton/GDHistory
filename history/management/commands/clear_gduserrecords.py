@@ -12,6 +12,7 @@ class Command(BaseCommand):
 		record_count = options['levels']
 		i = 0
 		while GDUserRecord.objects.all()[:1].count() > 0:
-			print(f"Deleting {record_count} records, iteration {i}")
-			level_records = GDUserRecord.objects.filter(pk__lt=GDUserRecord.objects.first().pk + record_count).delete()
+			wip_pk = GDUserRecord.objects.first().pk
+			print(f"Deleting {record_count} records, iteration {i}, id {wip_pk}")
+			level_records = GDUserRecord.objects.filter(pk__lt=wip_pk + record_count).delete()
 			i += 1
