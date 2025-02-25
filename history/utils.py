@@ -164,8 +164,10 @@ def create_user_record(user_object, account_id, username, date):
 
 	parsed_date = date
 	parsed_cache = record.cache_created
+	parsed_cache_last_seen = record.cache_last_seen
 	if isinstance(date, str): parsed_date = timezone.datetime.fromisoformat(date)
 	if isinstance(record.cache_created, str): parsed_cache = timezone.datetime.fromisoformat(record.cache_created)
+	if isinstance(record.cache_last_seen, str): parsed_cache_last_seen = timezone.datetime.fromisoformat(record.cache_last_seen)
 
 	if parsed_date is not None and is_naive(parsed_date):
 		parsed_date = make_aware(parsed_date)
@@ -177,7 +179,7 @@ def create_user_record(user_object, account_id, username, date):
 		record.cache_created = parsed_date
 		record.save()
 
-	if date is not None and ((record.cache_created is not None and parsed_date > parsed_cache) or record.cache_last_seen is None):
+	if date is not None and ((record.cache_last_seen is not None and parsed_date > parsed_cache_last_seen) or record.cache_last_seen is None):
 		record.cache_last_seen = parsed_date
 		record.save()
 	
