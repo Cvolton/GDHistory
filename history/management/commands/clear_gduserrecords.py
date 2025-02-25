@@ -8,7 +8,6 @@ class Command(BaseCommand):
 	def handle(self, *args, **options):
 		i = 0
 		while GDUserRecord.objects.all()[:1].count() > 0:
-			print(f"Deleting 100000 records, iteration {i}")
-			level_records = GDUserRecord.objects.all()[:100000]
-			for record in level_records:
-				record.delete()
+			record_count = 100000
+			print(f"Deleting {record_count} records, iteration {i}")
+			level_records = GDUserRecord.objects.filter(pk__lt=GDUserRecord.objects.first().pk + record_count).delete()
