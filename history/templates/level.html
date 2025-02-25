@@ -211,7 +211,7 @@
 		for(let record of records) {
 			if(!record.level_string_info) continue
 			sha = record.level_string_info.decompressed_sha256 ? record.level_string_info.decompressed_sha256 : record.level_string_info.sha256
-			if(unsortedRecordsByDecompressedSha[sha] && unsortedRecordsByDecompressedSha[sha].rel_date < record.real_date) continue
+			if(unsortedRecordsByDecompressedSha[sha] && unsortedRecordsByDecompressedSha[sha].downloads > record.downloads) continue
 			unsortedRecordsByDecompressedSha[sha] = record
 
 			recordsByDecompressedSha = Object.values(unsortedRecordsByDecompressedSha).sort((a, b) => new Date(b.real_date) - new Date(a.real_date))
