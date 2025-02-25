@@ -205,6 +205,7 @@ def search(request):
 				'difficulty': 'cache_stars',
 				'username': 'cache_username',
 				'user_id': 'cache_user_id',
+				'max_stars': 'cache_max_stars',
 				'versions': 'cache_available_versions',
 			}
 
