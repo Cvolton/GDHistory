@@ -1133,6 +1133,11 @@ class LevelRecord(models.Model):
 			del self.unprocessed_data['k105']
 			changed = True
 
+		#gdhistory changes
+		if self.real_user_record_id is None and self.user_id is not None:
+			self.create_user()
+			changed = False #saved in create_user
+
 		#saving
 		if changed:
 			self.save()
