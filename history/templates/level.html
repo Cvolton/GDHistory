@@ -253,8 +253,8 @@
 		}
 		$('#main-level-name').text(bestRecord.level_name)
 		$('#main-author').html(bestRecord.real_user_record ? `<a href="{% url 'search' %}?userID=${bestRecord.real_user_record.user_id}">${bestRecord.real_user_record.username ? bestRecord.real_user_record.username : cached_username(bestRecord.cached_user_info)}</a>` : "Unknown")
-		$('#main-downloads').text(bestRecord.downloads.toLocaleString('en-US'))
-		$('#main-likes').text(bestRecord.likes.toLocaleString('en-US'))
+		$('#main-downloads').text(bestRecord.downloads?.toLocaleString('en-US'))
+		$('#main-likes').text(bestRecord.likes?.toLocaleString('en-US'))
 		$('#main-difficulty').text(difficulty_text(bestRecord))
 		$('#main-featured').text(print_featured(bestRecord))
 		$('#main-length').text(level_length(bestRecord.length))
@@ -421,9 +421,9 @@
 		tr.appendChild(tdSource)
 
 		tr.appendChild(td(record.level_name))
-		tr.appendChild(td(record.downloads.toLocaleString('en-US')))
+		tr.appendChild(td(record.downloads?.toLocaleString('en-US')))
 		tr.appendChild(
-			td((record.dislikes ? (record.likes || 0) - record.dislikes : record.likes).toLocaleString('en-US'), 
+			td((record.dislikes ? (record.likes || 0) - record.dislikes : record.likes)?.toLocaleString('en-US'), 
 			null, 
 			record.dislikes ? `Likes: ${record.likes} Dislikes: ${record.dislikes}` : null)
 		)
