@@ -180,15 +180,16 @@
 		let waitForRecord = false
 		if(forcedRecord) {
 			bestRecord = recordsByDownloads.find(record => record.id == forcedRecord)
-			if(!bestRecord) {
-				if(!urlParams.has('blanks')) {
-					return loadWithBlanks(true)
-				} else if(!levelData.dupes_shown && !showDupes) {
-					forceLoadDupes(true)
-					waitForRecord = true
-				} else {
-					waitForRecord = true
-				}
+		}
+		
+		if(!bestRecord) {
+			if(!urlParams.has('blanks')) {
+				return loadWithBlanks(true)
+			} else if(!levelData.dupes_shown && !showDupes) {
+				forceLoadDupes(true)
+				waitForRecord = true
+			} else {
+				waitForRecord = true
 			}
 		}
 
@@ -248,6 +249,8 @@
 	}
 
 	function displayRecord(bestRecord, changeUrl = true, asSeenOn = true) {
+		if(!bestRecord) return
+
 		displayedRecord = bestRecord
 		if(changeUrl) {
 			history.pushState({}, "", `/level/${levelData.online_id}/${bestRecord.id}/${window.location.search}`)
