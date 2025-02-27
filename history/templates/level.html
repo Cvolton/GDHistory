@@ -25,6 +25,7 @@
 	    {{ comment }}
 	  </div>
 	{% endif %}
+	<span id="blank-alert"></span>
 	<p class="lead">Showing data for level {{ online_id }}<span id="as-seen-on"></span></p>
 </div>
 <div class="row gap-1">
@@ -116,9 +117,13 @@
 		});
 	}
 
+	function getNonBlanks() {
+		return levelData.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads))
+	}
+
 	function loadAllRecords(fullLoad = true) {
 		loadRecords(
-			urlParams.has('blanks') ? levelData.records : levelData.records.filter(record => (record.level_version || record.game_version || record.level_name || record.downloads))
+			urlParams.has('blanks') ? levelData.records : getNonBlanks()
 		, fullLoad)
 	}
 
@@ -171,7 +176,7 @@
 		let unsortedRecordsByDecompressedSha = {}
 
 		recordsByDownloads = records.sort((a, b) => b.downloads - a.downloads)
-		let bestRecord = null
+		let bestRecord = recordsByDownloads[0]
 		let waitForRecord = false
 		if(forcedRecord) {
 			bestRecord = recordsByDownloads.find(record => record.id == forcedRecord)
@@ -181,13 +186,10 @@
 				} else if(!levelData.dupes_shown && !showDupes) {
 					forceLoadDupes(true)
 					waitForRecord = true
-				} else if(!showDupes) {
-					alert("Record not found.")
+				} else {
+					waitForRecord = true
 				}
 			}
-		}
-		if(!bestRecord && !waitForRecord) {
-			bestRecord = recordsByDownloads[0]
 		}
 
 		recordsByYears = records.reduce((acc, record) => {
@@ -220,11 +222,13 @@
 		prepareTabs()
 		setTimeout(() => {
 			loadTabs(fullLoad)
-			if(!waitForRecord && fullLoad) showDupesMessage()
-			if(!waitForRecord) displayRecord(bestRecord, false, !!forcedRecord)
+			if(!waitForRecord && fullLoad) {
+				showDupesMessage()
+				displayRecord(bestRecord, false, !!forcedRecord)
+			}
 		}, 17)
 
-		if(!waitForRecord) {
+		if(!waitForRecord && fullLoad) {
 			displayRecord(bestRecord, false, !!forcedRecord)
 		}
 	}
@@ -265,6 +269,17 @@
 
 		displayDescription(bestRecord)
 		highlightRecord(bestRecord)
+		showBlankAlert()
+	}
+
+	function showBlankAlert() {
+		if(!levelData?.records) return
+
+		if(getNonBlanks() == 0) {
+			$('#blank-alert').html(`<div class="alert alert-warning" role="alert">
+				No non-blank records found for this level.
+			</div>`)
+		}
 	}
 
 	function displayDescription(bestRecord) {
