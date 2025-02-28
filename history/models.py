@@ -981,6 +981,7 @@ class LevelRecord(models.Model):
 	)
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
+	is_invalid = models.BooleanField(default=False, db_index=True)
 
 	cache_is_public = models.BooleanField(default=False, db_index=True)
 	cache_is_dupe = models.BooleanField(default=False, db_index=True)
