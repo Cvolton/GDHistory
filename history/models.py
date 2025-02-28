@@ -1076,7 +1076,7 @@ class LevelRecord(models.Model):
 		if '_prefetched_objects_cache' in response: del response['_prefetched_objects_cache']
 		if '_state' in response: del response['_state']
 		del response['unprocessed_data']
-		del response['username']
+		#del response['username']
 		del response['user_id']
 		del response['real_user_record_id']
 		del response['cache_user_record_id']
