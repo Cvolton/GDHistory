@@ -155,11 +155,13 @@
 		$('#recently-updated').empty()
 
 		for (var i = 0; i < counts.recently_added.length; i++) {
-			$('#recently-added').append(`<tr><td>${counts.recently_added[i].cache_level_name}</td><td><a href="/level/${counts.recently_added[i].online_id}">${counts.recently_added[i].online_id}</a></td></tr>`)
+			let record = counts.recently_added[i]
+			$('#recently-added').append(`<tr><td>${record.cache_level_name}</td><td><a href="/level/${record.online_id}">${record.online_id}</a></td></tr>`)
 		}
 
 		for (var i = 0; i < counts.recently_updated.length; i++) {
-			$('#recently-updated').append(`<tr><td>${counts.recently_added[i].cache_level_name}</td><td><a href="/level/${counts.recently_added[i].online_id}">${counts.recently_added[i].online_id}</a></td></tr>`)
+			let record = counts.recently_updated[i]
+			$('#recently-updated').append(`<tr><td>${record.cache_level_name}</td><td><a href="/level/${record.online_id}">${record.online_id}</a></td></tr>`)
 		}
 		
 	});
