@@ -20,16 +20,22 @@ def update_is_public():
 			record.level.save()
 
 def do_is_public_updating(records):
-	records = records[:100000]
-	record_count = records.count()
-	i = 1
-	for record in records:
-		print(f"{i} / {record_count} - Updating {record.level.online_id}")
-		record.cache_is_public = record.level.is_public
-		#record.save()
-		i += 1
+	records_max = 5000
 
-	LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
+	while True:
+		records = records[:records_max]
+		record_count = len(records)
+		i = 1
+		for record in records:
+			print(f"{i} / {record_count} - Updating {record.level.online_id}")
+			record.cache_is_public = record.level.is_public
+			#record.save()
+			i += 1
+
+		LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
+
+		if record_count < records_max:
+			break
 
 def do_search_cache_updating(records, status):
 	records_max = 5000
