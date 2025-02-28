@@ -465,10 +465,10 @@ class Level(models.Model):
 	def verify_needs_updating(self):
 		print("verifying needs updating")
 
-		data_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').order_by('-downloads')
+		data_record = self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').order_by('-downloads')
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
-			best_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) ).prefetch_related('level_string').order_by('-downloads')[:1][0]
+			best_record = self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).exclude( Q(level_name=None) ).prefetch_related('level_string').order_by('-downloads')[:1][0]
 
 			level_strings = {}
 			for record in data_record:
@@ -504,11 +504,12 @@ class Level(models.Model):
 		except:
 			print("couldnt assign username")
 
-	def update_with_record(self, record, record_date, force=False):
+	def update_with_record(self, record, force=False):
 		print("updating with record")
 
 		changed = False
 		check_level_string = False
+		record_date = record.get_real_date()
 
 		if record.stars is not None and int(record.stars) > self.cache_max_stars: 
 			self.cache_max_stars = record.stars
@@ -677,7 +678,7 @@ class Level(models.Model):
 
 		self.recalculate_maximums()
 
-		best_record = self.levelrecord_set.filter(cache_is_dupe=False).exclude( Q(level_name=None) ).order_by('-downloads')
+		best_record = self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).exclude( Q(level_name=None) ).order_by('-downloads')
 
 		best_record_download = best_record.filter(Q(record_type=LevelRecordType.DOWNLOAD) | Q(record_type=LevelRecordType.GET))[:1]
 		if len(best_record_download) > 0: best_record = best_record_download
@@ -691,9 +692,7 @@ class Level(models.Model):
 		best_record = best_record[0]
 		self.best_record = best_record
 
-		real_date = best_record.server_response.created if best_record.server_response else best_record.manual_submission.created if best_record.manual_submission else best_record.save_file.aggregate(oldest=Min('created'))['oldest']
-
-		self.update_with_record(best_record, real_date, True)
+		self.update_with_record(best_record, True)
 
 		self.verify_needs_updating()
 
@@ -1144,5 +1143,6 @@ class LevelRecord(models.Model):
 
 	class Meta:
 		indexes = [
-			models.Index(fields=['level', 'cache_is_dupe'], name='level_dupe')
+			models.Index(fields=['level', 'cache_is_dupe'], name='level_dupe'),
+			models.Index(fields=['level', 'cache_is_dupe', 'is_invalid'], name='level_dupe_invalid')
 		]
