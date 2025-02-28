@@ -50,7 +50,7 @@ def start_is_public_updating(state):
 
 	while True:
 		result = LevelRecord.objects.prefetch_related('level').filter(cache_is_public=state).exclude(level__is_public=state)[:records_max]
-		do_is_public_updating()
+		do_is_public_updating(result)
 		if len(result) < records_max:
 			break
 
