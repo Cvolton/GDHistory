@@ -36,7 +36,7 @@ def do_search_cache_updating(records, status):
 
 	while True:
 		records = records[:records_max]
-		record_count = records.count()
+		record_count = len(records)
 		i = 1
 		for record in records:
 			print(f"{i} / {record_count} - Updating {record.online_id}")
@@ -47,7 +47,7 @@ def do_search_cache_updating(records, status):
 
 		Level.objects.bulk_update(records, ['cache_search_available', 'cache_needs_search_update'], batch_size=1000)
 
-		if len(records) < records_max:
+		if record_count < records_max:
 			break
 
 def update_cached_fields():
