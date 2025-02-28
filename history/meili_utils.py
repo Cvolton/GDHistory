@@ -45,6 +45,12 @@ def update_settings():
 		'cache_max_two_player',
 		'cache_original',
 		'cache_max_original',
+		'cache_min_game_version',
+		'cache_max_game_version',
+		'cache_game_version',
+		'cache_audiotrack',
+		'cache_song_id',
+		'cache_song_artist_id',
 		'cache_needs_revalidation',
 	]
 

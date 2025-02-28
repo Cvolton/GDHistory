@@ -179,6 +179,30 @@ def search(request):
 			else: #other filters
 				filters.append(f"(cache_filter_difficulty = {form.cleaned_data['difficulty']})")
 
+		if 'minGameVersion' in form.cleaned_data and form.cleaned_data['minGameVersion'] is not None:
+			filters.append(f"cache_min_game_version = {form.cleaned_data['minGameVersion']}")
+			visible_query += f" (minGameVersion {form.cleaned_data['minGameVersion']})"
+
+		if 'maxGameVersion' in form.cleaned_data and form.cleaned_data['maxGameVersion'] is not None:
+			filters.append(f"cache_max_game_version = {form.cleaned_data['maxGameVersion']}")
+			visible_query += f" (maxGameVersion {form.cleaned_data['maxGameVersion']})"
+
+		if 'gameVersion' in form.cleaned_data and form.cleaned_data['gameVersion'] is not None:
+			filters.append(f"cache_game_version = {form.cleaned_data['gameVersion']}")
+			visible_query += f" (gameVersion {form.cleaned_data['gameVersion']})"
+
+		if 'audioTrack' in form.cleaned_data and form.cleaned_data['audioTrack'] is not None:
+			filters.append(f"cache_audiotrack = {form.cleaned_data['audioTrack']}")
+			visible_query += f" (audioTrack {form.cleaned_data['audioTrack']})"
+
+		if 'songID' in form.cleaned_data and form.cleaned_data['songID'] is not None:
+			filters.append(f"cache_song_id = {form.cleaned_data['songID']}")
+			visible_query += f" (songID {form.cleaned_data['songID']})"
+
+		if 'songArtistID' in form.cleaned_data and form.cleaned_data['songArtistID'] is not None:
+			filters.append(f"cache_song_artist_id = {form.cleaned_data['songArtistID']}")
+			visible_query += f" (songArtistID {form.cleaned_data['songArtistID']})"
+
 		if 'length' in form.cleaned_data and form.cleaned_data['length'] is not None:
 			visible_query += f" (length filter)"
 			length = form.cleaned_data['length']
@@ -207,6 +231,12 @@ def search(request):
 				'user_id': 'cache_user_id',
 				'max_stars': 'cache_max_stars',
 				'versions': 'cache_available_versions',
+				'min_game_version': 'cache_min_game_version',
+				'max_game_version': 'cache_max_game_version',
+				'game_version': 'cache_game_version',
+				'audiotrack': 'cache_audiotrack',
+				'song_id': 'cache_song_id',
+				'song_artist_id': 'cache_song_artist_id',
 			}
 
 			unique_sorts = ['id', 'likes']

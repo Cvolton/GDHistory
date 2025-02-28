@@ -28,6 +28,12 @@ class SearchForm(forms.Form):
 	daily = forms.BooleanField(label='Was daily', required=False)
 	twoPlayer = forms.BooleanField(label='Two player', required=False)
 	original = forms.IntegerField(label='Original', required=False)
+	minGameVersion = forms.IntegerField(label='Min Game Version', required=False)
+	maxGameVersion = forms.IntegerField(label='Max Game Version', required=False)
+	gameVersion = forms.IntegerField(label='Game Version', required=False)
+	audioTrack = forms.IntegerField(label='Audio Track', required=False)
+	songID = forms.IntegerField(label='Song ID', required=False)
+	songArtistID = forms.IntegerField(label='Song Artist ID', required=False)
 	s = forms.CharField(label='Sort', required=False)
 
 class LevelForm(forms.Form):

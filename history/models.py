@@ -288,6 +288,7 @@ class Song(models.Model):
 	online_id = models.IntegerField(unique=True, db_index=True)
 
 	cache_song_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
+	cache_artist_id = models.IntegerField(default=0, db_index=True)
 	cache_artist_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
 
@@ -330,14 +331,16 @@ class Song(models.Model):
 		best_record = self.songrecord_set.annotate(newest_created=Max('save_file__created'), real_date=Coalesce('newest_created', 'server_response__created')).exclude(real_date=None, song_name=None).order_by('-real_date')[:1]
 		if len(best_record) < 1:
 			self.cache_song_name = None
+			self.cache_artist_id = 0
 			self.cache_artist_name = None
 			self.save()
 			return
 
 		best_record = best_record[0]
-		self.cache_song_name = best_record.song_name
-		self.cache_artist_name = best_record.artist_name
-		self.cache_submitted = best_record.real_date
+		self.cache_song_name = best_record.song_name or self.cache_song_name
+		self.cache_artist_name = best_record.artist_name or self.cache_artist_name
+		self.cache_artist_id = best_record.artist_id or self.cache_artist_id
+		self.cache_submitted = best_record.real_date or self.cache_submitted
 
 		self.save()
 
@@ -345,7 +348,8 @@ class Song(models.Model):
 		record = {
 			'online_id': self.online_id,
 			'song_name': self.cache_song_name,
-			'artist_name': self.cache_artist_name
+			'artist_name': self.cache_artist_name,
+			'artist_id': self.cache_artist_id,
 		}
 		return record
 
@@ -430,6 +434,10 @@ class Level(models.Model):
 	cache_min_game_version = models.IntegerField(default=0, db_index=True)
 	cache_max_game_version = models.IntegerField(default=0, db_index=True)
 	cache_game_version = models.IntegerField(default=0, db_index=True)
+
+	cache_audiotrack = models.IntegerField(default=0, db_index=True)
+	cache_song_id = models.IntegerField(default=0, db_index=True)
+	cache_song_artist_id = models.IntegerField(default=0, db_index=True)
 
 	cache_needs_revalidation = models.BooleanField(db_index=True, default=False)
 	cache_needs_search_update = models.BooleanField(db_index=True, default=False)
@@ -540,6 +548,16 @@ class Level(models.Model):
 			self.cache_epic = record.epic or 0
 			self.cache_two_player = record.two_player or 0
 			self.cache_original = record.original or 0
+			self.cache_audiotrack = record.official_song or 0
+			if record.song is not None:
+				if record.song.cache_artist_id == 0:
+					print("updating song record")
+					record.song.revalidate_cache()
+				self.cache_song_id = record.song.online_id
+				self.cache_song_artist_id = record.song.cache_artist_id
+			else:
+				self.cache_song_id = 0
+				self.cache_song_artist_id = 0
 
 			self.assign_difficulty_from_record(record)
 
@@ -722,6 +740,12 @@ class Level(models.Model):
 			'cache_max_two_player': bool(self.cache_max_two_player),
 			'cache_original': int(self.cache_original),
 			'cache_max_original': int(self.cache_max_original),
+			'cache_min_game_version': int(self.cache_min_game_version),
+			'cache_max_game_version': int(self.cache_max_game_version),
+			'cache_game_version': int(self.cache_game_version),
+			'cache_audiotrack': int(self.cache_audiotrack),
+			'cache_song_id': int(self.cache_song_id),
+			'cache_song_artist_id': int(self.cache_song_artist_id),
 			'cache_needs_revalidation': bool(self.cache_needs_revalidation),
 		}
 		return response
