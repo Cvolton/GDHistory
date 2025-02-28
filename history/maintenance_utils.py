@@ -8,7 +8,7 @@ from django.utils import timezone
 
 def update_is_public():
 	user_whitelist = [21297937, 16, 11094602, 20417551]
-	records = LevelRecord.objects.filter( Q(level__cache_user_id__in=user_whitelist) | Q(level__cache_stars__gt=0) | Q(level__cache_downloads__gte=1000) | Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecordType.GET) | ( Q(record_type=LevelRecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") ) ).filter( Q(level__is_public=None) | Q(level__is_public=False) ).prefetch_related('level')
+	records = LevelRecord.objects.filter( Q(level__cache_user_id__in=user_whitelist) | Q(level__cache_stars__gt=0) | Q(level__cache_downloads__gte=1000) | Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecordType.GET) | ( Q(record_type=LevelRecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") ) ).filter(level__is_public=False).prefetch_related('level')
 	#record_count = records.count()
 	while True:
 		records_limited = records[0:1000]
@@ -57,7 +57,6 @@ def start_is_public_updating(state):
 def update_cached_fields():
 	start_is_public_updating(False)
 	start_is_public_updating(True)
-	start_is_public_updating(None)
 
 	estimated_id = get_level_id_within_window()
 

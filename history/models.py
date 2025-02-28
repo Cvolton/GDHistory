@@ -390,7 +390,7 @@ class SongRecord(models.Model):
 class Level(models.Model):
 	online_id = models.IntegerField(db_index=True, unique=True)
 	comment = models.TextField(blank=True, null=True)
-	is_public = models.BooleanField(blank=True, null=True, db_index=True) #this is to prevent leaking unlisted levels publicly
+	is_public = models.BooleanField(default=False, db_index=True) #this is to prevent leaking unlisted levels publicly
 	is_deleted = models.BooleanField(default=False, db_index=True)
 	hide_from_search = models.BooleanField(db_index=True, default=False)
 
@@ -998,7 +998,7 @@ class LevelRecord(models.Model):
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 
-	cache_is_public = models.BooleanField(blank=True, null=True, db_index=True)
+	cache_is_public = models.BooleanField(default=False, db_index=True)
 	cache_is_dupe = models.BooleanField(default=False, db_index=True)
 
 	level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True) #k2 #in the real world this can't be more than 20, unless you're dealing with private server save files
