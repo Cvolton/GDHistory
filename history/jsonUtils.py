@@ -171,4 +171,9 @@ def upload_submission_data(data, user, parent=None, save_file=False):
 		for child in data['submissions']:
 			upload_submission_data(child, user, submission)
 
+	submission.cache_level_count = None
+	submission.cache_full_level_count = None
+	submission.cache_children_count = None
+	submission.save()
+
 	return submission.pk
