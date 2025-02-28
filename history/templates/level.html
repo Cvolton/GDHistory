@@ -223,6 +223,7 @@
 		prepareTabs()
 		setTimeout(() => {
 			loadTabs(fullLoad)
+			refreshCounters()
 			if(!waitForRecord && fullLoad) {
 				showDupesMessage()
 				displayRecord(bestRecord, false, !!forcedRecord)
@@ -265,14 +266,18 @@
 		$('#main-difficulty').text(difficulty_text(bestRecord))
 		$('#main-featured').text(print_featured(bestRecord))
 		$('#main-length').text(level_length(bestRecord.length))
+
+		refreshCounters()
+		displayDescription(bestRecord)
+		highlightRecord(bestRecord)
+		showBlankAlert()
+	}
+
+	function refreshCounters() {
 		if(recordsByDownloads.length > 0) {
 			$('#main-record-count').text(recordsByDownloads.length)
 			$('#main-levelstring-count').text(levelData.level_string_count)
 		}
-
-		displayDescription(bestRecord)
-		highlightRecord(bestRecord)
-		showBlankAlert()
 	}
 
 	function showBlankAlert() {
