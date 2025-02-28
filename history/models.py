@@ -985,6 +985,7 @@ class LevelRecord(models.Model):
 
 	cache_is_public = models.BooleanField(default=False, db_index=True)
 	cache_is_dupe = models.BooleanField(default=False, db_index=True)
+	cache_real_date = models.DateTimeField(blank=True, null=True, db_index=True)
 
 	level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True) #k2 #in the real world this can't be more than 20, unless you're dealing with private server save files
 	description = models.TextField(blank=True, null=True) #k3
@@ -1128,11 +1129,18 @@ class LevelRecord(models.Model):
 		if changed:
 			self.save()
 
-	def get_real_date(self):
+	def calculate_real_date(self):
 		if self.server_response: return self.server_response.created
 		if self.manual_submission: return self.manual_submission.created
 		if self.save_file.count() > 0: return self.save_file.order_by('created')[:1][0].created
 		return None
+
+	def get_real_date(self):
+		if self.cache_real_date is not None: return self.cache_real_date
+
+		self.cache_real_date = self.calculate_real_date()
+		self.save()
+		return self.cache_real_date
 
 	class Meta:
 		indexes = [

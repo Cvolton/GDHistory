@@ -251,6 +251,8 @@ def create_data_from_level_record(record, double_base64 = False, is_saved = Fals
 def process_levels_in_glm(glm, record_type, save_file):
 	#records = []
 	for level, data in glm.items():
+		should_save = False
+		
 		level_id = data['k1'] if 'k1' in data else 0
 		level_object = get_level_object(level_id)
 		
@@ -262,6 +264,13 @@ def process_levels_in_glm(glm, record_type, save_file):
 			level_string = assign_key(data, 'k4')
 			record.level_string = create_level_string(level_string)
 			record.unprocessed_data = data
+			should_save = True
+
+		if record.get_real_date() > save_file.created:
+			record.cache_real_date = record.get_real_date()
+			should_save = True
+
+		if should_save:
 			record.save()
 
 		level_object.cache_needs_revalidation = True
