@@ -398,11 +398,11 @@ class Level(models.Model):
 	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
 	cache_downloads = models.IntegerField(db_index=True, default=0)
 	cache_likes = models.IntegerField(db_index=True, default=0)
-	cache_rating_sum = models.IntegerField(db_index=True, default=0)
-	cache_rating = models.IntegerField(db_index=True, default=0)
-	cache_demon = models.BooleanField(db_index=True, default=False)
-	cache_auto = models.BooleanField(db_index=True, default=False)
-	cache_demon_type = models.IntegerField(blank=True, null=True, db_index=True)
+	#cache_rating_sum = models.IntegerField(db_index=True, default=0)
+	#cache_rating = models.IntegerField(db_index=True, default=0)
+	#cache_demon = models.BooleanField(db_index=True, default=False)
+	#cache_auto = models.BooleanField(db_index=True, default=False)
+	#cache_demon_type = models.IntegerField(blank=True, null=True, db_index=True)
 	cache_stars = models.IntegerField(db_index=True, default=0)
 	cache_username = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_level_string_available = models.BooleanField(default=False, db_index=True)
@@ -411,7 +411,7 @@ class Level(models.Model):
 	cache_needs_updating = models.BooleanField(default=True, db_index=True)
 	cache_available_versions = models.IntegerField(default=0, db_index=True)
 	cache_search_available = models.BooleanField(default=False, db_index=True)
-	cache_main_difficulty = models.IntegerField(default=0, db_index=True)
+	#cache_main_difficulty = models.IntegerField(default=0, db_index=True)
 
 	cache_min_stars = models.IntegerField(db_index=True, default=0)
 	cache_max_stars = models.IntegerField(db_index=True, default=0)
@@ -446,46 +446,6 @@ class Level(models.Model):
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 	class Meta:
 		indexes = [
-			#models.Index(fields=['-cache_downloads']),
-
-			#models.Index(fields=['cache_search_available', 'online_id']),
-			#models.Index(fields=['cache_search_available', 'cache_level_name']),
-			#models.Index(fields=['cache_search_available', 'cache_submitted']),
-			#models.Index(fields=['cache_search_available', 'cache_downloads']),
-			##models.Index(fields=['cache_search_available', 'cache_likes']),
-			#models.Index(fields=['cache_search_available', 'cache_username']),
-			
-			#models.Index(fields=['online_id', 'cache_downloads']),
-			#models.Index(fields=['cache_level_name', 'cache_downloads']),
-			#models.Index(fields=['cache_submitted', 'cache_downloads']),
-			#models.Index(fields=['cache_likes', 'cache_downloads']),
-			#models.Index(fields=['cache_stars', 'cache_downloads']),
-			#models.Index(fields=['cache_username', 'cache_downloads']),
-			#models.Index(fields=['cache_user_id', 'cache_downloads']),
-			#models.Index(fields=['cache_available_versions', 'cache_downloads']),
-
-			#models.Index(fields=['cache_level_name']),
-			#models.Index(fields=['cache_user_id']),
-			#models.Index(fields=['cache_auto', 'cache_demon', 'cache_main_difficulty'], name='auto_demon_diff'),
-			#models.Index(fields=['cache_demon', 'cache_demon_type']),
-
-			#models.Index(fields=['cache_main_difficulty'], name='diff'),
-
-			#models.Index(fields=['cache_demon', 'cache_downloads'], name='demon_downloads'),
-			#models.Index(fields=['cache_demon', 'cache_likes'], name='demon_likes'),
-			#models.Index(fields=['cache_auto', 'cache_downloads'], name='auto_downloads'),
-			#models.Index(fields=['cache_auto', 'cache_likes'], name='auto_likes'),
-
-			#models.Index(fields=['cache_level_string_available'], name='playable'),
-			#models.Index(fields=['is_deleted'], name='deleted'),
-			#models.Index(fields=['is_deleted', 'cache_level_string_available'], name='deleted_playable'),
-			#models.Index(fields=['is_deleted', 'cache_max_stars'], name='deleted_wasrated'),
-
-			#models.Index(fields=['cache_stars', 'cache_max_stars'], name='wasrated_staronly'),
-			#models.Index(fields=['is_deleted', 'cache_stars'], name='deleted_staronly'),
-			#models.Index(fields=['is_deleted', 'cache_level_string_available', 'cache_stars'], name='deleted_playable_staronly'),
-
-			#models.Index(fields=['cache_level_string_available', 'is_deleted']),
 		]
 
 	def set_public(self, public):
@@ -572,7 +532,6 @@ class Level(models.Model):
 			self.cache_game_version = record.game_version or 0
 			self.cache_stars = record.stars or 0
 			self.cache_user_id = record.user_id or self.cache_user_id
-			self.cache_main_difficulty = 0 if int(self.cache_rating) == 0 else int(self.cache_rating_sum) / int(self.cache_rating)
 			self.cache_blank_name = (self.cache_level_name is None)
 			check_level_string = True
 
@@ -582,21 +541,7 @@ class Level(models.Model):
 			self.cache_two_player = record.two_player or 0
 			self.cache_original = record.original or 0
 
-			if record.auto:
-				self.cache_filter_difficulty = 1
-			elif not record.demon:
-				if self.cache_main_difficulty == 0:
-					self.cache_filter_difficulty = -1
-				else:
-					self.cache_filter_difficulty = self.cache_main_difficulty + 1
-			else:
-				if int(self.cache_demon_type) < 3: #hard demon
-					self.cache_filter_difficulty = 10
-				elif int(self.cache_demon_type) < 5: #easy medium
-					self.cache_filter_difficulty = 8 - 3 + int(self.cache_demon_type)
-				else:
-					self.cache_filter_difficulty = 11 - 5 + int(self.cache_demon_type)
-
+			self.assign_difficulty_from_record(record)
 
 			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-' and record.real_user_record.user_id != 0 and record.real_user_record.user_id is not None:
 				self.cache_username = record.real_user_record.username
@@ -622,6 +567,23 @@ class Level(models.Model):
 		
 		if changed and not force:
 			self.save()
+
+	def assign_difficulty_from_record(self, record):
+		if record.auto:
+			self.cache_filter_difficulty = 1
+		elif record.demon:
+			if record.demon_type is not None:
+				if int(record.demon_type) < 3: #hard demon
+					self.cache_filter_difficulty = 10
+				elif int(record.demon_type) < 5: #easy medium
+					self.cache_filter_difficulty = 8 - 3 + int(record.demon_type)
+				else:
+					self.cache_filter_difficulty = 11 - 5 + int(record.demon_type)
+			else:
+				self.cache_filter_difficulty = 10
+		elif record.rating is not None and int(record.rating) > 0:
+			main_difficulty = int(record.rating_sum or 0) / int(record.rating)
+			self.cache_filter_difficulty = main_difficulty + 1
 
 	def recalculate_maximums(self):
 		print("recalculating maximums")
@@ -667,8 +629,6 @@ class Level(models.Model):
 
 		for record in self.levelrecord_set.filter(cache_is_dupe=False).order_by('downloads'):
 			record.upgrade_data()
-			if not record.real_user_record:
-				record.create_user()
 			#name, rating_sum, ratings, demon, auto, stars, version, real_user_record, game_version, levelstring
 			current_record_string = f"{record.level_name or 0}, {record.rating or 0}, {record.rating_sum or 0}, {record.auto or 0}, {record.demon or 0}, {record.stars or 0}, {record.demon_type or 0}, {record.level_version or 0}, {record.username or 0}, {record.user_id or 0}, {record.account_id or 0}, {record.game_version or 0}, {record.level_string_id or 0}, {record.coins or 0}, {record.description or 0}, {record.song_id or 0}, {record.official_song or 0}, {record.feature_score or 0}, {record.epic or 0}, {record.password or 0}, {record.two_player or 0}, {record.objects_count or 0}, {record.extra_string or 0}, {record.original or 0}, {record.daily_id or 0}, {record.timestamp or 0}, {record.song_ids}, {record.sfx_ids}"
 			if (record.downloads or 0) > highest_downloads:
@@ -748,7 +708,7 @@ class Level(models.Model):
 			'cache_needs_updating': bool(self.cache_needs_updating),
 			'cache_available_versions': int(self.cache_available_versions),
 			'cache_search_available': bool(self.cache_search_available),
-			'cache_main_difficulty': int(self.cache_main_difficulty),
+			#'cache_main_difficulty': int(self.cache_main_difficulty),
 			'cache_min_stars': int(self.cache_min_stars),
 			'cache_max_stars': int(self.cache_max_stars),
 			'cache_rating_changed': bool(self.cache_rating_changed),

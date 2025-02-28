@@ -32,7 +32,6 @@ def update_settings():
 		'cache_needs_updating',
 		'cache_available_versions',
 		'cache_search_available',
-		'cache_main_difficulty',
 		'cache_min_stars',
 		'cache_max_stars',
 		'cache_rating_changed',
