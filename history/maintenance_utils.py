@@ -20,46 +20,44 @@ def update_is_public():
 			record.level.save()
 
 def do_is_public_updating(records):
-	records_max = 5000
+	records_max = 50000
 
-	while True:
-		records = records[:records_max]
-		record_count = len(records)
-		i = 1
-		for record in records:
-			print(f"{i} / {record_count} - Updating {record.level.online_id}")
-			record.cache_is_public = record.level.is_public
-			#record.save()
-			i += 1
+	records = records[:records_max]
+	record_count = len(records)
+	i = 1
+	for record in records:
+		print(f"{i} / {record_count} - Updating {record.level.online_id}")
+		record.cache_is_public = record.level.is_public
+		#record.save()
+		i += 1
 
-		LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
-
-		if record_count < records_max:
-			break
+	LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
 
 def do_search_cache_updating(records, status):
-	records_max = 5000
+	record_count = len(records)
+	i = 1
+	for record in records:
+		print(f"{i} / {record_count} - Updating {record.online_id}")
+		record.cache_search_available = status
+		record.cache_needs_search_update = True
+		#record.save()
+		i += 1
+
+	Level.objects.bulk_update(records, ['cache_search_available', 'cache_needs_search_update'], batch_size=1000)
+
+def start_is_public_updating(state):
+	records_max = 50000
 
 	while True:
-		records = records[:records_max]
-		record_count = len(records)
-		i = 1
-		for record in records:
-			print(f"{i} / {record_count} - Updating {record.online_id}")
-			record.cache_search_available = status
-			record.cache_needs_search_update = True
-			#record.save()
-			i += 1
-
-		Level.objects.bulk_update(records, ['cache_search_available', 'cache_needs_search_update'], batch_size=1000)
-
-		if record_count < records_max:
+		result = LevelRecord.objects.prefetch_related('level').filter(cache_is_public=state).exclude(level__is_public=state)[:records_max]
+		do_is_public_updating()
+		if len(result) < records_max:
 			break
 
 def update_cached_fields():
-	do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=False).exclude(level__is_public=False))
-	do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=True).exclude(level__is_public=True))
-	do_is_public_updating(LevelRecord.objects.prefetch_related('level').filter(cache_is_public=None).exclude(level__is_public=None))
+	start_is_public_updating(False)
+	start_is_public_updating(True)
+	start_is_public_updating(None)
 
 	estimated_id = get_level_id_within_window()
 
