@@ -29,7 +29,7 @@ def index_levels(request):
 
 	return JsonResponse({
 		'recently_added': [level.get_serialized_base() for level in recently_added],
-		'recently_updated': [level.level.get_serialized_base() for level in recently_updated]
+		'recently_updated': [{'level': level.level.get_serialized_base(), 'record': level.get_serialized_base()} for level in recently_updated]
 	})
 
 @csrf_exempt

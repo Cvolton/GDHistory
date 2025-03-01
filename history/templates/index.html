@@ -161,7 +161,7 @@
 
 		for (var i = 0; i < counts.recently_updated.length; i++) {
 			let record = counts.recently_updated[i]
-			$('#recently-updated').append(`<tr><td>${record.cache_level_name}</td><td><a href="/level/${record.online_id}">${record.online_id}</a></td></tr>`)
+			$('#recently-updated').append(`<tr><td>${record.record.level_name}</td><td><a href="/level/${record.level.online_id}">${record.level.online_id}</a></td></tr>`)
 		}
 		
 	});
