@@ -277,6 +277,7 @@ class GDUserRecord(models.Model):
 	def get_serialized_full(self):
 		response = self.get_serialized_base()
 		response['cache_created'] = self.cache_created
+		response['cache_last_seen'] = self.cache_last_seen
 		return response
 	
 	class Meta:
