@@ -186,7 +186,24 @@ class GDUser(models.Model):
 	cache_username_created = models.DateTimeField(blank = True, null=True, db_index=True)
 	cache_non_player_username_created = models.DateTimeField(blank = True, null=True, db_index=True)
 
+	forced_record = models.ForeignKey(
+		"GDUserRecord",
+		on_delete=models.SET_NULL,
+		blank=True, null=True,
+	)
+
 	def revalidate_cache(self):
+		if self.forced_record is not None:
+			self.cache_username = self.forced_record.username
+			self.cache_account_id = self.forced_record.account_id
+			self.cache_username_created = self.forced_record.cache_created
+
+			self.cache_non_player_username = self.forced_record.username
+			self.cache_non_player_username_created = self.forced_record.cache_created
+
+			self.save()
+			return
+
 		username_record_set = self.gduserrecord_set.exclude( Q(username='-') | Q(username=None) | Q(username='Unknown') | Q(username='TeamHax') ).order_by('-cache_last_seen')
 		username_record = username_record_set[:1]
 		if len(username_record) > 0:
