@@ -1061,9 +1061,7 @@ class LevelRecord(models.Model):
 
 	def create_user(self):
 
-		record_date = None
-		if self.server_response: record_date = self.server_response.created
-		if self.save_file.count() > 0: record_date = self.save_file.order_by('created')[:1][0].created
+		record_date = self.get_real_date()
 		
 		user_object = utils.get_user_object(self.user_id)
 		user_record = utils.create_user_record(user_object, self.account_id, self.username, record_date)
