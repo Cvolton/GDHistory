@@ -30,7 +30,7 @@ tr:hover, tr:focus-within {
 	  </div>
 	{% endif %}
 	<p class="lead">{% if query %}Showing results for {{ query }}{% else %}Showing all levels{% endif %}</p>
-	<p>(approx. {{ count }} results){%if query.isnumeric %} <a href="{% url 'level' query %}">See level {{ query }}</a>{% endif %}</p>
+	<p>(approx. {{ count|intcomma }} results){%if query.isnumeric %} <a href="{% url 'level' query %}">See level {{ query }}</a>{% endif %}</p>
 </div>
 <div class="row">
 	<div class="card">
