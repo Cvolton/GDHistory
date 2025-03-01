@@ -187,7 +187,7 @@ class GDUser(models.Model):
 	cache_non_player_username_created = models.DateTimeField(blank = True, null=True, db_index=True)
 
 	def revalidate_cache(self):
-		username_record_set = self.gduserrecord_set.exclude( Q(username='-') | Q(username=None) | Q(username='Unknown') ).order_by('-cache_last_seen')
+		username_record_set = self.gduserrecord_set.exclude( Q(username='-') | Q(username=None) | Q(username='Unknown') | Q(username='TeamHax') ).order_by('-cache_last_seen')
 		username_record = username_record_set[:1]
 		if len(username_record) > 0:
 			self.cache_username = username_record[0].username
