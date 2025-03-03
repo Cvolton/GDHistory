@@ -34,6 +34,7 @@ class SearchForm(forms.Form):
 	audioTrack = forms.IntegerField(label='Audio Track', required=False)
 	songID = forms.IntegerField(label='Song ID', required=False)
 	songArtistID = forms.IntegerField(label='Song Artist ID', required=False)
+	exactName = forms.CharField(label='Exact Name', required=False)
 	s = forms.CharField(label='Sort', required=False)
 
 class LevelForm(forms.Form):
