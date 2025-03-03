@@ -144,6 +144,8 @@ class ServerResponse(models.Model):
 	unprocessed_post_parameters = models.JSONField()
 	endpoint = models.CharField(max_length=32)
 
+	comment = models.CharField(max_length=255, blank=True, null=True)
+
 	get_type = models.IntegerField(blank=True, null=True, db_index=True)
 	get_page = models.IntegerField(blank=True, null=True, db_index=True)
 
