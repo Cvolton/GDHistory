@@ -99,7 +99,7 @@ def get_song_object(song):
 		song_object.save()
 	return song_object
 
-def create_song_record_from_data(data, song_object, record_type, *args, **kwargs):
+def create_song_record_from_data(data, song_object, record_type, date, *args, **kwargs):
 	from .models import SongRecord
 
 	link = assign_key(data, 10)
@@ -107,7 +107,7 @@ def create_song_record_from_data(data, song_object, record_type, *args, **kwargs
 		link = urllib.parse.unquote(link)
 
 	try:
-		return SongRecord.objects.get(song=song_object,
+		record = SongRecord.objects.get(song=song_object,
 			song_name = assign_key_no_pop(data, 2),
 			artist_id = assign_key_no_pop(data, 3),
 			artist_name = assign_key_no_pop(data, 4),
@@ -118,6 +118,11 @@ def create_song_record_from_data(data, song_object, record_type, *args, **kwargs
 			link = link,
 			record_type = record_type
 		)
+		real_date = record.get_real_date()
+		if real_date is None or date < real_date:
+			record.cache_real_date = date
+			record.save()
+		return record
 	except:
 		record = SongRecord(song=song_object,
 			song_name = assign_key(data, 2),
@@ -129,7 +134,8 @@ def create_song_record_from_data(data, song_object, record_type, *args, **kwargs
 			is_verified = assign_key(data, 8),
 			link = link,
 			record_type = record_type,
-			unprocessed_data = data
+			unprocessed_data = data,
+			cache_real_date = date
 		)
 		record.save()
 		return record

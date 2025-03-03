@@ -344,11 +344,19 @@ class Song(models.Model):
 			self.cache_artist_name = record.artist_name
 			self.cache_submitted = record_date
 			self.save()"""
+	
+	def fix_null_dates(self):
+		records = self.songrecord_set.filter(cache_real_date=None)
+		for record in records:
+			record.cache_real_date = record.calculate_real_date()
+			record.save()
 
 	def revalidate_cache(self):
 		self.cache_needs_revalidation = False
+
+		self.fix_null_dates()
 		
-		best_record = self.songrecord_set.annotate(newest_created=Max('save_file__created'), real_date=Coalesce('newest_created', 'server_response__created')).exclude(real_date=None, song_name=None).order_by('-real_date')[:1]
+		best_record = self.songrecord_set.exclude(song_name=None).order_by('-cache_real_date')[:1]
 		if len(best_record) < 1:
 			self.cache_song_name = None
 			self.cache_artist_id = 0
@@ -360,7 +368,7 @@ class Song(models.Model):
 		self.cache_song_name = best_record.song_name or self.cache_song_name
 		self.cache_artist_name = best_record.artist_name or self.cache_artist_name
 		self.cache_artist_id = best_record.artist_id or self.cache_artist_id
-		self.cache_submitted = best_record.real_date or self.cache_submitted
+		self.cache_submitted = best_record.get_real_date() or self.cache_submitted
 
 		self.save()
 
@@ -408,8 +416,26 @@ class SongRecord(models.Model):
 	youtube_channel = models.TextField(blank=True, null=True)
 	is_verified = models.BooleanField(null=True)
 	link = models.TextField(blank=True, null=True)
+	cache_real_date = models.DateTimeField(blank=True, null=True, db_index=True)
 
 	unprocessed_data = models.JSONField() #this field should only be used for archival purposes, do not pull data from this directly in production
+
+	def calculate_real_date(self):
+		date = None
+
+		if self.server_response.count() > 0: date = self.server_response.order_by('created')[:1][0].created
+		if self.save_file.count() > 0: 
+			date_2 = self.save_file.order_by('created')[:1][0].created
+			if date is None or date_2 > date: date = date_2
+
+		return date
+
+	def get_real_date(self):
+		if self.cache_real_date is not None: return self.cache_real_date
+
+		self.cache_real_date = self.calculate_real_date()
+		self.save()
+		return self.cache_real_date
 
 class Level(models.Model):
 	online_id = models.IntegerField(db_index=True, unique=True)
