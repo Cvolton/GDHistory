@@ -203,7 +203,7 @@ def search(request):
 			filters.append(f"cache_song_artist_id = {form.cleaned_data['songArtistID']}")
 			visible_query += f" (songArtistID {form.cleaned_data['songArtistID']})"
 
-		if 'exactName' in form.cleaned_data and form.cleaned_data['exactName'] is not None:
+		if 'exactName' in form.cleaned_data and form.cleaned_data['exactName'] is not None and form.cleaned_data['exactName'] != "":
 			filters.append(f"cache_level_name = {form.cleaned_data['exactName']}")
 			visible_query += f" (exactName {form.cleaned_data['exactName']})"
 
