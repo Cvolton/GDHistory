@@ -65,6 +65,7 @@ tr:hover, tr:focus-within {
 					<thead>
 						<tr>
 							<th>#</th>
+							<th>Date</th>
 							<th>ID</th>
 							<th>Name</th>
 							<th>Difficulty</th>
@@ -77,6 +78,7 @@ tr:hover, tr:focus-within {
 			for(let level of content) {
 				tabContent += `<tr>
 							<td><a href="/level/${level.online_id}/">${level.cache_daily_id}</a></td>
+							<td><a href="/level/${level.online_id}/">${!level.cache_daily_date ? "" : new Date(level.cache_daily_date)?.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'CET' })}</a></td>
 							<td><a href="/level/${level.online_id}/">${level.online_id}</a></td>
 							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_level_name}</a></td>
 							<td><a href="/level/${level.online_id}/" tabindex="-1">${difficulty(level.cache_rating_sum, level.cache_rating, level.cache_demon, level.cache_auto, level.cache_demon_type)} (${display_number(level.cache_stars)}*)</a></td>

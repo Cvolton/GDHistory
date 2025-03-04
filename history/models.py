@@ -457,7 +457,11 @@ class Level(models.Model):
 	cache_username = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_level_string_available = models.BooleanField(default=False, db_index=True)
 	cache_user_id = models.IntegerField(blank=True, null=True, db_index=True)
+
 	cache_daily_id = models.IntegerField(default=0, db_index=True)
+	is_test_daily = models.BooleanField(blank=True, null=True)
+	cache_daily_date = models.DateTimeField(blank=True, null=True)
+
 	cache_needs_updating = models.BooleanField(default=True, db_index=True)
 	cache_available_versions = models.IntegerField(default=0, db_index=True)
 	cache_search_available = models.BooleanField(default=False, db_index=True)
@@ -678,6 +682,12 @@ class Level(models.Model):
 			self.cache_user_id = user_id_set['user_id__max']
 			print("set user id, not saved")
 
+		if self.cache_daily_id is not None and self.cache_daily_date is None:
+			print("setting daily date")
+			best_daily_record = self.levelrecord_set.filter(cache_is_dupe=False, daily_id=self.cache_daily_id, record_type=LevelRecordType.DOWNLOAD).order_by('downloads')[:1]
+			if len(best_daily_record) > 0:
+				self.cache_daily_date = best_daily_record[0].get_real_date()
+				print("set daily date, not saved")
 
 		self.cache_rating_changed = (self.cache_stars != self.cache_max_stars) or (self.cache_min_stars != self.cache_stars) or (self.cache_min_stars != self.cache_max_stars)
 
@@ -768,6 +778,8 @@ class Level(models.Model):
 			'cache_level_string_available': bool(self.cache_level_string_available),
 			'cache_user_id': int(self.cache_user_id) if self.cache_user_id else None,
 			'cache_daily_id': int(self.cache_daily_id),
+			'is_test_daily': bool(self.is_test_daily),
+			'cache_daily_date': self.cache_daily_date,
 			'cache_needs_updating': bool(self.cache_needs_updating),
 			'cache_available_versions': int(self.cache_available_versions),
 			'cache_search_available': bool(self.cache_search_available),
