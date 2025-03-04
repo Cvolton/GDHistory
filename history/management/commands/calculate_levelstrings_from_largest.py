@@ -7,7 +7,7 @@ class Command(BaseCommand):
 	help = 'Calculates object counts in level strings'
 
 	def handle(self, *args, **options):
-		song_count = 10000
+		song_count = 100000
 		songs = LevelString.objects.filter(object_count=None).order_by('-decompressed_file_size')[:10000]
 		#song_count = songs.count()
 		i = 0
