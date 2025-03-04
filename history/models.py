@@ -872,12 +872,14 @@ class LevelString(models.Model):
 	decompressed_sha256 = models.CharField(max_length=64, db_index=True, blank=True, null=True)
 	file_size = models.IntegerField(blank=True, null=True, db_index=True)
 	decompressed_file_size = models.IntegerField(blank=True, null=True, db_index=True)
+	object_count = models.IntegerField(blank=True, null=True, db_index=True)
 
 	def get_serialized_base(self):
 		return {
 			'sha256': self.sha256,
 			'decompressed_sha256': self.get_decompressed_sha256(),
-			'file_size': self.get_file_size()
+			'file_size': self.get_file_size(),
+			'object_count': self.get_object_count(),
 		}
 
 	def get_file_path(self):
@@ -969,6 +971,21 @@ class LevelString(models.Model):
 			return self.calculate_file_size()
 
 		return self.file_size
+
+	def calculate_object_count(self):
+		content = self.calculate_decompressed_string()
+		if content is None: return None
+
+		self.object_count = content.count(b';')
+		print(content[-1])
+		if(content[-1] == 59): self.object_count -= 1
+		self.save()
+		return self.object_count
+
+	def get_object_count(self):
+		if not self.object_count:
+			return self.calculate_object_count()
+		return self.object_count
 
 
 class LevelRecord(models.Model):

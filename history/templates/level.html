@@ -296,15 +296,22 @@
 		let descriptionHtml = `<p>${bestRecord.descriptionEncoded ? "<b>Warning:</b> Description decoding failed<br>" : ""}
 			<b>Description:</b> ${bestRecord.description ? bestRecord.description : "(No description provided.)"}<br>
 			<b>Song:</b> ${bestRecord.song && bestRecord.song.online_id != 0 ? `${bestRecord.song.song_name} by ${bestRecord.song.artist_name} (ID: ${bestRecord.song.online_id})` : `${official_song_name(bestRecord.official_song, bestRecord.game_version)} (ID: ${bestRecord.official_song})`}</p>`
+
+		let objects = bestRecord.objects_count ? `${bestRecord.objects_count} <small>(reported)</small>` : ""
+		let realObjects = bestRecord.level_string_info?.object_count ? `${bestRecord.level_string_info?.object_count} <small>(real)</small>` : ""
+		console.log(objects.length)
+		console.log(realObjects.length)
+		if(objects.length > 0 && realObjects.length > 0) objects += ` <span style="font-weight: 550;">/</span> ${realObjects}`
+		else if(realObjects.length > 0) objects = realObjects
 		
 		descriptionHtml += `<div class="collapse" id="collapseDescription">
 			${bestRecord.song && bestRecord.song.online_id != 0 && bestRecord.official_song > 0 ? `<b>Official Song:</b> ${official_song_name(bestRecord.official_song, bestRecord.game_version)} (ID: ${bestRecord.official_song})<br>` : ""}
 			<b>Password:</b> ${level_password(bestRecord.password)}<br>
-			${bestRecord.objects_count ? `<b>Objects:</b> ${bestRecord.objects_count}<br>` : ""}
+			${objects.length > 0 ? `<b>Objects:</b> ${objects}<br>` : ""}
 			<b>Coins:</b> ${display_number(bestRecord.coins)} ${bestRecord.coins_verified ? "(Verified)" : ""}<br>
 			${bestRecord.requested_stars ? `<b>Requested Stars:</b> ${bestRecord.requested_stars}<br>` : ""}
 			${bestRecord.original ? `<b>Original:</b> ${bestRecord.original}<br>` : ""}
-			<b>Feature Score:</b> ${bestRecord.feature_score}<br>
+			${bestRecord.feature_score ? `<b>Feature Score:</b> ${bestRecord.feature_score}<br>` : ""}
 			${bestRecord.seconds_spent_editing > 1 ? `<br><b>Time spent editing:</b> ${working_time(bestRecord.seconds_spent_editing)}` : ""}
 			${bestRecord.seconds_spent_editing_copies > 2 ? `<br><b>Time spent editing (copies):</b> ${working_time(bestRecord.seconds_spent_editing_copies)}` : ""}
 			${bestRecord.timestamp ? `<br><b>Verification time:</b> ${bestRecord.timestamp} steps (approx. ${approx_verification(bestRecord.timestamp)})` : ""}
@@ -402,7 +409,7 @@
 
 		function make_tooltip(title, text) {
 			const a = document.createElement('a')
-			a.title = title
+			if(title) a.title = title
 			a.textContent = text
 			return a
 		}
@@ -492,7 +499,8 @@ Rating denominator: ${record.rating}`)
 			if(levelData.is_public) {
 				tdDataAvailable.appendChild(make_link("(.gmd)", `/level/${levelData.online_id}/${record.id}/download/`))
 			}
-			tdDataAvailable.appendChild(make_tooltip(null, ` - ${print_file_size(record.level_string_info?.file_size)}`))
+			let obj = record.level_string_info?.object_count
+			tdDataAvailable.appendChild(make_tooltip(obj ? `${obj} objects` : null, ` - ${print_file_size(record.level_string_info?.file_size)}`))
 		} else {
 			tdDataAvailable.textContent = "❌"
 		}
