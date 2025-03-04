@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		song_count = 100000
-		songs = LevelString.objects.filter(object_count=None).order_by('-decompressed_file_size')[:10000]
+		songs = LevelString.objects.filter(object_count=None).order_by('-decompressed_file_size')[:song_count]
 		#song_count = songs.count()
 		i = 0
 		for song in songs:
