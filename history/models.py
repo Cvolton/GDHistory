@@ -977,7 +977,6 @@ class LevelString(models.Model):
 		if content is None: return None
 
 		self.object_count = content.count(b';')
-		print(content[-1])
 		if(content[-1] == 59): self.object_count -= 1
 		self.save()
 		return self.object_count
