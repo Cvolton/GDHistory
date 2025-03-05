@@ -169,3 +169,10 @@ function official_song_name(id, gameVersion) {
     return fullArray[id + 1] || "Unknown by DJVI"
     
 }
+
+function print_filter_difficulty(diff) {
+    const values = ["Auto", "Easy", "Normal", "Hard", "Harder", "Insane", "Demon", "Easy Demon", "Medium Demon", "Hard Demon", "Insane Demon", "Extreme Demon"]
+    if (diff > values.length || diff < -1) return "Unknown"
+    if (diff <= 0) return "N/A"
+    return values[diff - 1]
+}
