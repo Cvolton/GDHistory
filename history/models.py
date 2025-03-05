@@ -810,6 +810,7 @@ class Level(models.Model):
 	def get_serialized_base_json(self):
 		level_dict = self.get_serialized_base()
 		level_dict['cache_submitted'] = str(level_dict['cache_submitted'])
+		level_dict['cache_daily_date'] = str(level_dict['cache_daily_date'])
 		return level_dict
 	
 	def get_best_record(self):
