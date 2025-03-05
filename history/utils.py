@@ -257,6 +257,7 @@ def recalculate_daily_records():
 			else: records["Event"].append(record.get_serialized_base())
 
 	cache.set('daily', records, None)
+	recalculate_daily_records_current_year()
 	return records
 
 def recalculate_daily_records_current_year():
