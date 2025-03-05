@@ -326,7 +326,7 @@ def download_record(request, record_id=None, online_id=None):
 
 	data = ccUtils.consolidate_plist(data)
 	data = ccUtils.plist_to_robtop_plist(data)
-	response = HttpResponse(data)
+	response = HttpResponse(data, content_type='application/gmd')
 	response['Content-Disposition'] = f'attachment; filename={online_id}.gmd'
 	return response
 
