@@ -9,6 +9,8 @@
 <div class="row">
 	<p>Date: {{ manual.submitted }}</p>
 	<p>Comment: {{ manual.comment }}</p>
+	{% if can_delete %}<p><a href="delete/" onclick="return confirm('Are you sure you want to delete this record?')">Delete</a></p>{% endif %}
+	{% if manual.queued_deletion %}<p>THIS RECORD IS QUEUED FOR DELETION IT WILL BE GONE AND THIS IS IRREVERSIBLE ITS ALREADY GONE BASICALLY</p>{% endif %}
 </div>
 <div class="row">
 	<p class="lead">Manual submissions</p>

@@ -139,6 +139,24 @@ def process_delayed_submissions():
 				upload_submission_data(data, user_object, None, True)
 				os.remove(f"{directory}/{user}/{file}")
 
+def delete_queued_submissions():
+	queued = ManualSubmission.objects.filter(queued_deletion=True)
+	for submission in queued:
+		delete_submission(submission)
+
+def delete_submission(submission):
+	print(f"Deleting {submission.pk}")
+	for subsubmission in submission.manualsubmission_set.all():
+		delete_submission(subsubmission)
+
+	levels = [levelrecord.level for levelrecord in submission.levelrecord_set.all()]
+	submission.delete()
+
+	for level in levels:
+		level.cache_needs_revalidation = True
+		level.best_record = None
+		level.save()
+
 def upload_submission(file, user):
 
 	content = json.load(file)

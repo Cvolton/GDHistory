@@ -56,6 +56,7 @@ class ManualSubmission(models.Model):
 		blank=True, null=True,
 		db_index=True,
 	)
+	queued_deletion = models.BooleanField(default=False, db_index=True)
 
 	cache_level_count = models.IntegerField(blank=True, null=True)
 	cache_full_level_count = models.IntegerField(blank=True, null=True)

@@ -360,6 +360,20 @@ def my_manuals(request, show_all=None):
 	return render(request, 'my_manuals.html', context)
 
 @login_required
+def delete_manual(request, manual_id=None):
+	try:
+		manual = ManualSubmission.objects.get(pk=manual_id)
+	except:
+		return render(request, 'error.html', {'error': 'Submission not found in our database'})
+	
+	if manual.author == HistoryUser.get_user(request.user) and manual.parent_id is None:
+		manual.queued_deletion = True
+		manual.save()
+		return render(request, 'error_success.html', {'error': "Manual record queued for deletion."})
+	else:
+		return render(request, 'error.html', {'error': 'You don''t have permission to delete this manual record'})
+
+@login_required
 def view_manual(request, manual_id=None):
 	try:
 		manual = ManualSubmission.objects.get(pk=manual_id)
@@ -367,7 +381,8 @@ def view_manual(request, manual_id=None):
 		return render(request, 'error.html', {'error': 'Submission not found in our database'})
 
 	context = {
-		'manual': manual
+		'manual': manual,
+		'can_delete': manual.author == HistoryUser.get_user(request.user) and not manual.queued_deletion and manual.parent_id is None
 	}
 
 	return render(request, 'manual_details.html', context)

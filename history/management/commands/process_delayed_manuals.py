@@ -7,3 +7,4 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		jsonUtils.process_delayed_submissions()
+		jsonUtils.delete_queued_submissions()
