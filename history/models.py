@@ -138,6 +138,22 @@ class SaveFile(models.Model):
 			self.cache_nonblank_count = count
 			self.save()
 		return count
+	
+	def get_serialized_base(self):
+		return {
+			'id': self.pk,
+			'author': self.author.user.username,
+			'submitted': str(self.submitted),
+			'created': str(self.created),
+			'comment': self.comment,
+			'is_processed': self.is_processed,
+			'player_name': self.player_name,
+			'player_user_id': self.player_user_id,
+			'player_account_id': self.player_account_id,
+			'binary_version': self.binary_version,
+			'nonblank_count': self.get_nonblank_count(),
+			'count': self.get_count()
+		}
 
 class ServerResponse(models.Model):
 
@@ -149,6 +165,15 @@ class ServerResponse(models.Model):
 
 	get_type = models.IntegerField(blank=True, null=True, db_index=True)
 	get_page = models.IntegerField(blank=True, null=True, db_index=True)
+
+	def get_serialized_base(self):
+		return {
+			'created': str(self.created),
+			'endpoint': self.endpoint,
+			'comment': self.comment,
+			'get_type': self.get_type,
+			'get_page': self.get_page
+		}
 
 	def assign_get(self):
 		if not self.endpoint.startswith("getGJLevels"): return
@@ -1160,6 +1185,13 @@ class LevelRecord(models.Model):
 		response['manual_submission_id'] = self.manual_submission.pk if self.manual_submission is not None else None
 		response['real_date'] = self.get_real_date()
 		return response
+	
+	def get_serialized_sources(self):
+		return {
+			'save_files': [save_file.get_serialized_base() for save_file in self.save_file.all()],
+			'server_responses': [self.server_response.get_serialized_base()] if self.server_response else [],
+			'manual_submissions': [self.manual_submission.get_serialized_base()] if self.manual_submission else [],
+		}
 
 	def upgrade_data(self):
 		changed = False

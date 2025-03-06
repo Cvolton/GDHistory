@@ -5,25 +5,35 @@
 {% load tags %}
 {% block title %}{{ first_record.level_name }}{% endblock title %}
 
-{% block description %}By {% if first_record.real_user_record %}{% user_record_to_username first_record.real_user_record %}{% else %}Unknown{% endif %} - {% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}{% star_character first_record.length %})
-{{ first_record.downloads }} downloads | {% if first_record.dislikes %}{{ first_record.likes|sub:first_record.dislikes }}{% else %}{{ first_record.likes }}{% endif %} likes
+{% block description %}By {% if first_record.real_user_record %}{% user_record_to_username first_record.real_user_record
+%}{% else %}Unknown{% endif %} - {% difficulty first_record.rating_sum first_record.rating first_record.demon
+first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}{% star_character
+first_record.length %})
+{{ first_record.downloads }} downloads | {% if first_record.dislikes %}{{ first_record.likes|sub:first_record.dislikes
+}}{% else %}{{ first_record.likes }}{% endif %} likes
 {{ records_count }} records | {{ level_string_count }} versions
 {% endblock description %}
 
 {% block content %}
+<script src="{% static 'table_utils.js' %}"></script>
+{%if user.is_authenticated %}
+<script src="{% static 'sources_modal.js' %}"></script>
+{% endif %}
+
 <style>
 	.round-border {
 		border-radius: 5px;
 	}
+
 	.highlighted-record {
 		background-color: #fff3cd;
 	}
 </style>
 <div class="row">
 	{% if comment %}
-	  <div class="alert alert-info" role="alert">
-	    {{ comment }}
-	  </div>
+	<div class="alert alert-info" role="alert">
+		{{ comment }}
+	</div>
 	{% endif %}
 	<span id="blank-alert"></span>
 	<p class="lead">Showing data for level {{ online_id }}<span id="as-seen-on"></span></p>
@@ -55,7 +65,8 @@
 				<tr>
 					<th>Featured</th>
 					<td class="align-right" id="main-featured"></td>
-				</tr>				<tr>
+				</tr>
+				<tr>
 					<th>Length</th>
 					<td class="align-right" id="main-length"></td>
 				</tr>
@@ -71,7 +82,8 @@
 		</div>
 	</div>
 	<div class="col-md-8" style="padding-right:0px">
-		<img class="round-border" style="max-width:100%;max-height:100%;aspect-ratio: 16/9;" src="https://cvolton.eu/gdhistory_placeholder2.webp">
+		<img class="round-border" style="max-width:100%;max-height:100%;aspect-ratio: 16/9;"
+			src="https://cvolton.eu/gdhistory_placeholder2.webp">
 	</div>
 </div>
 
@@ -81,7 +93,7 @@
 
 <div class="row pt-0">
 	<ul class="nav nav-tabs" id="tabList" role="tablist">
-		
+
 	</ul>
 	<div class="tab-content" id="tabContent" style="padding-left: 0px; padding-right: 0px">
 
@@ -109,12 +121,12 @@
 
 	function startLoading() {
 		$('#main-level-name').text('')
-		$.getJSON(`/api/v1/level/{{ online_id }}/record/${forcedRecord ? `${forcedRecord}/` : ""}`, function(result) {
-			if(!displayedRecord) displayRecord(result, false, false)
+		$.getJSON(`/api/v1/level/{{ online_id }}/record/${forcedRecord ? `${forcedRecord}/` : ""}`, function (result) {
+			if (!displayedRecord) displayRecord(result, false, false)
 		})
-		.fail(function() { 
-			paragraph.textContent = 'Failed to load manual record info.'
-		});
+			.fail(function () {
+				paragraph.textContent = 'Failed to load manual record info.'
+			});
 	}
 
 	function getNonBlanks() {
@@ -124,18 +136,18 @@
 	function loadAllRecords(fullLoad = true) {
 		loadRecords(
 			urlParams.has('blanks') ? levelData.records : getNonBlanks()
-		, fullLoad)
+			, fullLoad)
 	}
 
 	function startLoadingRecords() {
 		$.getJSON(`/api/v1/level/{{ online_id }}/`, (result) => {
 			levelData = result
 			setTimeout(() => loadAllRecords(), 1)
-			if(showDupes) setTimeout(() => loadDupes(), 2)
+			if (showDupes) setTimeout(() => loadDupes(), 2)
 		})
-		.fail(function() { 
-			$('#main-level-name').text('Failed to load level info.')
-		});
+			.fail(function () {
+				$('#main-level-name').text('Failed to load level info.')
+			});
 	}
 
 	addEventListener("popstate", function (e) {
@@ -156,7 +168,7 @@
 			levelData.dupes_shown = true
 			levelData.records.push(...result.records)
 
-			if(result.records.length == maxRecords) {
+			if (result.records.length == maxRecords) {
 				setTimeout(() => loadAllRecords(false), 1)
 				setTimeout(() => {
 					loadDupesStartFrom = result.records[result.records.length - 1].id
@@ -166,10 +178,10 @@
 				loadAllRecords(true)
 			}
 		})
-		.fail(function() {
-			loadAllRecords(true)
-			$('#dupes-message').html(`Failed to load duplicate records. <a href="?dupes=true">Retry</a>`)
-		});
+			.fail(function () {
+				loadAllRecords(true)
+				$('#dupes-message').html(`Failed to load duplicate records. <a href="?dupes=true">Retry</a>`)
+			});
 	}
 
 	function loadRecords(records, fullLoad = true) {
@@ -178,14 +190,14 @@
 		recordsByDownloads = records.sort((a, b) => b.downloads - a.downloads)
 		let bestRecord = recordsByDownloads[0]
 		let waitForRecord = false
-		if(forcedRecord) {
+		if (forcedRecord) {
 			bestRecord = recordsByDownloads.find(record => record.id == forcedRecord)
 		}
-		
-		if(!bestRecord) {
-			if(!urlParams.has('blanks')) {
+
+		if (!bestRecord) {
+			if (!urlParams.has('blanks')) {
 				return loadWithBlanks(true)
-			} else if(!levelData.dupes_shown && !showDupes) {
+			} else if (!levelData.dupes_shown && !showDupes) {
 				forceLoadDupes(true)
 				waitForRecord = true
 			} else {
@@ -195,7 +207,7 @@
 
 		recordsByYears = records.reduce((acc, record) => {
 			date = new Date(record.real_date)
-			if(!acc[date.getFullYear()]) acc[date.getFullYear()] = []
+			if (!acc[date.getFullYear()]) acc[date.getFullYear()] = []
 			acc[date.getFullYear()].push(record)
 			return acc
 		}, {})
@@ -207,14 +219,14 @@
 
 		years = Object.keys(recordsByYears)
 		years.sort()
-		for(let i = years[0]; i < years[years.length - 1]; i++) {
-			if(!recordsByYears[i]) recordsByYears[i] = []
+		for (let i = years[0]; i < years[years.length - 1]; i++) {
+			if (!recordsByYears[i]) recordsByYears[i] = []
 		}
 
-		for(let record of records) {
-			if(!record.level_string_info) continue
+		for (let record of records) {
+			if (!record.level_string_info) continue
 			sha = record.level_string_info.decompressed_sha256 ? record.level_string_info.decompressed_sha256 : record.level_string_info.sha256
-			if(unsortedRecordsByDecompressedSha[sha] && unsortedRecordsByDecompressedSha[sha].downloads > record.downloads) continue
+			if (unsortedRecordsByDecompressedSha[sha] && unsortedRecordsByDecompressedSha[sha].downloads > record.downloads) continue
 			unsortedRecordsByDecompressedSha[sha] = record
 
 			recordsByDecompressedSha = Object.values(unsortedRecordsByDecompressedSha).sort((a, b) => new Date(b.real_date) - new Date(a.real_date))
@@ -224,21 +236,21 @@
 		setTimeout(() => {
 			loadTabs(fullLoad)
 			refreshCounters()
-			if(!waitForRecord && fullLoad) {
+			if (!waitForRecord && fullLoad) {
 				showDupesMessage()
 				displayRecord(bestRecord, false, !!forcedRecord)
 			}
 		}, 17)
 
-		if(!waitForRecord && fullLoad) {
+		if (!waitForRecord && fullLoad) {
 			displayRecord(bestRecord, false, !!forcedRecord)
 		}
 	}
 
 	function showDupesMessage() {
-		if(levelData.dupes_present && !levelData.dupes_shown) {
+		if (levelData.dupes_present && !levelData.dupes_shown) {
 			$('#dupes-message').html(`Possibly duplicate records were hidden. <a href="?dupes=true" onclick="forceLoadDupes(); return false;">Show hidden records</a>`)
-		} else if(levelData.dupes_shown) {
+		} else if (levelData.dupes_shown) {
 			$('#dupes-message').html(``)
 		}
 	}
@@ -250,13 +262,13 @@
 	}
 
 	function displayRecord(bestRecord, changeUrl = true, asSeenOn = true) {
-		if(!bestRecord) return
+		if (!bestRecord) return
 
 		displayedRecord = bestRecord
-		if(changeUrl) {
+		if (changeUrl) {
 			history.pushState({}, "", `/level/${levelData.online_id}/${bestRecord.id}/${window.location.search}`)
 		}
-		if(asSeenOn) {
+		if (asSeenOn) {
 			$('#as-seen-on').html(bestRecord.real_date ? `, as seen on ${record_date(bestRecord.real_date)} ${record_time(bestRecord.real_date)}` : ``)
 		}
 		$('#main-level-name').text(bestRecord.level_name)
@@ -274,16 +286,16 @@
 	}
 
 	function refreshCounters() {
-		if(recordsByDownloads.length > 0) {
+		if (recordsByDownloads.length > 0) {
 			$('#main-record-count').text(recordsByDownloads.length)
 			$('#main-levelstring-count').text(levelData.level_string_count)
 		}
 	}
 
 	function showBlankAlert() {
-		if(!levelData?.records) return
+		if (!levelData?.records) return
 
-		if(getNonBlanks() == 0) {
+		if (getNonBlanks() == 0) {
 			$('#blank-alert').html(`<div class="alert alert-warning" role="alert">
 				No non-blank records found for this level.
 			</div>`)
@@ -301,9 +313,9 @@
 		let realObjects = bestRecord.level_string_info?.object_count ? `${bestRecord.level_string_info?.object_count?.toLocaleString('en-US')} <small>(real)</small>` : ""
 		console.log(objects.length)
 		console.log(realObjects.length)
-		if(objects.length > 0 && realObjects.length > 0) objects += ` <span style="font-weight: 550;">/</span> ${realObjects}`
-		else if(realObjects.length > 0) objects = realObjects
-		
+		if (objects.length > 0 && realObjects.length > 0) objects += ` <span style="font-weight: 550;">/</span> ${realObjects}`
+		else if (realObjects.length > 0) objects = realObjects
+
 		descriptionHtml += `<div class="collapse" id="collapseDescription">
 			${bestRecord.song && bestRecord.song.online_id != 0 && bestRecord.official_song > 0 ? `<b>Official Song:</b> ${official_song_name(bestRecord.official_song, bestRecord.game_version)} (ID: ${bestRecord.official_song})<br>` : ""}
 			<b>Password:</b> ${level_password(bestRecord.password)}<br>
@@ -336,24 +348,24 @@
 
 	function prepareTabs() {
 		tabs = []
-		if(recordsByDecompressedSha.length > 0) tabs.push({displayName: "Saved Versions", name: "saved-ver", content: recordsByDecompressedSha})
-		for(let [year, records] of Object.entries(recordsByYears)) {
-			tabs.push({displayName: year, name: year, content: records})
+		if (recordsByDecompressedSha.length > 0) tabs.push({ displayName: "Saved Versions", name: "saved-ver", content: recordsByDecompressedSha })
+		for (let [year, records] of Object.entries(recordsByYears)) {
+			tabs.push({ displayName: year, name: year, content: records })
 		}
-		tabs.push({displayName: "By Downloads", name: "by-downloads", content: recordsByDownloads})
+		tabs.push({ displayName: "By Downloads", name: "by-downloads", content: recordsByDownloads })
 	}
 
 	function loadTabs(fullLoad = true) {
 		let tabsHtml = ""
 		let tabsContentHtml = ""
 		let len = tabs.length
-		for(let [idx, tab] of Object.entries(tabs)) {
+		for (let [idx, tab] of Object.entries(tabs)) {
 			tabsHtml += `<li class="nav-item" role="presentation">
 			<button class="nav-link ${idx == len - 1 ? "active" : ""} ${tab.content.length > 0 ? "" : "disabled"}" id="y${tab.name}-tab" data-bs-toggle="tab" data-bs-target="#y${tab.name}" type="button" role="tab" aria-controls="y${tab.name}" aria-selected="${idx == len - 1 ? "true" : ""}">${tab.displayName}</button>
 			</li>`
 		}
 
-		for(let [idx, tab] of Object.entries(tabs.reverse())) {
+		for (let [idx, tab] of Object.entries(tabs.reverse())) {
 			tabsContentHtml += `<div class="tab-pane fade ${idx == 0 ? "show active" : ""}" id="y${tab.name}" role="tabpanel" aria-labelledby="y${tab.name}-tab">
 				<table class="table table-striped">
 					<thead>
@@ -379,13 +391,13 @@
 		}
 		$('#tabList').html(tabsHtml)
 		$('#tabContent').html(tabsContentHtml)
-		for(let [idx, tab] of Object.entries(tabs.reverse())) {
+		for (let [idx, tab] of Object.entries(tabs.reverse())) {
 			let tabContent = document.getElementById(`y${tab.name}-content`)
 			let content = tab.content
-			if(!fullLoad) {
+			if (!fullLoad) {
 				content = content.slice(0, 20)
 			}
-			for(let record of content) {
+			for (let record of content) {
 				tabContent.appendChild(renderRecord(record))
 			}
 		}
@@ -395,56 +407,26 @@
 		const tr = document.createElement('tr')
 		tr.classList.add(`row-record-${record.id}`)
 
-		function td(text, link, tooltip, onclick) {
-			const td = document.createElement('td')
-			if(link) {
-				td.appendChild(make_link(text, link, onclick))
-			} else if(tooltip) {
-				td.appendChild(make_tooltip(tooltip, text))
-			} else {
-				td.textContent = text
-			}
-			return td
-		}
-
-		function make_tooltip(title, text) {
-			const a = document.createElement('a')
-			if(title) a.title = title
-			a.textContent = text
-			return a
-		}
-
-		function make_link(text, link, onclick = null) {
-			const a = document.createElement('a')
-			a.href = link
-			a.textContent = text
-			if(onclick) a.addEventListener('click', (e) => {
-				e.preventDefault()
-				e.stopPropagation()
-				onclick()
-				return false
-			})
-			return a
-		}
-		
-		function make_small(text, title = null) {
-			const small = document.createElement('small')
-			small.textContent = text
-			if(title) small.title = title
-			return small
-		}
-
-		tr.appendChild(td(record_date(record.real_date), `/level/${levelData.online_id}/${record.id}/`, null, () => {
+		const tdDate = td(record_date(record.real_date), `/level/${levelData.online_id}/${record.id}/`, null, () => {
 			console.log(record.id)
 			displayRecord(record)
 			//window.scrollTo(0, 0);
+		})
+
+		{%if user.is_authenticated %}
+		tdDate.appendChild(make_link(" 🛈", "#", () => {
+			showSources(record.id)
+			return false
 		}))
+		{% endif %}
+
+		tr.appendChild(tdDate)
 
 		const tdSource = td(`${record.record_type} `)
 
-		if(record.record_type == "get") {
+		if (record.record_type == "get") {
 			tdSource.appendChild(make_small(`(${record.response_get_type})`))
-		} else if(record.record_type == "manual") {
+		} else if (record.record_type == "manual") {
 			tdSource.appendChild(make_link("🛈", "#", () => {
 				showManual(record.manual_submission_id)
 				return false
@@ -455,17 +437,17 @@
 		tr.appendChild(td(record.level_name))
 		tr.appendChild(td(record.downloads?.toLocaleString('en-US')))
 		tr.appendChild(
-			td((record.dislikes ? (record.likes || 0) - record.dislikes : record.likes)?.toLocaleString('en-US'), 
-			null, 
-			record.dislikes ? `Likes: ${record.likes} Dislikes: ${record.dislikes}` : null)
+			td((record.dislikes ? (record.likes || 0) - record.dislikes : record.likes)?.toLocaleString('en-US'),
+				null,
+				record.dislikes ? `Likes: ${record.likes} Dislikes: ${record.dislikes}` : null)
 		)
 
 		const tdDifficulty = td(difficulty_text(record), null, `Rating sum: ${record.rating_sum}
 Rating denominator: ${record.rating}`)
-		if(record.feature_score > 0) {
+		if (record.feature_score > 0) {
 			tdDifficulty.appendChild(make_tooltip("Featured", " ✅"))
 		}
-		if(record.epic > 0) {
+		if (record.epic > 0) {
 			tdDifficulty.appendChild(make_tooltip(epic_string(record.epic), epic_fires(record.epic, '🔥')))
 		}
 		tr.appendChild(tdDifficulty)
@@ -473,20 +455,20 @@ Rating denominator: ${record.rating}`)
 		tr.appendChild(td(record.level_version))
 
 		let tdCreator = null
-		if(record.real_user_record?.username) {
+		if (record.real_user_record?.username) {
 			tdCreator = (td(record.real_user_record.username))
-		} else if(record.username && !record.real_user_record) {
+		} else if (record.username && !record.real_user_record) {
 			tdCreator = td(record.username)
 			tdCreator.appendChild(make_small("❌", "This record does not have a user ID assigned."))
 		} else {
 			tdCreator = td("-", null, "This record does not provide the creator's username. If one is shown, it comes from other records in the GDHistory system.")
-			if(record.cached_user_info) {
+			if (record.cached_user_info) {
 				tdCreator.appendChild(make_small(` (${cached_username(record.cached_user_info)})`))
 			} else {
 				tdCreator.appendChild(make_small("❌", "This record does not have a user ID assigned."))
 			}
 		}
-		if(record.real_user_record?.account_id) {
+		if (record.real_user_record?.account_id) {
 			tdCreator.appendChild(make_tooltip("Registered", " ✔️"))
 		}
 		tr.appendChild(tdCreator)
@@ -494,9 +476,9 @@ Rating denominator: ${record.rating}`)
 		tr.appendChild(td(game_version(record.game_version)))
 
 		const tdDataAvailable = td("")
-		if(record.level_string_available) {
+		if (record.level_string_available) {
 			tdDataAvailable.textContent = "✅ "
-			if(levelData.is_public) {
+			if (levelData.is_public) {
 				tdDataAvailable.appendChild(make_link("(.gmd)", `/level/${levelData.online_id}/${record.id}/download/`))
 			}
 			let obj = record.level_string_info?.object_count
@@ -510,27 +492,27 @@ Rating denominator: ${record.rating}`)
 	}
 
 	addEventListener("popstate", function (e) {
-		if(e.state) {
+		if (e.state) {
 			displayRecord(displayedRecord, false, false)
 		}
 	})
 </script>
 
 <div class="modal" tabindex="-1" id="manualModal">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Manual Record</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p id="modal-placeholder">Placeholder text for popup.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-      </div>
-    </div>
-  </div>
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Manual Record</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p id="modal-placeholder">Placeholder text for popup.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script type="text/javascript">
@@ -541,16 +523,15 @@ Rating denominator: ${record.rating}`)
 		var paragraph = document.getElementById('modal-placeholder')
 		paragraph.textContent = 'Loading manual record data...'
 
-		$.getJSON(`/api/v1/manual/${manualId}/`, function(result) {
-			paragraph.textContent = 'test'
-			if(result["success"] === false) {
+		$.getJSON(`/api/v1/manual/${manualId}/`, function (result) {
+			paragraph.textContent = ''
+			if (result["success"] === false) {
 				paragraph.textContent = 'Manual submission not found.'
 			} else {
 				paragraph.textContent = ''
 				paragraph.appendChild(renderManual(result))
 			}
-		})
-		.fail(function() { 
+		}).fail(function () {
 			paragraph.textContent = 'Failed to load manual record info.'
 		});
 	})
@@ -576,13 +557,13 @@ Rating denominator: ${record.rating}`)
 		const commentText = document.createElement('b')
 		commentText.textContent = 'Comment: '
 		const commentContent = document.createElement('span')
-		if(result.comment != "") commentContent.textContent = result.comment
+		if (result.comment != "") commentContent.textContent = result.comment
 		else commentContent.innerHTML = '<i>(no comment)</i>'
 		span.appendChild(commentText)
 		span.appendChild(commentContent)
 		span.appendChild(document.createElement('br'))
 
-		if(result.parent) {
+		if (result.parent) {
 			span.appendChild(document.createElement('br'))
 			const separator = document.createElement('span')
 			separator.innerHTML = "<b>Parent record:</b>"
@@ -595,5 +576,56 @@ Rating denominator: ${record.rating}`)
 	}
 
 </script>
+
+{%if user.is_authenticated %}
+<div class="modal" tabindex="-1" id="sourcesModal">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Manual Record</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div id="saved-modal-holder"></div>
+				<div id="server-modal-holder"></div>
+				<div id="manual-modal-holder"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	var sourcesId = 0;
+
+	var sourcesModal = document.getElementById('sourcesModal')
+	sourcesModal.addEventListener('show.bs.modal', function (event) {
+		$('#saved-modal-holder').html('Loading...')
+		$('#server-modal-holder').html('')
+		$('#manual-modal-holder').html('')
+
+		$.getJSON(`/api/v1/auth/levelrecord/${sourcesId}/sources/`, function (result) {
+			$('#saved-modal-holder').html('')
+			if (result["success"] === false) {
+				paragraph.textContent = 'Manual submission not found.'
+			} else {
+				loadSource(result)
+			}
+		}).fail(function () {
+			paragraph.textContent = 'Failed to load manual record info.'
+		});
+	})
+
+	function showSources(id) {
+		sourcesId = id;
+
+		var modal = new bootstrap.Modal(sourcesModal, {})
+		modal.show()
+	}
+
+</script>
+{% endif %}
 <!-- {{ pk }} -->
 {% endblock %}
