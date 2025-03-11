@@ -26,7 +26,7 @@ tr:hover, tr:focus-within {
 	<p class="lead">{% if not public %}{% if not show_all %}My{% else %}All{% endif %}{% else %}Public{% endif %} submissions</p>
 	<p>
 		Click a submission for more details
-		{% if public %}<br>Only certain submissions are shown, most save file submissions are not listed to protect player privacy{% endif %}
+		{% if public %}<br><small>Most save file submissions are not listed to protect player privacy</small>{% endif %}
 		{% if not show_all %}<br><a href="all">See all submissions</a>{% endif %}
 	</p>
 </div>
