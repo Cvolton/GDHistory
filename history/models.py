@@ -526,6 +526,12 @@ class Level(models.Model):
 		blank=True, null=True,
 		related_name='best_record_level',
 	)
+	first_record = models.ForeignKey(
+		"LevelRecord",
+		on_delete=models.SET_NULL,
+		blank=True, null=True,
+		related_name='first_record_level',
+	)
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 	class Meta:
@@ -855,6 +861,21 @@ class Level(models.Model):
 		self.best_record = all_levels[0]
 		self.save()
 		return self.best_record
+	
+	def get_first_record(self):
+		if self.first_record is not None: return self.first_record
+		
+		all_levels = self.levelrecord_set.order_by('id')[:1]
+		if len(all_levels) < 1:
+			return None
+		self.first_record = all_levels[0]
+		self.save()
+		return self.first_record
+	
+	def get_first_record_id(self):
+		if self.first_record_id is not None: return self.first_record_id
+		record = self.get_first_record()
+		return record.pk if record else None
 
 	def save(self, *args, **kwargs):
 		self.cache_needs_search_update = True
