@@ -345,6 +345,17 @@ def my_submissions(request, show_all=None):
 
 	return render(request, 'my_submissions.html', context)
 
+def public_submissions(request, show_all=None):
+	#TODO: optimize this
+	submissions = SaveFile.objects.order_by('created').prefetch_related("author").filter(is_browsable=True)
+
+	context = {
+		'submissions': submissions,
+		'show_all': True
+	}
+
+	return render(request, 'my_submissions.html', context)
+
 @login_required
 def my_manuals(request, show_all=None):
 	submissions = ManualSubmission.objects.order_by('created').prefetch_related("author").filter(parent__id=None)

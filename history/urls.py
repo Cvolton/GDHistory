@@ -16,6 +16,7 @@ urlpatterns = [
     path('manual/<manual_id>/delete/', views.delete_manual, name='delete_manual'),
     path('submission/<save_id>/', views.view_submission, name='submission'),
     path('submission/<save_id>/<page>/', views.view_submission, name='submission'),
+    path('submissions/', views.public_submissions, name='submissions'),
     path('my_submissions/', views.my_submissions, name='my_submissions'),
     path('my_submissions/<show_all>/', views.my_submissions, name='all_submissions'),
     path('my_manuals/', views.my_manuals, name='my_manuals'),
