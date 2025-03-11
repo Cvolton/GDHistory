@@ -682,7 +682,7 @@ class Level(models.Model):
 		elif rating > 4:
 			# prior to 1.5 difficulties were rounded incorrectly
 			main_difficulty = int(record.rating_sum or 0) / int(record.rating)
-			if record.game_version >= 6:
+			if (record.game_version or 0) >= 6:
 				self.cache_filter_difficulty = round(main_difficulty + 1)
 			else:
 				self.cache_filter_difficulty = math.floor(main_difficulty + 1)
