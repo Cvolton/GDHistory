@@ -678,7 +678,7 @@ class Level(models.Model):
 				self.cache_filter_difficulty = 10
 		elif record.rating is not None and int(record.rating) > 0:
 			main_difficulty = int(record.rating_sum or 0) / int(record.rating)
-			self.cache_filter_difficulty = main_difficulty + 1
+			self.cache_filter_difficulty = round(main_difficulty + 1)
 
 	def recalculate_maximums(self):
 		print("recalculating maximums")
