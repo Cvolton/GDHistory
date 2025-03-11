@@ -12,7 +12,7 @@ from . import utils
 from .constants import MiscConstants
 
 from datetime import datetime
-import os
+import os, math
 
 class LevelRecordType(models.TextChoices):
 		GLM_03 = 'glm_03', _('GLM_03')
@@ -664,6 +664,9 @@ class Level(models.Model):
 			self.save()
 
 	def assign_difficulty_from_record(self, record):
+		rating = record.rating or 0
+		self.cache_filter_difficulty = 0
+
 		if record.auto:
 			self.cache_filter_difficulty = 1
 		elif record.demon:
@@ -676,9 +679,13 @@ class Level(models.Model):
 					self.cache_filter_difficulty = 11 - 5 + int(record.demon_type)
 			else:
 				self.cache_filter_difficulty = 10
-		elif record.rating is not None and int(record.rating) > 0:
+		elif rating > 4:
+			# prior to 1.5 difficulties were rounded incorrectly
 			main_difficulty = int(record.rating_sum or 0) / int(record.rating)
-			self.cache_filter_difficulty = round(main_difficulty + 1)
+			if record.game_version >= 6:
+				self.cache_filter_difficulty = round(main_difficulty + 1)
+			else:
+				self.cache_filter_difficulty = math.floor(main_difficulty + 1)
 
 	def recalculate_maximums(self):
 		print("recalculating maximums")

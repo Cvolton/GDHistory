@@ -8,18 +8,20 @@ function demon_type(demon_type_number) {
     return `Hard (${demon_type_number})`
 }
 
-function difficulty(rating_sum, rating, demon, auto, demon_type_number) {
+function difficulty(rating_sum, ratings, demon, auto, demon_type_number, game_version) {
     if (auto) return "Auto"
     if (demon) return `${demon_type(demon_type_number)} Demon`
-    if (!rating || !rating_sum) return "N/A"
+    if (!ratings || !rating_sum || ratings < 5) return "N/A"
 
-    diff = rating_sum / rating
-    if (diff < 0) return "N/A"
-    if (diff < 1.5) return "Easy"
-    if (diff < 2.5) return "Normal"
-    if (diff < 3.5) return "Hard"
-    if (diff < 4.5) return "Harder"
-    if (diff < 5.5) return "Insane"
+    const diffs = ["N/A", "Easy", "Normal", "Hard", "Harder", "Insane"]
+
+    // prior to 1.5 difficulties were rounded incorrectly
+    let diff = rating_sum / ratings
+    if(game_version >= 6) diff = Math.round(diff)
+    else diff = Math.floor(diff)
+
+    if(diff >= diffs.length || diff < 0) return "N/A"
+    return diffs[diff]
 }
 
 function display_number(number) {
@@ -79,7 +81,7 @@ function star_character(length) {
 }
 
 function difficulty_text(bestRecord) {
-    return `${difficulty(bestRecord.rating_sum, bestRecord.rating, bestRecord.demon, bestRecord.auto, bestRecord.demon_type)} (${display_number(bestRecord.stars)}${star_character(bestRecord.length)})`
+    return `${difficulty(bestRecord.rating_sum, bestRecord.rating, bestRecord.demon, bestRecord.auto, bestRecord.demon_type, bestRecord.game_version)} (${display_number(bestRecord.stars)}${star_character(bestRecord.length)})`
 }
 
 function epic_fires(epic, character) {
