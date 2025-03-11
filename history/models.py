@@ -865,7 +865,7 @@ class Level(models.Model):
 	def get_first_record(self):
 		if self.first_record is not None: return self.first_record
 		
-		all_levels = self.levelrecord_set.order_by('id')[:1]
+		all_levels = self.levelrecord_set.exclude(level_version=None, game_version=None, level_name=None, downloads=None).order_by('id')[:1]
 		if len(all_levels) < 1:
 			return None
 		self.first_record = all_levels[0]
