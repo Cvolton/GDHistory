@@ -23,9 +23,12 @@ tr:hover, tr:focus-within {
 }
 </style>
 <div class="row">
-	<p class="lead">{% if not show_all %}My{% else %}All{% endif %} submissions</p>
-	<p>Click a submission for more details
-	{% if not show_all %}<br><a href="all">See all submissions</a>{% endif %}</p>
+	<p class="lead">{% if not public %}{% if not show_all %}My{% else %}All{% endif %}{% else %}Public{% endif %} submissions</p>
+	<p>
+		Click a submission for more details
+		{% if public %}<br>Only specific submissions are shown, most save file submissions are not listed to protect player privacy{% endif %}
+		{% if not show_all %}<br><a href="all">See all submissions</a>{% endif %}
+	</p>
 </div>
 <div class="row">
 	<table class="table table-striped">

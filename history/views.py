@@ -340,7 +340,8 @@ def my_submissions(request, show_all=None):
 
 	context = {
 		'submissions': submissions,
-		'show_all': show_all
+		'show_all': show_all,
+		'public': False
 	}
 
 	return render(request, 'my_submissions.html', context)
@@ -351,7 +352,8 @@ def public_submissions(request, show_all=None):
 
 	context = {
 		'submissions': submissions,
-		'show_all': True
+		'show_all': True,
+		'public': True
 	}
 
 	return render(request, 'my_submissions.html', context)
