@@ -1210,6 +1210,7 @@ class LevelRecord(models.Model):
 		response['cached_user_info'] = None if self.real_user_record is None else self.real_user_record.user.get_serialized_base()
 		response['song'] = None if self.song is None else self.song.get_serialized_base()
 		response['response_get_type'] = self.server_response.get_type if self.server_response is not None else None
+		response['response_comment'] = self.server_response.comment if self.server_response is not None else None
 		response['manual_submission_id'] = self.manual_submission.pk if self.manual_submission is not None else None
 		response['real_date'] = self.get_real_date()
 		return response
