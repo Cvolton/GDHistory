@@ -1,5 +1,4 @@
-import datetime
-import base64
+import datetime, math
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.http import urlencode
@@ -133,35 +132,20 @@ def demon_type(demon_type_number):
 	return f"Hard ({demon_type})"
 
 @register.simple_tag
-def difficulty(rating_sum, rating, demon, auto, demon_type_number):
-	if auto:
-		return "Auto"
+def difficulty(rating_sum, rating, demon, auto, demon_type_number, game_version):
+	if auto: return "Auto"
+	if demon: return f"{demon_type(demon_type_number)} Demon"
+	if rating_sum is None or rating is None or rating_sum < 5: return "N/A"
 
-	if demon:
-		return f"{demon_type(demon_type_number)} Demon"
+	difficulties = ["N/A", "Easy", "Normal", "Hard", "Harder", "Insane"]
 
-	if rating == 0 or rating is None or rating_sum == 0 or rating_sum is None:
-		return "N/A"
-
+	# prior to 1.5 difficulties were rounded incorrectly
 	diff = rating_sum / rating
+	if (game_version or 0) >= 6: diff = round(diff)
+	else: diff = math.floor(diff)
 
-	if diff < 0:
-		return "N/A"
-
-	if diff < 1.5:
-		return "Easy"
-
-	if diff < 2.5:
-		return "Normal"
-
-	if diff < 3.5:
-		return "Hard"
-
-	if diff < 4.5:
-		return "Harder"
-
-	if diff < 5.5:
-		return "Insane"
+	if diff >= len(difficulties) or diff < 0: return "N/A"
+	return difficulties[diff]
 
 @register.simple_tag
 def game_version(number):

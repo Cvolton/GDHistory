@@ -49,7 +49,7 @@
 					{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
 					<td><a data-toggle="tooltip" title="Rating sum: {{ record.rating_sum }}
-Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type %} ({% display_number record.stars %}{% star_character record.length %})</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="{% print_epic record.epic %}"> {% print_epic_fires record.epic '🔥' %}</a>{% endif %}</td>
+Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type record.game_version %} ({% display_number record.stars %}{% star_character record.length %})</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="{% print_epic record.epic %}"> {% print_epic_fires record.epic '🔥' %}</a>{% endif %}</td>
 					<!--<td>{{ record.stars }}</td>-->
 					<td>{{ record.level_version }}</td>
 					<td>{% if record.real_user_record and record.real_user_record.username %}

@@ -5,7 +5,7 @@
 {% load tags %}
 {% block title %}{{ first_record.level_name }}{% endblock title %}
 
-{% block description %}By {% if first_record.real_user_record %}{% user_record_to_username first_record.real_user_record %}{% else %}Unknown{% endif %} - {% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type %} ({% display_number first_record.stars %}{% star_character first_record.length %})
+{% block description %}By {% if first_record.real_user_record %}{% user_record_to_username first_record.real_user_record %}{% else %}Unknown{% endif %} - {% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type first_record.game_version %} ({% display_number first_record.stars %}{% star_character first_record.length %})
 {{ first_record.downloads }} downloads | {% if first_record.dislikes %}{{ first_record.likes|sub:first_record.dislikes }}{% else %}{{ first_record.likes }}{% endif %} likes
 {{ records_count }} records | {{ level_string_count }} versions
 {% endblock description %}
