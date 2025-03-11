@@ -201,11 +201,13 @@ def get_level_object(level_id, validate_id_range=False):
 	from .models import Level
 	try:
 		level_object = Level.objects.get(online_id=level_id)
-	except:
+	except Level.DoesNotExist:
 		if validate_id_range and level_id < MiscConstants.LAST_FULL_SCRAPE_ID: return None
 
 		level_object = Level(online_id=level_id)
 		level_object.save()
+	except:
+		return None
 	return level_object
 
 def recalculate_counts():
