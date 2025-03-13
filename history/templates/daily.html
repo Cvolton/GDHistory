@@ -38,13 +38,19 @@ tr:hover, tr:focus-within {
 <script type="text/javascript">
 	function loadTabs(dailies) {
 		const sortedEntries = Object.entries(dailies).sort(([keyA], [keyB]) => {
-		const isNumA = !isNaN(keyA);
-		const isNumB = !isNaN(keyB);
+			const isNumA = !isNaN(keyA);
+			const isNumB = !isNaN(keyB);
 
-		if (isNumA && !isNumB) return 1;  // Numbers go after letters
-		if (!isNumA && isNumB) return -1; // Letters come first
-		return !keyA.localeCompare(keyB, undefined, { numeric: true });
+			if (isNumA && !isNumB) return 1;  // Numbers go after letters
+			if (!isNumA && isNumB) return -1; // Letters come first
+			return !keyA.localeCompare(keyB, undefined, { numeric: true });
 		});
+
+		for(let [year, content] of sortedEntries) {
+			content.sort((a, b) => {
+				return a.is_test_daily ? -1 : 1
+			})
+		}
 
 		let len = Object.keys(dailies).length
 		let tabList = ""
