@@ -1276,6 +1276,9 @@ class LevelRecord(models.Model):
 		self.save()
 		return self.cache_real_date
 
+	def is_blank(self):
+		return self.level_version is None and self.game_version is None and self.level_name is None and self.downloads is None
+
 	class Meta:
 		indexes = [
 			models.Index(fields=['level', 'cache_is_dupe'], name='level_dupe'),
