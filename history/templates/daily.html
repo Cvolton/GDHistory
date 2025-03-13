@@ -49,7 +49,7 @@ tr:hover, tr:focus-within {
 		for(let [year, content] of sortedEntries) {
 			if(content.filter(level => !level.cache_daily_date).length == 0) {
 				content.sort((a, b) => {
-					return a.cache_daily_date ? -1 : 1
+					return new Date(a.cache_daily_date) - new Date(b.cache_daily_date)
 				})
 			}
 		}
