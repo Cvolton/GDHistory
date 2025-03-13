@@ -42,7 +42,7 @@
 			</thead>
 			<tbody>
 				{% for record in level_records %}
-				<tr {% if record.pk == record.level.get_first_record_id %}class="new-level" aria-label="Level first seen in this save file"{% endif %}>
+				<tr {% if record.pk == record.level.get_first_record_id and record.submitted > save_file.submitted %}class="new-level" aria-label="Level first seen in this save file"{% endif %}>
 					<td><a href="{% url 'level' record.level.online_id record.pk %}?{% print_filters filters %}">{{ record.level.online_id }}</a></td>
 					<td>{{ record.level_name }}</td>
 					<td>{{ record.downloads }}</td>
