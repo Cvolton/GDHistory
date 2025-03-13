@@ -47,9 +47,11 @@ tr:hover, tr:focus-within {
 		});
 
 		for(let [year, content] of sortedEntries) {
-			content.sort((a, b) => {
-				return a.is_test_daily ? -1 : 1
-			})
+			if(content.filter(level => !level.cache_daily_date).length == 0) {
+				content.sort((a, b) => {
+					return a.cache_daily_date ? -1 : 1
+				})
+			}
 		}
 
 		let len = Object.keys(dailies).length
