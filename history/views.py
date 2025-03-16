@@ -257,6 +257,8 @@ def search(request):
 				sort = [primary_parameter]
 				if not primary_parameter.startswith("cache_downloads"):
 					sort.append("cache_downloads:desc")
+				else:
+					sort.append("cache_likes:desc")
 
 		#level_results = levels[start_offset:end_offset]
 
