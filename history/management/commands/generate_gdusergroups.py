@@ -11,7 +11,8 @@ class Command(BaseCommand):
         print("Loading levels...")
         for level in levels:
             # print(f"Handling level {level.online_id}...")
-            ids = list(level.levelrecord_set.filter(cache_is_dupe=False).values('user_id').distinct().exclude(user_id=None).values_list('user_id', flat=True))
+            ids = set(level.levelrecord_set.filter(cache_is_dupe=False).values('user_id').distinct().exclude(user_id=None).values_list('user_id', flat=True))
+            ids = ids - set([21297937, 5774280, 0, 6133124])
             if len(ids) > 1:
                 print(ids)
                 group = GDUserGroup.objects.filter(users__in=ids)
