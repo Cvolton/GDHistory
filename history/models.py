@@ -330,6 +330,10 @@ class GDUserRecord(models.Model):
 			models.UniqueConstraint(fields=['user_id', 'username', 'account_id'], name='hello')
 		]
 
+class GDUserGroup(models.Model):
+	comment = models.CharField(max_length=255)
+	users = models.ManyToManyField(GDUser)
+
 class Song(models.Model):
 	online_id = models.IntegerField(unique=True, db_index=True)
 
