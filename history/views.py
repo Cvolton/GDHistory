@@ -7,7 +7,7 @@ from datetime import datetime
 
 from history import jsonUtils
 
-from .models import Level, LevelRecord, SaveFile, HistoryUser, ManualSubmission
+from .models import Level, LevelRecord, SaveFile, HistoryUser, ManualSubmission, GDUserGroup
 from .forms import UploadFileForm, SearchForm, UploadSubmissionForm
 from . import ccUtils, tasks, utils, meili_utils
 
@@ -90,6 +90,7 @@ def search(request):
 	if request.method == 'GET':
 		#needs_revalidation = Level.objects.filter(cache_needs_revalidation=True)[:1000].count()
 		needs_revalidation = 0
+		user_group = None
 
 		index = meili_utils.get_level_index()
 
@@ -112,6 +113,9 @@ def search(request):
 
 
 		if 'userID' in form.cleaned_data and form.cleaned_data['userID'] is not None and form.cleaned_data['userID'] != "" and re.match(r'[0-9,]*$', form.cleaned_data['userID']):
+			if ',' not in form.cleaned_data['userID']:
+				user_int = int(form.cleaned_data['userID'])
+				user_group = GDUserGroup.objects.filter(users__online_id=user_int).first()
 			filters.append(f"cache_user_id IN [{form.cleaned_data['userID']}]")
 			visible_query += f" (userID {form.cleaned_data['userID']})"
 
@@ -302,7 +306,8 @@ def search(request):
 			'page_buttons': page_buttons,
 			'minimum_page_button': minimum_page_button,
 			'maximum_page_button': maximum_page_button,
-			'needs_revalidation': needs_revalidation
+			'needs_revalidation': needs_revalidation,
+			'user_group': user_group
 		}
 		return render(request, 'search.html', context)
 	else:

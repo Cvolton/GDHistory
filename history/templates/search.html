@@ -23,6 +23,14 @@ tr:hover, tr:focus-within {
 	outline: none;
 }
 </style>
+{% if user_group %}
+<div class="row">
+	<div class="alert alert-info" role="alert">
+		User ID with possibly moved levels detected.
+		<a href="{% url 'search' %}?{% print_filters_without filters 'userID' %}&userID={% for user in user_group.users.all %}{% if not forloop.first %},{% endif %}{{ user.online_id }}{% endfor %}">See all levels possibly created by this user.</a>
+	</div>
+</div>
+{% endif %}
 <div class="row">
 	{% if needs_revalidation >= 1000 %}
 	  <div class="alert alert-info" role="alert">
