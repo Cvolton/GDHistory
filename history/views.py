@@ -15,6 +15,7 @@ import math
 import plistlib
 import meilisearch
 import random
+import re
 from os import sys
 
 
@@ -110,8 +111,8 @@ def search(request):
 		filters = []
 
 
-		if 'userID' in form.cleaned_data and form.cleaned_data['userID'] is not None:
-			filters.append(f"cache_user_id = {form.cleaned_data['userID']}")
+		if 'userID' in form.cleaned_data and form.cleaned_data['userID'] is not None and re.match(r'[0-9,]*$', form.cleaned_data['userID']):
+			filters.append(f"cache_user_id IN [{form.cleaned_data['userID']}]")
 			visible_query += f" (userID {form.cleaned_data['userID']})"
 
 		if 'deleted' in form.cleaned_data and form.cleaned_data['deleted'] is True:
