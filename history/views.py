@@ -111,7 +111,7 @@ def search(request):
 		filters = []
 
 
-		if 'userID' in form.cleaned_data and form.cleaned_data['userID'] is not None and re.match(r'[0-9,]*$', form.cleaned_data['userID']):
+		if 'userID' in form.cleaned_data and form.cleaned_data['userID'] is not None and form.cleaned_data['userID'] != "" and re.match(r'[0-9,]*$', form.cleaned_data['userID']):
 			filters.append(f"cache_user_id IN [{form.cleaned_data['userID']}]")
 			visible_query += f" (userID {form.cleaned_data['userID']})"
 
