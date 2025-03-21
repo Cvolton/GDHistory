@@ -257,6 +257,19 @@
 		loadDupes()
 	}
 
+	function userIDForRecord(record) {
+		if (record.real_user_record) return record.real_user_record.user_id
+		if (record.cached_user_info) return record.cached_user_info.user_id
+		if (record.accountid_user) return record.accountid_user.user_id
+		return null
+	}
+
+	function usernameForRecord(record) {
+		if (record.real_user_record) return record.real_user_record.username
+		if (record.cached_user_info) return cached_username(record.cached_user_info)
+		return record.username
+	}
+
 	function displayRecord(bestRecord, changeUrl = true, asSeenOn = true) {
 		if (!bestRecord) return
 
@@ -268,7 +281,7 @@
 			$('#as-seen-on').html(bestRecord.real_date ? `, as seen on ${record_date(bestRecord.real_date)} ${record_time(bestRecord.real_date)}` : ``)
 		}
 		$('#main-level-name').text(bestRecord.level_name)
-		$('#main-author').html(bestRecord.real_user_record ? `<a href="{% url 'search' %}?userID=${bestRecord.real_user_record.user_id}">${bestRecord.real_user_record.username ? bestRecord.real_user_record.username : cached_username(bestRecord.cached_user_info)}</a>` : "Unknown")
+		$('#main-author').html(userIDForRecord(bestRecord) ? `<a href="{% url 'search' %}?userID=${userIDForRecord(bestRecord)}">${usernameForRecord(bestRecord)}</a>` : usernameForRecord(bestRecord))
 		$('#main-downloads').text(bestRecord.downloads?.toLocaleString('en-US'))
 		$('#main-likes').text((bestRecord.dislikes ? (bestRecord.likes || 0) - bestRecord.dislikes : bestRecord.likes)?.toLocaleString('en-US'))
 		$('#main-difficulty').text(difficulty_text(bestRecord))
@@ -460,7 +473,11 @@ Rating denominator: ${record.rating}`)
 			tdCreator = (td(record.real_user_record.username))
 		} else if (record.username && !record.real_user_record) {
 			tdCreator = td(record.username)
-			tdCreator.appendChild(make_small("❌", "This record does not have a user ID assigned."))
+			if (record.accountid_user) {
+				tdCreator.appendChild(make_small("❓", "This record does not have a user ID assigned but it has an account ID,\nso a user ID assumption was made based on that."))
+			} else {
+				tdCreator.appendChild(make_small("❌", "This record does not have a user ID assigned."))
+			}
 		} else {
 			tdCreator = td("-", null, "This record does not provide the creator's username. If one is shown, it comes from other records in the GDHistory system.")
 			if (record.cached_user_info) {

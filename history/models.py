@@ -266,6 +266,13 @@ class GDUser(models.Model):
 		}
 		return response
 
+	@staticmethod
+	def user_for_account_id(account_id):
+		users = GDUser.objects.filter(cache_account_id=account_id)
+		if len(users) != 1:
+			return None
+		return users[0]
+
 	"""Implementation removed because usernames don't change most of the time therefore it's better to just revalidate cache every once in a while
 	def update_with_record(self, record):
 		should_save = False
@@ -651,6 +658,12 @@ class Level(models.Model):
 			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-' and record.real_user_record.user_id != 0 and record.real_user_record.user_id is not None:
 				self.cache_username = record.real_user_record.username
 				self.cache_user_id = record.real_user_record.user.online_id
+    
+			if self.cache_user_id == None or self.cache_user_id == 0:
+				user = GDUser.user_for_account_id(record.account_id)
+				if user:
+					self.cache_user_id = user.online_id
+					print(f"Assigning detected user ID ({user.online_id})")
 
 		if record.daily_id is not None and int(record.daily_id) > 0:
 			changed = True
@@ -1217,6 +1230,12 @@ class LevelRecord(models.Model):
 		response['response_comment'] = self.server_response.comment if self.server_response is not None else None
 		response['manual_submission_id'] = self.manual_submission.pk if self.manual_submission is not None else None
 		response['real_date'] = self.get_real_date()
+  
+		if self.account_id is not None and self.real_user_record is None:
+			user = GDUser.user_for_account_id(self.account_id)
+			if user:
+				response['accountid_user'] = user.get_serialized_base()
+  
 		return response
 	
 	def get_serialized_sources(self):
