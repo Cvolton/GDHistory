@@ -40,31 +40,31 @@
 			<table class="table table-dark table-striped">
 				<tr>
 					<th>Level Name</th>
-					<td class="align-right" id="main-level-name"></td>
+					<td class="align-right" id="main-level-name">{{ first_record.cache_level_name }}/td>
 				</tr>
 				<tr>
 					<th>Author</th>
-					<td class="align-right" id="main-author"></td>
+					<td class="align-right" id="main-author">{% if first_record.real_user_record %}{% user_record_to_username first_record.real_user_record %}{% else %}Unknown{% endif %}</td>
 				</tr>
 				<tr>
 					<th>Downloads</th>
-					<td class="align-right" id="main-downloads"></td>
+					<td class="align-right" id="main-downloads">{{ first_record.downloads }}</td>
 				</tr>
 				<tr>
 					<th>Likes</th>
-					<td class="align-right" id="main-likes"></td>
+					<td class="align-right" id="main-likes">{{ first_record.likes }}</td>
 				</tr>
 				<tr>
 					<th>Difficulty</th>
-					<td class="align-right" id="main-difficulty"></td>
+					<td class="align-right" id="main-difficulty">{% difficulty first_record.rating_sum first_record.rating first_record.demon first_record.auto first_record.demon_type first_record.game_version %} ({% display_number first_record.stars %}{% star_character first_record.length %})</td>
 				</tr>
 				<tr>
 					<th>Featured</th>
-					<td class="align-right" id="main-featured"></td>
+					<td class="align-right">{% if first_record.feature_score > 0 %}✅{% if first_record.epic %} ({% print_epic first_record.epic %}){% endif %}{% else %}❌{% endif %}</td>
 				</tr>
 				<tr>
 					<th>Length</th>
-					<td class="align-right" id="main-length"></td>
+					<td class="align-right">{% length first_record.length %}</td>
 				</tr>
 				<tr>
 					<th>Saved records</th>
@@ -84,6 +84,30 @@
 </div>
 
 <div class="row pt-3" id="main-description">
+	<p>
+		<b>Description:</b> {% if first_record.description %}{{ first_record.description }}{% else %}(No description provided.){% endif %}
+		<br><b>Song:</b> {% if first_record.song and first_record.song.online_id != 0 %}{{ first_record.song.cache_song_name }} by {{ first_record.song.cache_artist_name }} (ID: {{ first_record.song.online_id }}){% else %}{% song_name first_record.official_song first_record.game_version %} (ID: {{ first_record.official_song }}){% endif %}
+		<div class="collapse" id="collapseDescription">
+			{% if first_record.song and first_record.song.online_id != 0 and first_record.official_song > 0 %}<b>Official Song:</b> {% song_name first_record.official_song first_record.game_version %} (ID: {{ first_record.official_song }})<br>{% endif %}
+			<b>Password:</b> {% level_password first_record.password %}<br>
+			{% if first_record.objects_count %}<b>Objects:</b> {{ first_record.objects_count }}<br>{% endif %}
+			<b>Coins:</b> {% display_number first_record.coins %} {% if first_record.coins_verified %}(Verified){% endif %}<br>
+			{% if first_record.requested_stars %}<b>Requested Stars:</b> {{ first_record.requested_stars }}<br>{% endif %}
+			{% if first_record.original %}<b>Original:</b> {{ first_record.original }}<br>{% endif %}
+			<b>Feature Score:</b> {{ first_record.feature_score }}<br>
+			{% if first_record.seconds_spent_editing > 1 %}<br><b>Time spent editing:</b> {% working_time first_record.seconds_spent_editing %}{% endif %}
+			{% if first_record.seconds_spent_editing_copies > 2 %}<br><b>Time spent editing (copies):</b> {% working_time first_record.seconds_spent_editing_copies %}{% endif %}
+			{% if first_record.timestamp %}<br><b>Verification time:</b> {{ first_record.timestamp }} steps (approx. {% approx_verification first_record.timestamp %}){% endif %}
+			<br>
+		</div>
+		<div>
+			<a data-bs-toggle="collapse" href="#collapseDescription" aria-expanded="false" aria-controls="collapseDescription">
+				More info</a>
+			|
+			<a href="{% url 'search' %}?original={{ online_id }}">
+				See copies</a>
+		</div>
+	</p>
 	<hr />
 </div>
 
