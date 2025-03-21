@@ -84,7 +84,7 @@ tr:hover, tr:focus-within {
 					<tbody>`
 
 			for(let level of content) {
-				tabContent += `<tr>
+				tabContent += `<tr ${level.is_test_daily ? 'style="background-color: khaki;" aria-label="This is a test daily level"' : ''}>
 							<td><a href="/level/${level.online_id}/">${level.cache_daily_id}</a></td>
 							<td><a href="/level/${level.online_id}/">${!level.cache_daily_date ? "" : new Date(level.cache_daily_date)?.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'CET' })}</a></td>
 							<td><a href="/level/${level.online_id}/">${level.online_id}</a></td>
