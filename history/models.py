@@ -268,7 +268,9 @@ class GDUser(models.Model):
 
 	@staticmethod
 	def user_for_account_id(account_id):
-		users = GDUser.objects.filter(cache_account_id=account_id)
+		if account_id == None or account_id == 0: return None
+		
+		users = GDUser.objects.filter(cache_account_id=account_id)[:2]
 		if len(users) != 1:
 			return None
 		return users[0]
