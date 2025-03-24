@@ -713,6 +713,9 @@ class Level(models.Model):
 				self.cache_filter_difficulty = math.floor(main_difficulty + 1)
 
 	def recalculate_maximums(self):
+		print("ensuring first record id is set")
+		self.get_first_record_id()
+     
 		print("recalculating maximums")
 		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'), Max('game_version'), Min('game_version'))
 		self.cache_max_stars = maximums['stars__max'] or 0
