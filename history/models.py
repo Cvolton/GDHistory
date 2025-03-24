@@ -874,7 +874,7 @@ class Level(models.Model):
 	def get_best_record(self):
 		if self.best_record is not None: return self.best_record
 		
-		all_levels = self.levelrecord_set.order_by('-downloads')[:1]
+		all_levels = self.levelrecord_set.filter(is_invalid=False).order_by('-downloads')[:1]
 		if len(all_levels) < 1:
 			return None
 		self.best_record = all_levels[0]
