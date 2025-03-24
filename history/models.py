@@ -713,8 +713,8 @@ class Level(models.Model):
 				self.cache_filter_difficulty = math.floor(main_difficulty + 1)
 
 	def recalculate_maximums(self):
-		print("ensuring first record id is set")
-		self.get_first_record_id()
+		#print("ensuring first record id is set")
+		#self.get_first_record_id()
      
 		print("recalculating maximums")
 		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'), Max('game_version'), Min('game_version'))
@@ -886,7 +886,16 @@ class Level(models.Model):
 	
 	def get_first_record(self):
 		if self.first_record is not None: return self.first_record
+  
+		# more optimized route that is less reliable
+		all_levels = self.levelrecord_set.order_by('id')[:10]
+		for level in all_levels:
+			if level.level_version is not None and level.game_version is not None and level.level_name is not None and level.downloads is not None:
+				self.first_record = level
+				self.save()
+				return self.first_record
 		
+		# reliable fallback that can take minutes
 		all_levels = self.levelrecord_set.exclude(level_version=None, game_version=None, level_name=None, downloads=None).order_by('id')[:1]
 		if len(all_levels) < 1:
 			return None
