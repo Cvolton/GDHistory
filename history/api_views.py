@@ -45,8 +45,10 @@ def save_level(request, online_id=None):
 @csrf_exempt
 def level_info(request, online_id=None, view_mode="normal"):
 	level = utils.get_level_object(online_id, True)
-	if level is None or (not (request.user.is_authenticated and request.user.is_superuser) and not (level.is_public or int(online_id) < utils.get_level_id_within_window())) or level.levelrecord_set.count() == 0:
+	if level is None or (not (request.user.is_authenticated and request.user.is_superuser) and not (level.is_public or int(online_id) < utils.get_level_id_within_window())) or level.levelrecord_set.count() == 0 or level.cache_user_id in utils.get_blacklisted_userids():
 		return JsonResponse({'success': False}, status=404)
+
+	print(utils.get_blacklisted_userids())
 
 	all_levels = level.levelrecord_set.filter(is_invalid=False)
 

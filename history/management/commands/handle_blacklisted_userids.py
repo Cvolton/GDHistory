@@ -1,25 +1,18 @@
-import history.ccUtils
+from history import utils
 from history.models import Level
 from django.contrib.auth.models import User
 
 import os
-from datetime import datetime
-from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
+from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     help = 'Removes all blacklisted user IDs from public search'
 
     def handle(self, *args, **options):
-        data_path = history.utils.get_data_path()
-        if not os.path.exists(f"{data_path}/blacklisted_userids.txt"):
-            print("No blacklisted_userids.txt file found")
-            return
-        with open(f"{data_path}/blacklisted_userids.txt", "r") as f:
-            blacklisted_userids = f.read().splitlines()
+        blacklisted_userids = utils.get_blacklisted_userids(True)
         for userid in blacklisted_userids:
             try:
-                levels = Level.objects.filter(cache_user_id=int(userid.strip()), hide_from_search=False)
+                levels = Level.objects.filter(cache_user_id=userid, hide_from_search=False)
                 for level in levels:
                     print(f"Removing {level.online_id} from public search")
                     level.hide_from_search = True

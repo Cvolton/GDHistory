@@ -304,3 +304,16 @@ def annotate_record_set_with_date(record_set):
 	from django.db.models import Min
 	from django.db.models.functions import Coalesce
 	return record_set.annotate(oldest_created=Min('save_file__created'), real_date=Coalesce('oldest_created', 'server_response__created', 'manual_submission__created'))
+
+def get_blacklisted_userids(force_reload = False):
+	values = cache.get('blacklisted_userids')
+	if values is None or force_reload:
+		data_path = get_data_path()
+		if not os.path.exists(f"{data_path}/blacklisted_userids.txt"):
+			values = []
+		else:
+			with open(f"{data_path}/blacklisted_userids.txt", "r") as f:
+				values = f.read().splitlines()
+			values = [int(value.strip()) for value in values if value.isdigit]
+		cache.set('blacklisted_userids', values, None)
+	return values
