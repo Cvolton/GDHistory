@@ -102,6 +102,9 @@ def level_record(request, online_id=None, record_id=None):
 
 @csrf_exempt
 def user_info(request, online_id=None, view_mode="normal"):
+	if online_id in utils.get_blacklisted_userids():
+		return JsonResponse({'success': False}, status=404)
+	
 	all_users = GDUserRecord.objects.all()
 
 	try:
