@@ -397,16 +397,18 @@ def delete_manual(request, manual_id=None):
 	else:
 		return render(request, 'error.html', {'error': 'You don''t have permission to delete this manual record'})
 
-@login_required
 def view_manual(request, manual_id=None):
 	try:
 		manual = ManualSubmission.objects.get(pk=manual_id)
 	except:
 		return render(request, 'error.html', {'error': 'Submission not found in our database'})
 
+	if not manual.is_browsable and not request.user.is_authenticated:
+		return render(request, 'error.html', {'error': 'This submission is not available for public viewing'})
+
 	context = {
 		'manual': manual,
-		'can_delete': manual.author == HistoryUser.get_user(request.user) and not manual.queued_deletion and manual.parent_id is None
+		'can_delete': request.user.is_authenticated and manual.author == HistoryUser.get_user(request.user) and not manual.queued_deletion and manual.parent_id is None
 	}
 
 	return render(request, 'manual_details.html', context)
