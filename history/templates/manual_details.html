@@ -3,6 +3,14 @@
 {% load tags %}
 {% block title %}My submissions{% endblock title %}
 {% block content %}
+<style>
+	.new-level {
+		background-color: #C0F4BC;
+	}
+	.blank-record {
+		background-color: khaki;
+	}
+</style>
 <div class="row">
 	<p class="lead">Manual submission detail</p>
 </div>
@@ -49,6 +57,7 @@
 </div>
 <div class="row">
 	<p class="lead">Level records</p>
+	<p><span style="font-weight: 550;">Legend: </span><span class="blank-record">&nbsp;Blank record - level metadata not included in the submission&nbsp;</span></p>
 </div>
 <div class="row">
 	<div class="tab-content" id="myTabContent" style="padding-left: 0px; padding-right: 0px">
@@ -69,9 +78,9 @@
 			</thead>
 			<tbody>
 				{% for record in manual.levelrecord_set.all %}
-				<tr>
+				<tr {% if record.is_blank %}class="blank-record" aria-label="This record is blank"{% endif %}>
 					<td><a href="{% url 'level' record.level.online_id record.pk %}?{% print_filters filters %}">{{ record.level.online_id }}</a></td>
-					<td>{{ record.level_name }}</td>
+					<td{% if record.is_blank %} style="color: #814141;">{{ record.level.cache_level_name }}{% else %}>{{ record.level_name }}{% endif %}</td>
 					<td>{{ record.downloads }}</td>
 					{% if record.dislikes %}<td><a data-toggle="tooltip" title="Likes: {{ record.likes }}
 Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{% else %}<td>{{ record.likes }}</td>{% endif %}
@@ -79,7 +88,8 @@ Dislikes: {{ record.dislikes}}">{{ record.likes|sub:record.dislikes }}</a></td>{
 Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.rating record.demon record.auto record.demon_type record.game_version %} ({% display_number record.stars %}{% star_character record.length %})</a>{% if record.feature_score > 0 %}<a data-toggle="tooltip" title="Featured"> ✅</a>{% endif %}{% if record.epic > 0 %}<a data-toggle="tooltip" title="{% print_epic record.epic %}"> {% print_epic_fires record.epic '🔥' %}</a>{% endif %}</td>
 					<!--<td>{{ record.stars }}</td>-->
 					<td>{{ record.level_version }}</td>
-					<td>{% if record.real_user_record and record.real_user_record.username %}
+					<td{% if record.is_blank %} style="color: #814141;">{{ record.level.cache_username }}{% else %}>
+						{% if record.real_user_record and record.real_user_record.username %}
 							{{ record.real_user_record.username }}
 						{% elif record.username and not record.real_user_record %}
 							{{ record.username }} 
@@ -91,7 +101,8 @@ Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.
 									{% endif %}
 								</a>
 						{% endif %}
-						{% if record.real_user_record and record.real_user_record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}</td>
+						{% if record.real_user_record and record.real_user_record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}
+					{% endif %}</td>
 					<td>{% game_version record.game_version %}</td>
 					<td>{% if record.level_string %}✅{%if record.level.is_public %} <a href="{% url 'download_record' record.level.online_id record.pk %}">(.gmd)</a>{% endif %} - {% print_file_size record.level_string.get_file_size %}{% else %}❌{% endif %}</td>
 					<!-- pk: {{ record.pk }}, levelstring: {{ record.level_string }} -->
