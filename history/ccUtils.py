@@ -339,11 +339,11 @@ def process_save_file(save_id):
 	save_file.save()
 	print(f"Finished processing save file {save_id}")
 
-	maintenance_utils.update_is_public()
-	maintenance_utils.update_cached_fields()
-	meili_utils.index_queue()
-	recalculate_everything()
-	print(f"Finished maintenance for {save_id}")
+	#maintenance_utils.update_is_public()
+	#maintenance_utils.update_cached_fields()
+	#meili_utils.index_queue()
+	#recalculate_everything()
+	#print(f"Finished maintenance for {save_id}")
 
 def consolidate_plist(plist_content):
 	test = plist_content.split(b'\n')[3:-2]
