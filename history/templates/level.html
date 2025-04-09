@@ -60,11 +60,11 @@
 				</tr>
 				<tr>
 					<th>Featured</th>
-					<td class="align-right">{% if first_record.feature_score > 0 %}✅{% if first_record.epic %} ({% print_epic first_record.epic %}){% endif %}{% else %}❌{% endif %}</td>
+					<td class="align-right" id="main-featured">{% if first_record.feature_score > 0 %}✅{% if first_record.epic %} ({% print_epic first_record.epic %}){% endif %}{% else %}❌{% endif %}</td>
 				</tr>
 				<tr>
 					<th>Length</th>
-					<td class="align-right">{% length first_record.length %}</td>
+					<td class="align-right" id="main-length">{% length first_record.length %}</td>
 				</tr>
 				<tr>
 					<th>Saved records</th>
