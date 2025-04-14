@@ -390,7 +390,7 @@ def delete_manual(request, manual_id=None):
 	except:
 		return render(request, 'error.html', {'error': 'Submission not found in our database'})
 	
-	if manual.author == HistoryUser.get_user(request.user) and manual.parent_id is None:
+	if (request.user.is_superuser or manual.author == HistoryUser.get_user(request.user)) and manual.parent_id is None:
 		manual.queued_deletion = True
 		manual.save()
 		return render(request, 'error_success.html', {'error': "Manual record queued for deletion."})
