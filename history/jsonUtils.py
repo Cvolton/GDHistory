@@ -1,13 +1,10 @@
-from .models import ManualSubmission, Level, LevelRecord, HistoryUser, Song, SongRecord, LevelString, LevelRecordType
-from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, create_song_record_from_data, get_song_object, decode_base64_text, encode_base64_text, get_level_object
+from .models import ManualSubmission, Level, LevelRecord, HistoryUser, LevelRecordType
+from .utils import assign_key, get_data_path, assign_key_no_pop, create_level_string, get_song_object, decode_base64_text, get_level_object
 
-from celery import shared_task
+from django.utils import timezone
 
 import json
 import os
-import base64
-import gzip
-from datetime import datetime
 
 def create_level_record_from_data(data, level_object, record_type, submission):
 	description = assign_key(data, 'description')
@@ -116,11 +113,28 @@ def process_levels_in_submission(level_list, record_type, submission):
 			record.save()
 
 		level_object.revalidate_cache()
+  
+def validate_submission(data):
+	if "created" not in data: return 1
+	if not isinstance(data["created"], str): return 2
+	try:
+		timezone.datetime.fromisoformat(data["created"])
+	except:
+		return False
+	
+	if "submissions" in data:
+		for child in data['submissions']:
+			res = validate_submission(child)
+			if not res: return res + 10
+	if "levels" in data:
+		for level in data['levels']:
+			if not "id" in level: return 4
+			if not isinstance(level["id"], int) and not level["id"].isnumeric(): return 5
+   
+	return 0
 
-def upload_submission_delayed(data, user):
+def upload_submission_delayed(content, user):
 	data_path = get_data_path()
-
-	content = json.load(data)
 
 	os.makedirs(f"{data_path}/ManualSubmission-Delayed/{user.pk}", exist_ok=True)
 	with open(f"{data_path}/ManualSubmission-Delayed/{user.pk}/{data}", "w") as f:
