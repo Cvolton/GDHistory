@@ -289,7 +289,7 @@
 	}
 
 	function usernameForRecord(record) {
-		if (record.real_user_record) return record.real_user_record.username
+		if (record.real_user_record?.username) return record.real_user_record.username
 		if (record.cached_user_info) return cached_username(record.cached_user_info)
 		return record.username
 	}
