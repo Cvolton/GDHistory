@@ -292,8 +292,9 @@ def process_get(response_json):
 		if level_object.is_deleted and time_created >= level_object.deleted_date:
 			level_object.is_deleted = False
 			level_object.deleted_date = None
+			level_object.needs_priority_download = True
   
-		level_object.save(update_fields=["cache_needs_revalidation", "is_public", "is_deleted", "deleted_date"])
+		level_object.save(update_fields=["cache_needs_revalidation", "is_public", "is_deleted", "deleted_date", "needs_priority_download"])
 
 	print(f":: {datetime.now().time()} : Iterating through songs")
 	for item in song_array:
