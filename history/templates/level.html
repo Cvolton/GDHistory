@@ -338,7 +338,7 @@
 	}
 
 	function displayDescription(bestRecord) {
-		let descriptionHtml = `<p>${bestRecord.descriptionEncoded ? "<b>Warning:</b> Description decoding failed<br>" : ""}
+		let descriptionHtml = `<p>${bestRecord.description_encoded ? "<b>Warning:</b> Description decoding failed<br>" : ""}
 			<b>Description:</b> ${bestRecord.description ? escapeHtml(bestRecord.description) : "(No description provided.)"}<br>
 			<b>Song:</b> ${bestRecord.song && bestRecord.song.online_id != 0 ? escapeHtml(`${bestRecord.song.song_name} by ${bestRecord.song.artist_name} (ID: ${bestRecord.song.online_id})`) : `${official_song_name(bestRecord.official_song, bestRecord.game_version)} (ID: ${bestRecord.official_song})`}</p>`
 
