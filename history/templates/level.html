@@ -305,7 +305,7 @@
 			$('#as-seen-on').html(bestRecord.real_date ? `, as seen on ${record_date(bestRecord.real_date)} ${record_time(bestRecord.real_date)}` : ``)
 		}
 		$('#main-level-name').text(bestRecord.level_name)
-		$('#main-author').html(userIDForRecord(bestRecord) ? `<a href="{% url 'search' %}?userID=${userIDForRecord(bestRecord)}">${usernameForRecord(bestRecord)}</a>` : usernameForRecord(bestRecord))
+		$('#main-author').html(userIDForRecord(bestRecord) ? `<a href="{% url 'search' %}?userID=${userIDForRecord(bestRecord)}">${escapeHtml(usernameForRecord(bestRecord))}</a>` : escapeHtml(usernameForRecord(bestRecord)))
 		$('#main-downloads').text(bestRecord.downloads?.toLocaleString('en-US'))
 		$('#main-likes').text((bestRecord.dislikes ? (bestRecord.likes || 0) - bestRecord.dislikes : bestRecord.likes)?.toLocaleString('en-US'))
 		$('#main-difficulty').text(difficulty_text(bestRecord))
@@ -339,8 +339,8 @@
 
 	function displayDescription(bestRecord) {
 		let descriptionHtml = `<p>${bestRecord.descriptionEncoded ? "<b>Warning:</b> Description decoding failed<br>" : ""}
-			<b>Description:</b> ${bestRecord.description ? bestRecord.description : "(No description provided.)"}<br>
-			<b>Song:</b> ${bestRecord.song && bestRecord.song.online_id != 0 ? `${bestRecord.song.song_name} by ${bestRecord.song.artist_name} (ID: ${bestRecord.song.online_id})` : `${official_song_name(bestRecord.official_song, bestRecord.game_version)} (ID: ${bestRecord.official_song})`}</p>`
+			<b>Description:</b> ${bestRecord.description ? escapeHtml(bestRecord.description) : "(No description provided.)"}<br>
+			<b>Song:</b> ${bestRecord.song && bestRecord.song.online_id != 0 ? escapeHtml(`${bestRecord.song.song_name} by ${bestRecord.song.artist_name} (ID: ${bestRecord.song.online_id})`) : `${official_song_name(bestRecord.official_song, bestRecord.game_version)} (ID: ${bestRecord.official_song})`}</p>`
 
 		let objects = bestRecord.objects_count ? `${bestRecord.objects_count?.toLocaleString('en-US')} <small>(reported)</small>` : ""
 		let realObjects = bestRecord.level_string_info?.object_count ? `${bestRecord.level_string_info?.object_count?.toLocaleString('en-US')} <small>(real)</small>` : ""

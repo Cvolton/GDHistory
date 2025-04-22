@@ -88,9 +88,9 @@ tr:hover, tr:focus-within {
 							<td><a href="/level/${level.online_id}/">${level.cache_daily_id}</a></td>
 							<td><a href="/level/${level.online_id}/">${!level.cache_daily_date ? "" : new Date(level.cache_daily_date)?.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'CET' })}</a></td>
 							<td><a href="/level/${level.online_id}/">${level.online_id}</a></td>
-							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_level_name}</a></td>
+							<td><a href="/level/${level.online_id}/" tabindex="-1">${escapeHtml(level.cache_level_name)}</a></td>
 							<td><a href="/level/${level.online_id}/" tabindex="-1">${print_filter_difficulty(level.cache_filter_difficulty)} (${display_number(level.cache_stars)}${star_character(level.cache_length)})</a></td>
-							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_username ? level.cache_username : "-"}</a></td>
+							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_username ? escapeHtml(level.cache_username) : "-"}</a></td>
 							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_level_string_available ? "✅" : "❌"}</a></td>
 						</tr>`
 			}

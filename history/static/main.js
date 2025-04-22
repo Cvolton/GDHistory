@@ -178,3 +178,12 @@ function print_filter_difficulty(diff) {
     if (diff <= 0) return "N/A"
     return values[diff - 1]
 }
+
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
