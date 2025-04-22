@@ -1,3 +1,4 @@
+from celery import shared_task
 import meilisearch
 import math
 import os
@@ -60,6 +61,8 @@ def update_settings():
 
 def index_levels():
 	from .models import Level
+
+	cache.set('indexing_levels', True, 1800)
 
 	index = get_level_index()
 	update_settings()
@@ -136,4 +139,12 @@ def index_queue_negative():
 def index_queue():
 	index_queue_positive()
 	index_queue_negative()
-	
+
+@shared_task
+def try_index_levels():
+	stats = client.get_all_stats()
+	if cache.get('indexing_levels'):
+		return
+	if stats['indexes']['levels']['isIndexing']:
+		return
+	index_levels()

@@ -101,6 +101,8 @@ def search(request):
 		user_group = None
 
 		index = meili_utils.get_level_index()
+  
+		meili_utils.try_index_levels.delay()
 
 		if not form.is_valid():
 			form.cleaned_data = {'p': 1, 'q': ''}
