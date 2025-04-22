@@ -209,7 +209,7 @@ def process_download(response_json):
 		level_object.set_public(True)
 		record.cache_is_public = True
   
-	if level_object.is_deleted and time_created >= level_object.deleted_date:
+	if level_object.is_deleted and (level_object.deleted_date is None or time_created >= level_object.deleted_date):
 		level_object.is_deleted = False
 		level_object.deleted_date = None
 
@@ -289,7 +289,7 @@ def process_get(response_json):
 		#print(f":::: {datetime.now().time()} : Updating with record")
 		#level_object.update_with_record(record, response_object.created)
 		level_object.cache_needs_revalidation = True
-		if level_object.is_deleted and time_created >= level_object.deleted_date:
+		if level_object.is_deleted and (level_object.deleted_date is None or time_created >= level_object.deleted_date):
 			level_object.is_deleted = False
 			level_object.deleted_date = None
 			level_object.needs_priority_download = True
