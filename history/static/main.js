@@ -180,6 +180,7 @@ function print_filter_difficulty(diff) {
 }
 
 function escapeHtml(unsafe) {
+    if (typeof unsafe !== "string") return unsafe
     return unsafe
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
