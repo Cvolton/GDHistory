@@ -911,6 +911,9 @@ class Level(models.Model):
 		return record.pk if record else None
 
 	def save(self, *args, **kwargs):
+		if "update_fields" in kwargs and kwargs["update_fields"] is not None:
+			kwargs["update_fields"].append("cache_needs_search_update")
+
 		self.cache_needs_search_update = True
 
 		super(Level, self).save(*args, **kwargs)
