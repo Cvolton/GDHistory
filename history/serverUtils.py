@@ -178,6 +178,10 @@ def process_download(response_json):
 
 	response_object = create_request(response_json)
 	response = response_json["raw_output"]
+ 
+	time_created = parse_datetime(response_json["created"])
+	if is_naive(time_created):
+		time_created = make_aware(time_created)
 
 	if response_object is False:
 		print(f"::: {datetime.now().time()} : Unable to create response")
@@ -186,7 +190,9 @@ def process_download(response_json):
 	if response[:2] == '-1': #level doesn't exist or other error
 		print(f"::: {datetime.now().time()} : Level deleted")
 		level_object.is_deleted = True
-		level_object.save()
+		if level_object.deleted_date is None or level_object.deleted_date > time_created:
+			level_object.deleted_date = time_created
+		level_object.save(update_fields=["is_deleted", "deleted_date"])
 		return True
 
 	request_info = response.split('#')
@@ -199,13 +205,13 @@ def process_download(response_json):
 
 	record = create_level_record_from_data(level_info, level_object, LevelRecordType.DOWNLOAD, response_object, legacy_description=response_json.get('legacy_description', False))
 
-	time_created = parse_datetime(response_json["created"])
-	if is_naive(time_created):
-		time_created = make_aware(time_created)
-
 	if time_created >= MiscConstants.UNLISTED_EXPLOIT_FIX_TIME:
 		level_object.set_public(True)
 		record.cache_is_public = True
+  
+	if level_object.is_deleted and time_created >= level_object.deleted_date:
+		level_object.is_deleted = False
+		level_object.deleted_date = None
 
 	#record.server.add(save_file)
 
@@ -224,7 +230,7 @@ def process_download(response_json):
 	record.create_user()
 	level_object.cache_needs_revalidation = True
 	level_object.cache_needs_updating = False
-	level_object.save()
+	level_object.save(update_fields=["cache_needs_revalidation", "cache_needs_updating", "is_public", "is_deleted", "deleted_date"])
 	#level_object.update_with_record(record, response_object.created)
 
 	return True
@@ -248,6 +254,10 @@ def process_get(response_json):
 
 	if not no_song: song_array = create_song_array(request_info[2])
 	else: song_array = []
+ 
+	time_created = parse_datetime(response_json["created"])
+	if is_naive(time_created):
+		time_created = make_aware(time_created)
 
 	print(f":: {datetime.now().time()} : Iterating through levels")
 
@@ -279,7 +289,11 @@ def process_get(response_json):
 		#print(f":::: {datetime.now().time()} : Updating with record")
 		#level_object.update_with_record(record, response_object.created)
 		level_object.cache_needs_revalidation = True
-		level_object.save()
+		if level_object.is_deleted and time_created >= level_object.deleted_date:
+			level_object.is_deleted = False
+			level_object.deleted_date = None
+  
+		level_object.save(update_fields=["cache_needs_revalidation", "is_public", "is_deleted", "deleted_date"])
 
 	print(f":: {datetime.now().time()} : Iterating through songs")
 	for item in song_array:
