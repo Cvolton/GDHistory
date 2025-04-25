@@ -143,8 +143,10 @@ def index_queue():
 @shared_task
 def try_index_levels():
 	stats = client.get_all_stats()
-	if cache.get('indexing_levels'):
-		return
 	if stats['indexes']['levels']['isIndexing']:
+		print("Already indexing")
+		return
+	if cache.get('indexing_levels'):
+		print("Indexing timeout not reached")
 		return
 	index_levels()
