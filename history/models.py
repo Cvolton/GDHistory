@@ -602,7 +602,7 @@ class Level(models.Model):
 			print("couldnt assign username")
 
 	def update_with_record(self, record, force=False):
-		print("updating with record")
+		print(f"updating with record ({record.downloads} downloads)")
 
 		changed = False
 		check_level_string = False
@@ -625,6 +625,7 @@ class Level(models.Model):
 			changed = True
 
 		if force or (record.downloads is not None and record_date is not None and (self.cache_downloads == 0 or int(record.downloads) >= self.cache_downloads)):
+			print(f"Setting data to record with {record.downloads} downloads")
 			changed = True
 			self.cache_level_name = record.level_name
 			self.cache_submitted = record_date
