@@ -149,4 +149,4 @@ def try_index_levels():
 	if stats['indexes']['levels']['isIndexing']:
 		print("Already indexing")
 		return
-	index_levels()
+	index_queue()
