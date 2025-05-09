@@ -75,7 +75,15 @@ def upload(request):
 def upload_submission(request):
 	form = UploadSubmissionForm(request.POST or None, request.FILES or None)
 	if request.method == 'POST' and form.is_valid():
-		jsonUtils.upload_submission_delayed(request.FILES['file'], HistoryUser.get_user(request.user))
+		data = None
+		try:
+			data = json.load(request.FILES['file'])
+		except:
+			return render(request, 'error.html', {'error': 'Invalid submission file (invalid JSON)'})
+		res = jsonUtils.validate_submission(data)
+		if res != 0:
+			return render(request, 'error.html', {'error': f'Invalid submission file (error code {res})'})
+		jsonUtils.upload_submission_delayed(data, HistoryUser.get_user(request.user))
 		return render(request, 'error_success.html', {'error': "good but it'll take a few minutes before it shows up in the list"})
 	else:
 		return render(request, 'upload_submission.html')
@@ -93,6 +101,8 @@ def search(request):
 		user_group = None
 
 		index = meili_utils.get_level_index()
+  
+		meili_utils.try_index_levels.delay()
 
 		if not form.is_valid():
 			form.cleaned_data = {'p': 1, 'q': ''}
@@ -390,7 +400,7 @@ def delete_manual(request, manual_id=None):
 	except:
 		return render(request, 'error.html', {'error': 'Submission not found in our database'})
 	
-	if manual.author == HistoryUser.get_user(request.user) and manual.parent_id is None:
+	if (request.user.is_superuser or manual.author == HistoryUser.get_user(request.user)) and manual.parent_id is None:
 		manual.queued_deletion = True
 		manual.save()
 		return render(request, 'error_success.html', {'error': "Manual record queued for deletion."})
