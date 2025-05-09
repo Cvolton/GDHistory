@@ -235,6 +235,8 @@
 		let unsortedRecordsByDecompressedSha = {}
 		let waitForRecord = false
 
+		if(!records) return
+
 		recordsByDownloads = records.sort((a, b) => b.downloads - a.downloads)
 		let bestRecord = recordsByDownloads[0]
 		if (forcedRecord) {
