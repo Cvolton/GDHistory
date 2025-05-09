@@ -133,11 +133,11 @@ def validate_submission(data):
    
 	return 0
 
-def upload_submission_delayed(content, user):
+def upload_submission_delayed(content, user, filename):
 	data_path = get_data_path()
 
 	os.makedirs(f"{data_path}/ManualSubmission-Delayed/{user.pk}", exist_ok=True)
-	with open(f"{data_path}/ManualSubmission-Delayed/{user.pk}/{data}", "w") as f:
+	with open(f"{data_path}/ManualSubmission-Delayed/{user.pk}/{filename}", "w") as f:
 		json.dump(content, f)
 
 def process_delayed_submissions():
