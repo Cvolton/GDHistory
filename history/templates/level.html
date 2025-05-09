@@ -433,7 +433,7 @@
 			tabsContentHtml += `<div class="tab-pane fade ${idx == 0 ? "show active" : ""}" id="y${tab.name}" role="tabpanel" aria-labelledby="y${tab.name}-tab">
 				<table class="table table-striped">
 					<thead>
-						<tr ${placeholder ? 'style="color: rgba(0,0,0,0)"' : ''}>
+						<tr ${placeholder ? 'style="opacity: 0";' : ''}>
 							<th>Saved on</th>
 							<th>Source</th>
 							<th>Name</th>
@@ -447,7 +447,7 @@
 							<th>Data Available</th>
 						</tr>
 					</thead>
-					<tbody id="y${tab.name}-content">
+					<tbody id="y${tab.name}-content" ${placeholder ? 'style="opacity: 0"' : ''}>
 					</tbody>
 				</table>
 			</div>
@@ -470,6 +470,9 @@
 	function renderPlaceholderRecord(record) {
 		const tr = document.createElement('tr')
 		tr.classList.add(`row-record-${record.id}`)
+		tr.style.borderStyle = "none"
+		tr.style.borderWidth = "0px"
+		tr.style.borderColor = "transparent"
 
 		for(let i = 0; i < 10; i++) {
 			const td = document.createElement('td')
