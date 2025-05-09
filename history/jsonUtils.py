@@ -120,12 +120,12 @@ def validate_submission(data):
 	try:
 		timezone.datetime.fromisoformat(data["created"])
 	except:
-		return False
+		return 3
 	
 	if "submissions" in data:
 		for child in data['submissions']:
 			res = validate_submission(child)
-			if not res: return res + 10
+			if res != 0: return res + 10
 	if "levels" in data:
 		for level in data['levels']:
 			if not "id" in level: return 4
