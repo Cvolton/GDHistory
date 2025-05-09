@@ -720,7 +720,7 @@ class Level(models.Model):
 		#self.get_first_record_id()
      
 		print("recalculating maximums")
-		maximums = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'), Max('game_version'), Min('game_version'))
+		maximums = self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'), Max('game_version'), Min('game_version'))
 		self.cache_max_stars = maximums['stars__max'] or 0
 		#self.cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
 		self.cache_max_featured = maximums['feature_score__max'] or 0
