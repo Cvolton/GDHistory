@@ -137,17 +137,19 @@
 
 	startLoading()
 	startLoadingRecords()
+	showImage()
 
-	document.addEventListener('DOMContentLoaded', function() {
+	function showImage() {
 		let img = document.getElementById('level-image')
 		img.src = "https://raw.githubusercontent.com/cdc-sys/level-thumbnails/main/thumbs/{{ online_id }}.png"
 		img.onerror = function() {
 			img.src = "https://cvolton.eu/gdhistory_placeholder2.webp"
 			img.onerror = null
 		}
-	});
+	}
 
 	function startLoading() {
+		loadPlaceholders()
 		$('#main-level-name').text('')
 		$.getJSON(`/api/v1/level/{{ online_id }}/record/${forcedRecord ? `${forcedRecord}/` : ""}`, function (result) {
 			if (!displayedRecord) displayRecord(result, false, false)
@@ -172,8 +174,7 @@
 			levelData = result
 			setTimeout(() => loadAllRecords(), 1)
 			if (showDupes) setTimeout(() => loadDupes(), 2)
-		})
-			.fail(function () {
+		}).fail(function () {
 				$('#main-level-name').text('Failed to load level info.')
 			});
 	}
@@ -181,6 +182,24 @@
 	addEventListener("popstate", function (e) {
 		window.location.reload()
 	})
+
+	function loadPlaceholders() {
+		records = []
+		for (let i = 0; i < 5; i++) {
+			records.push({
+				id: i,
+				level_name: "",
+				real_date: new Date().toISOString(),
+				/*downloads: 0,
+				likes: 0,
+				difficulty: 0,
+				stars: 0,
+				length: 0,
+				game_version: 0*/
+			})
+		}
+		loadRecords(records, true, true)
+	}
 
 	function loadWithBlanks(replaceState = false) {
 		urlParams.set('blanks', true)
@@ -212,12 +231,12 @@
 			});
 	}
 
-	function loadRecords(records, fullLoad = true) {
+	function loadRecords(records, fullLoad = true, placeholder = false) {
 		let unsortedRecordsByDecompressedSha = {}
+		let waitForRecord = false
 
 		recordsByDownloads = records.sort((a, b) => b.downloads - a.downloads)
 		let bestRecord = recordsByDownloads[0]
-		let waitForRecord = false
 		if (forcedRecord) {
 			bestRecord = recordsByDownloads.find(record => record.id == forcedRecord)
 		}
@@ -261,17 +280,21 @@
 		}
 
 		prepareTabs()
-		setTimeout(() => {
-			loadTabs(fullLoad)
+		if(!placeholder) setTimeout(() => {
+			loadTabs(fullLoad, placeholder)
 			refreshCounters()
-			if (!waitForRecord && fullLoad) {
+			if (!waitForRecord && fullLoad && !placeholder) {
 				showDupesMessage()
 				displayRecord(bestRecord, false, !!forcedRecord)
 			}
 		}, 17)
 
-		if (!waitForRecord && fullLoad) {
+		if (!waitForRecord && fullLoad && !placeholder) {
 			displayRecord(bestRecord, false, !!forcedRecord)
+		}
+
+		if(placeholder) {
+			loadTabs(fullLoad, placeholder)
 		}
 	}
 
@@ -396,7 +419,7 @@
 		tabs.push({ displayName: "By Downloads", name: "by-downloads", content: recordsByDownloads })
 	}
 
-	function loadTabs(fullLoad = true) {
+	function loadTabs(fullLoad = true, placeholder = false) {
 		let tabsHtml = ""
 		let tabsContentHtml = ""
 		let len = tabs.length
@@ -410,7 +433,7 @@
 			tabsContentHtml += `<div class="tab-pane fade ${idx == 0 ? "show active" : ""}" id="y${tab.name}" role="tabpanel" aria-labelledby="y${tab.name}-tab">
 				<table class="table table-striped">
 					<thead>
-						<tr>
+						<tr ${placeholder ? 'style="color: rgba(0,0,0,0)"' : ''}>
 							<th>Saved on</th>
 							<th>Source</th>
 							<th>Name</th>
@@ -439,9 +462,23 @@
 				content = content.slice(0, 20)
 			}
 			for (let record of content) {
-				tabContent.appendChild(renderRecord(record))
+				tabContent.appendChild(placeholder ? renderPlaceholderRecord(record) : renderRecord(record))
 			}
 		}
+	}
+
+	function renderPlaceholderRecord(record) {
+		const tr = document.createElement('tr')
+		tr.classList.add(`row-record-${record.id}`)
+
+		for(let i = 0; i < 10; i++) {
+			const td = document.createElement('td')
+			td.textContent = "Loading..."
+			td.style.color = "rgba(0,0,0,0)"
+			tr.appendChild(td)
+		}
+
+		return tr
 	}
 
 	function renderRecord(record) {
