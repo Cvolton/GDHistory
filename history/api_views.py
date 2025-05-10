@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import make_aware
+from django.db.models import Min, Max, Q
 
 from datetime import datetime, UTC
 
@@ -203,6 +204,19 @@ def time_to_id_estimation(aware_date):
 	}
 	
 	return JsonResponse(response)
+
+@csrf_exempt
+def user_to_level_estimation(request, online_id):
+	low = GDUser.objects.filter(online_id__lte=online_id).order_by('-online_id')[:1000].values_list('online_id', flat=True)
+	high = GDUser.objects.filter(online_id__gte=online_id).order_by('online_id')[:len(low)].values_list('online_id', flat=True)
+ 
+	all_ids = list(low) + list(high)
+	min_level_ids = Level.objects.filter(cache_user_id__in=all_ids).values('cache_user_id').annotate(Min('online_id')).values_list('online_id__min', flat=True)
+	min_level_ids = sorted(min_level_ids)
+	median_level_id = min_level_ids[int(len(min_level_ids) / 2)] if len(min_level_ids) > 0 else None
+	return JsonResponse({
+		'level_id': median_level_id
+	})
 
 @csrf_exempt
 def level_search(request):
