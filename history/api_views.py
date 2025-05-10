@@ -214,6 +214,8 @@ def user_to_level_estimation(request, online_id):
 	min_level_ids = Level.objects.filter(cache_user_id__in=all_ids).values('cache_user_id').annotate(Min('online_id')).values_list('online_id__min', flat=True)
 	min_level_ids = sorted(min_level_ids)
 	median_level_id = min_level_ids[int(len(min_level_ids) / 2)] if len(min_level_ids) > 0 else None
+ 
+	min_level_ids = [x for x in min_level_ids if x > median_level_id * 0.9 and x < median_level_id * 1.1]
 	return JsonResponse({
 		'low': min(min_level_ids) if len(min_level_ids) > 0 else None,
 		'high': max(min_level_ids) if len(min_level_ids) > 0 else None,
