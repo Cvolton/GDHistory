@@ -217,10 +217,10 @@ def user_to_level_estimation(request, online_id):
  
 	#min_level_ids = [x for x in min_level_ids if x > median_level_id * 0.9 and x < median_level_id * 1.1]
 	return JsonResponse({
-		'low': min(min_level_ids) if len(min_level_ids) > 0 else None,
-		'high': max(min_level_ids) if len(min_level_ids) > 0 else None,
+		#'low': min(min_level_ids) if len(min_level_ids) > 0 else None,
+		#'high': max(min_level_ids) if len(min_level_ids) > 0 else None,
 		'approx': median_level_id,
-		'all_ids': min_level_ids,
+		#'all_ids': min_level_ids,
 	})
 
 @csrf_exempt
