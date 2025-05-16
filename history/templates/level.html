@@ -531,7 +531,8 @@
 		)
 
 		const tdDifficulty = td(difficulty_text(record), null, `Rating sum: ${record.rating_sum}
-Rating denominator: ${record.rating}`)
+Rating denominator: ${record.rating}
+Average: ${(record.rating_sum / record.rating).toFixed(2)}`)
 		if (record.feature_score > 0) {
 			tdDifficulty.appendChild(make_tooltip("Featured", " ✅"))
 		}
@@ -577,6 +578,9 @@ Rating denominator: ${record.rating}`)
 			tdDataAvailable.appendChild(make_tooltip(obj ? `${obj} objects` : null, ` - ${print_file_size(record.level_string_info?.file_size)}`))
 		} else {
 			tdDataAvailable.textContent = "❌"
+			if (record.level_size) {
+				tdDataAvailable.appendChild(make_tooltip(`Level Size: ${record.level_size}`, ` - ${print_file_size(record.level_size / 0.152)} (est.)`))
+			}
 		}
 		tr.appendChild(tdDataAvailable)
 

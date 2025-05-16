@@ -1189,6 +1189,7 @@ class LevelRecord(models.Model):
 	timestamp = models.IntegerField(blank=True, null=True) #57
 	song_ids = models.TextField(blank=True, null=True) #52 #k104
 	sfx_ids = models.TextField(blank=True, null=True) #53 #k105
+	level_size = models.IntegerField(blank=True, null=True) #k39
 
 	song = models.ForeignKey(
 		Song,
@@ -1301,6 +1302,12 @@ class LevelRecord(models.Model):
 		if self.real_user_record_id is None and self.user_id is not None:
 			self.create_user()
 			changed = False #saved in create_user
+   
+		#1.7 1.8 level size
+		if 'k39' in self.unprocessed_data:
+			self.level_size = self.unprocessed_data['k39']
+			del self.unprocessed_data['k39']
+			changed = True
 
 		#saving
 		if changed:

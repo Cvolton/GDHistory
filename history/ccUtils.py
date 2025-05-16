@@ -142,6 +142,7 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			timestamp = assign_key_no_pop(data, 'k95'),
 			song_ids = assign_key_no_pop(data, 'k104'),
 			sfx_ids = assign_key_no_pop(data, 'k105'),
+			level_size = assign_key_no_pop(data, 'k39'),
 			record_type = record_type
 		)
 	except:
@@ -183,6 +184,7 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			timestamp = assign_key(data, 'k95'),
 			song_ids = assign_key(data, 'k104'),
 			sfx_ids = assign_key(data, 'k105'),
+			level_size = assign_key(data, 'k39'),
 			record_type = record_type,
 			unprocessed_data = data
 		)
@@ -220,7 +222,8 @@ def create_data_from_level_record(record, double_base64 = False, is_saved = Fals
 		'k81': record.seconds_spent_editing_copies,
 		'k95': record.timestamp,
 		'k104': record.song_ids,
-		'k105': record.sfx_ids
+		'k105': record.sfx_ids,
+		'k39': record.level_size,
 	}
 
 	data_saved = {
