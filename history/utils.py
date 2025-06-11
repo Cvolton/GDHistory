@@ -126,7 +126,7 @@ def create_song_record_from_data(data, song_object, record_type, date, *args, **
 		return record
 	except:
 		song_name = assign_key(data, 2)
-		if len(song_name) > 255:
+		if song_name is not None and len(song_name) > 255:
 			data['song_name_untrimmed'] = song_name
 			song_name = song_name[:255]
 	
