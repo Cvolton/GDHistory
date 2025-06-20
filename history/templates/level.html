@@ -141,7 +141,7 @@
 
 	function showImage() {
 		let img = document.getElementById('level-image')
-		img.src = "https://raw.githubusercontent.com/cdc-sys/level-thumbnails/main/thumbs/{{ online_id }}.png"
+		img.src = "https://levelthumbs.prevter.me/thumbnail/{{ online_id }}"
 		img.onerror = function() {
 			img.src = "https://cvolton.eu/gdhistory_placeholder2.webp"
 			img.onerror = null
