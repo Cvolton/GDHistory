@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock title %}
+{% block content %}
+<style>
+	.right {
+		text-align: right;
+	}
+	.right > span {
+		margin-right: 2em;
+	}
+</style>
+<div class="row">
+	<p class="lead">Welcome</p>
+</div>
+<div class="row">
+	<div class="col mb-3">
+		<div class="card">
+			<div class="card-header lead">
+				Statistics
+			</div>
+			<div class="card-body">
+				<table class="table">
+					<tbody>
+						<tr>
+							<td>Processing Meili:</td>
+							<td class="right">{{ meili_stats.processing_meili }}</td>
+						</tr>
+						<tr>
+							<td>Enqueued Meili:</td>
+							<td class="right">{{ meili_stats.enqueued_meili }}</td>
+						</tr>
+						<tr>
+							<td>Cache Needs Revalidation:</td>
+							<td class="right">{{ cache_needs_revalidation }}</td>
+						</tr>
+						<tr>
+							<td>Cache Needs Search Update:</td>
+							<td class="right">{{ cache_needs_search_update }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col mb-3">
+		<div class="card">
+			<div class="card-header lead">
+				Quick Actions
+			</div>
+			<div class="card-body">
+				<a class="btn btn-primary" href="{% url 'admin_revalidate_all' %}">Revalidate All Levels</a>
+			</div>
+		</div>
+	</div>
+	<div class="col mb-3">
+		<div class="card">
+			<div class="card-header lead">
+				.
+			</div>
+			<div class="card-body">
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

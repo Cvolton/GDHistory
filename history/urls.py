@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
-from . import views, api_views, authed_api_views
+from . import views, api_views, authed_api_views, admin_views
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -45,6 +45,9 @@ urlpatterns = [
     path('api/v1/daily/current_year/', api_views.daily_current_year, name='api_daily_current_year'),
 
     path('api/v1/auth/levelrecord/<record_id>/sources/', authed_api_views.record_source_info, name='api_daily_current_year'),
+    
+    path('admin2/', admin_views.index, name='admin_index'),
+    path('admin2/revalidate_all/', admin_views.revalidate_all, name='admin_revalidate_all'),
 
     #path('debug/<online_id>/', views.debug, name='debug'),
 ]

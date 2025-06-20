@@ -161,3 +161,11 @@ def try_index_levels():
 		print("Already indexing")
 		return
 	index_queue()
+
+def admin_stats():
+    processing_meili = client.get_tasks({'statuses': 'processing'})
+    enqueued_meili = client.get_tasks({'statuses': 'enqueued'})
+    return {
+		'processing_meili': processing_meili.total,
+		'enqueued_meili': enqueued_meili.total,
+	}
