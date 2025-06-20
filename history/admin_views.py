@@ -31,16 +31,6 @@ def index(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def revalidate_all(request):
-    max_level_id = Level.objects.order_by('-pk').first().pk if Level.objects.exists() else 0
-    batch_size = 100000
-    for i in range(0, math.ceil(max_level_id / batch_size)):
-        start = i * batch_size
-        end = (i + 1) * batch_size
-
-        levels_to_revalidate = Level.objects.filter(pk__gt=start, pk__lt=end)
-        if not levels_to_revalidate.exists():
-            continue
-        levels_to_revalidate.update(cache_needs_revalidation=True)
-        print(f"Forced revalidation for levels from {start} to {end}")
+    tasks.revalidate_cache_all.delay()
         
     return render(request, 'error_success.html', {'error': "good"})
