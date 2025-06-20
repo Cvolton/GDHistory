@@ -532,6 +532,10 @@ class Level(models.Model):
 
 	cache_needs_revalidation = models.BooleanField(db_index=True, default=False)
 	cache_needs_search_update = models.BooleanField(db_index=True, default=False)
+ 
+	cache_file_size = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_decompressed_file_size = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_object_count = models.IntegerField(blank=True, null=True, db_index=True)
 
 	needs_priority_download = models.BooleanField(db_index=True, default=False)
 
@@ -558,11 +562,21 @@ class Level(models.Model):
 		#self.save()
 
 		#self.levelrecord_set.update(cache_is_public=True)
+  
+	def assign_level_string_cache(self, level_string):
+		print("assigning level string cache")
+		info = level_string.get_serialized_base()
+		self.cache_file_size = info['file_size']
+		self.cache_decompressed_file_size = info['decompressed_file_size']
+		self.cache_object_count = info['object_count']
+  
+	def get_data_record(self):
+		return self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').order_by('-downloads')[:1]
 
 	def verify_needs_updating(self):
 		print("verifying needs updating")
 
-		data_record = self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').order_by('-downloads')
+		data_record = self.get_data_record()
 		self.cache_needs_updating = False
 		if len(data_record) > 0:
 			best_record = self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).exclude( Q(level_name=None) ).prefetch_related('level_string').order_by('-downloads')[:1][0]
@@ -585,6 +599,8 @@ class Level(models.Model):
 			elif (best_record.coins or 0) != (data_record.coins or 0): self.cache_needs_updating = True
 			elif (best_record.requested_stars or 0) != (data_record.requested_stars or 0): self.cache_needs_updating = True
 			elif (best_record.original or 0) != (data_record.original or 0): self.cache_needs_updating = True
+   
+			self.assign_level_string_cache(data_record.level_string)
 		else:
 			self.cache_needs_updating = True
 			self.cache_level_string_available = False
@@ -868,6 +884,9 @@ class Level(models.Model):
 			'cache_song_id': int(self.cache_song_id),
 			'cache_song_artist_id': int(self.cache_song_artist_id),
 			'cache_needs_revalidation': bool(self.cache_needs_revalidation),
+			'cache_file_size': int(self.cache_file_size) if self.cache_file_size is not None else None,
+			'cache_decompressed_file_size': int(self.cache_decompressed_file_size) if self.cache_decompressed_file_size is not None else None,
+			'cache_object_count': int(self.cache_object_count) if self.cache_object_count is not None else None,
 		}
 		return response
 
@@ -983,6 +1002,7 @@ class LevelString(models.Model):
 			'sha256': self.sha256,
 			'decompressed_sha256': self.get_decompressed_sha256(),
 			'file_size': self.get_file_size(),
+			'decompressed_file_size': self.decompressed_file_size,
 			'object_count': self.get_object_count(),
 		}
 

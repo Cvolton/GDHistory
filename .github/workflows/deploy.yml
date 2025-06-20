@@ -31,3 +31,15 @@ jobs:
                 port: ${{ secrets.PORT }}
                 script: |
                   bash -c 'source ~/venv/website/bin/activate; cd ~/src/gdhistory; pip install -r requirements.txt; python manage.py collectstatic --no-input; python manage.py makemigrations && python manage.py migrate && sudo /usr/bin/systemctl restart gdhistory-gunicorn.service && sudo /usr/bin/systemctl restart gdhistory-celery.service'
+
+            - name: Update MeiliSearch Settings 
+              uses: appleboy/ssh-action@v0.1.6
+              if: ${{ !contains(github.event.head_commit.message, 'skip-deploy') }}
+              with:  
+                host: ${{ secrets.HOST }}
+                username: ${{ secrets.USERNAME }}
+                password: ${{ secrets.PASSWORD }}
+                key: ${{ secrets.SSH_KEY }}
+                port: ${{ secrets.PORT }}
+                script: |
+                  bash -c 'source ~/venv/website/bin/activate; cd ~/src/gdhistory; python manage.py update_meili_settings'

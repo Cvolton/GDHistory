@@ -12,7 +12,7 @@ def get_level_index():
 	index = client.index('levels')
 	return index
 
-def update_settings():
+def update_settings(force = False):
 	index = get_level_index()
 
 	index.update_settings({'distinctAttribute': 'online_id'})
@@ -53,11 +53,22 @@ def update_settings():
 		'cache_song_id',
 		'cache_song_artist_id',
 		'cache_needs_revalidation',
+		'cache_file_size',
+		'cache_decompressed_file_size',
+		'cache_object_count',
 	]
-
-	index.update_filterable_attributes(attribute_list)
-	index.update_sortable_attributes(attribute_list)
-	index.update_pagination_settings({'maxTotalHits': 2147483647})
+ 
+	if force or index.get_settings().get('filterableAttributes') != sorted(attribute_list):
+		print("Updating Meili settings")
+		index.update_filterable_attributes(attribute_list)
+		index.update_sortable_attributes(attribute_list)
+		index.update_pagination_settings({'maxTotalHits': 2147483647})
+	else:
+		print("Settings already up to date")
+  
+	if force or index.get_settings().get('pagination') != {'maxTotalHits': 2147483647}:
+		print("Updating pagination settings")
+		index.update_pagination_settings({'maxTotalHits': 2147483647})
 
 def index_levels():
 	from .models import Level
