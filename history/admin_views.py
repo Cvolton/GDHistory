@@ -34,3 +34,9 @@ def revalidate_all(request):
     tasks.revalidate_cache_all.delay()
         
     return render(request, 'error_success.html', {'error': "good"})
+
+@user_passes_test(lambda u: u.is_superuser)
+def search_update_all(request):
+    tasks.search_update_all.delay()
+    
+    return render(request, 'error_success.html', {'error': "good"})

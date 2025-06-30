@@ -498,6 +498,7 @@ class Level(models.Model):
 	cache_username = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_level_string_available = models.BooleanField(default=False, db_index=True)
 	cache_user_id = models.IntegerField(blank=True, null=True, db_index=True)
+	cache_account_id = models.IntegerField(blank=True, null=True, db_index=True)
 
 	cache_daily_id = models.IntegerField(default=0, db_index=True)
 	is_test_daily = models.BooleanField(blank=True, null=True)
@@ -655,6 +656,7 @@ class Level(models.Model):
 			self.cache_game_version = record.game_version or 0
 			self.cache_stars = record.stars or 0
 			self.cache_user_id = record.user_id or self.cache_user_id
+			self.cache_account_id = record.account_id or self.cache_account_id
 			self.cache_blank_name = (self.cache_level_name is None)
 			check_level_string = True
 
@@ -679,11 +681,13 @@ class Level(models.Model):
 			if record.real_user_record is not None and record.real_user_record.username is not None and record.real_user_record.username != '' and record.real_user_record.username != '-' and record.real_user_record.user_id != 0 and record.real_user_record.user_id is not None:
 				self.cache_username = record.real_user_record.username
 				self.cache_user_id = record.real_user_record.user.online_id
+				self.cache_account_id = record.real_user_record.account_id
     
 			if self.cache_user_id == None or self.cache_user_id == 0:
 				user = GDUser.user_for_account_id(record.account_id)
 				if user:
 					self.cache_user_id = user.online_id
+					self.cache_account_id = user.cache_account_id
 					print(f"Assigning detected user ID ({user.online_id})")
 
 		if record.daily_id is not None and int(record.daily_id) > 0:
@@ -761,6 +765,12 @@ class Level(models.Model):
 			user_id_set = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('user_id'))
 			self.cache_user_id = user_id_set['user_id__max']
 			print("set user id, not saved")
+   
+		if self.cache_account_id is None or self.cache_account_id == 0:
+			print("recalculating account id")
+			account_id_set = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('account_id'))
+			self.cache_account_id = account_id_set['account_id__max']
+			print("set account id, not saved")
 
 		if self.cache_daily_id is not None and self.cache_daily_date is None:
 			print("setting daily date")
@@ -856,7 +866,8 @@ class Level(models.Model):
 			'cache_stars': int(self.cache_stars),
 			'cache_username': self.cache_username,
 			'cache_level_string_available': bool(self.cache_level_string_available),
-			'cache_user_id': int(self.cache_user_id) if self.cache_user_id else None,
+			'cache_user_id': int(self.cache_user_id) if self.cache_user_id else 0,
+			'cache_account_id': int(self.cache_account_id) if self.cache_account_id else 0,
 			'cache_daily_id': int(self.cache_daily_id),
 			'is_test_daily': bool(self.is_test_daily),
 			'cache_daily_date': self.cache_daily_date,

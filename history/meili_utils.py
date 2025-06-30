@@ -29,6 +29,7 @@ def update_settings(force = False):
 		'cache_username',
 		'cache_level_string_available',
 		'cache_user_id',
+		'cache_account_id',
 		'cache_daily_id',
 		'cache_needs_updating',
 		'cache_available_versions',
