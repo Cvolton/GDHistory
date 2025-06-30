@@ -571,7 +571,7 @@ class Level(models.Model):
 		self.cache_object_count = info['object_count']
   
 	def get_data_record(self):
-		return self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).exclude( Q(level_name=None) | Q(level_string=None) ).prefetch_related('level_string').order_by('-downloads')[:1]
+		return self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).exclude( Q(level_string=None) ).prefetch_related('level_string').order_by('-downloads')
 
 	def verify_needs_updating(self):
 		print("verifying needs updating")
