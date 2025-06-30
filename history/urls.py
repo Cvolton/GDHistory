@@ -48,6 +48,7 @@ urlpatterns = [
     
     path('admin2/', admin_views.index, name='admin_index'),
     path('admin2/revalidate_all/', admin_views.revalidate_all, name='admin_revalidate_all'),
+    path('admin2/search_update_all/', admin_views.search_update_all, name='admin_search_update_all'),
 
     #path('debug/<online_id>/', views.debug, name='debug'),
 ]
