@@ -709,7 +709,7 @@ class Level(models.Model):
 			changed = True
 
 		if changed:
-			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.cache_level_name is not None)
+			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.is_blank() == False)
 		
 		if changed and not force:
 			self.save()
