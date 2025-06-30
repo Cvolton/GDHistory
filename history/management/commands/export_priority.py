@@ -36,7 +36,7 @@ class Command(BaseCommand):
 		json.dump(task_json, f)
 		f.close()
   
-		task_json == {
+		task_json = {
 			"endpoint": "getGJLevels21",
 			"parameters": {
 				"type": "26",
