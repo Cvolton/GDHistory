@@ -7,58 +7,62 @@ from django.db import connection
 from django.utils import timezone
 
 def update_is_public():
-	user_whitelist = [21297937, 16, 20417551]
-	records = LevelRecord.objects.filter( Q(level__cache_user_id__in=user_whitelist) | Q(level__cache_stars__gt=0) | Q(level__cache_downloads__gte=1000) | Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecordType.GET) | ( Q(record_type=LevelRecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") & Q(server_response__created__lte="2023-12-20 01:27:21+00:00") ) ).filter(level__is_public=False).prefetch_related('level')
-	#record_count = records.count()
-	while True:
-		records_limited = records[0:1000]
-		if len(records_limited) < 1:
-			return
-		for record in records_limited:
-			print(f"is_public - Updating {record.level.online_id}")
-			record.level.set_public(True)
-			record.level.save()
+    user_whitelist = [21297937, 16, 20417551]
+    records = LevelRecord.objects.filter( Q(level__cache_user_id__in=user_whitelist) | Q(level__cache_stars__gt=0) | Q(level__cache_downloads__gte=1000) | Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecordType.GET) | ( Q(record_type=LevelRecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") & Q(server_response__created__lte="2023-12-20 01:27:21+00:00") ) ).filter(level__is_public=False).prefetch_related('level')
+    #record_count = records.count()
+    while True:
+        records_limited = records[0:1000]
+        if len(records_limited) < 1:
+            return
+        for record in records_limited:
+            print(f"is_public - Updating {record.level.online_id}")
+            record.level.set_public(True)
+            record.level.save()
 
 def do_is_public_updating(records):
-	records_max = 50000
+    records_max = 50000
 
-	records = records[:records_max]
-	record_count = len(records)
-	i = 1
-	for record in records:
-		print(f"{i} / {record_count} - Updating {record.level.online_id}")
-		record.cache_is_public = record.level.is_public
-		#record.save()
-		i += 1
+    records = records[:records_max]
+    record_count = len(records)
+    i = 1
+    for record in records:
+        print(f"{i} / {record_count} - Updating {record.level.online_id}")
+        record.cache_is_public = record.level.is_public
+        #record.save()
+        i += 1
 
-	LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
+    LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
 
 def do_search_cache_updating(records, status):
-	record_count = len(records)
-	i = 1
-	for record in records:
-		print(f"{i} / {record_count} - Updating {record.online_id}")
-		record.cache_search_available = status
-		record.cache_needs_search_update = True
-		#record.save()
-		i += 1
+    record_count = len(records)
+    i = 1
+    for record in records:
+        print(f"{i} / {record_count} - Updating {record.online_id}")
+        if record.is_blank():
+            record.cache_needs_search_update = record.cache_needs_search_update or (record.cache_search_available == False)
+            record.cache_search_available = False
+        else:
+            record.cache_search_available = status
+            record.cache_needs_search_update = True
+        #record.save()
+        i += 1
 
-	Level.objects.bulk_update(records, ['cache_search_available', 'cache_needs_search_update'], batch_size=1000)
+    Level.objects.bulk_update(records, ['cache_search_available', 'cache_needs_search_update'], batch_size=1000)
 
 def start_is_public_updating(state):
-	records_max = 50000
+    records_max = 50000
 
-	while True:
-		result = LevelRecord.objects.prefetch_related('level').filter(cache_is_public=state).exclude(level__is_public=state)[:records_max]
-		do_is_public_updating(result)
-		if len(result) < records_max:
-			break
+    while True:
+        result = LevelRecord.objects.prefetch_related('level').filter(cache_is_public=state).exclude(level__is_public=state)[:records_max]
+        do_is_public_updating(result)
+        if len(result) < records_max:
+            break
 
 def update_cached_fields():
-	start_is_public_updating(False)
-	start_is_public_updating(True)
+    start_is_public_updating(False)
+    start_is_public_updating(True)
 
-	estimated_id = get_level_id_within_window()
+    estimated_id = get_level_id_within_window()
 
-	do_search_cache_updating(Level.objects.filter( Q(is_public=True) | Q(online_id__lt=estimated_id) , hide_from_search=False).exclude(cache_level_name=None).exclude(cache_search_available=True), True)
-	do_search_cache_updating(Level.objects.filter( Q(is_public=False, online_id__gte=estimated_id) | Q( hide_from_search=True) | Q(cache_level_name=None) ).exclude(cache_search_available=False), False)
+    do_search_cache_updating(Level.objects.filter( Q(is_public=True) | Q(online_id__lt=estimated_id) , hide_from_search=False).exclude(cache_search_available=True), True)
+    do_search_cache_updating(Level.objects.filter( Q(is_public=False, online_id__gte=estimated_id) | Q( hide_from_search=True) ).exclude(cache_search_available=False), False)

@@ -557,6 +557,9 @@ class Level(models.Model):
 	class Meta:
 		indexes = [
 		]
+  
+	def is_blank(self):
+		return self.cache_level_name is None and self.cache_game_version == 0 and self.cache_downloads == 0
 
 	def set_public(self, public):
 		self.is_public = public
@@ -832,6 +835,8 @@ class Level(models.Model):
 
 		if len(best_record) < 1:
 			self.cache_level_name = None
+			self.cache_downloads = 0
+			self.cache_game_version = 0
 			self.save()
 			return
 
