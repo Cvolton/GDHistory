@@ -19,7 +19,7 @@ class Command(BaseCommand):
 			print(f"{i} / 20 - {level.online_id}")
 			levels_to_export.append(level.online_id)
 			level.needs_priority_download = False
-			level.save()
+			level.save(update_fields=['needs_priority_download'])
 
 		print("Creating JSON")
 		task_json = {
@@ -33,6 +33,19 @@ class Command(BaseCommand):
 
 		print("Saving JSON")
 		f = open(f"{data_path}/Exports/LevelTaskPriority.json", "w")
+		json.dump(task_json, f)
+		f.close()
+  
+		task_json == {
+			"endpoint": "getGJLevels21",
+			"parameters": {
+				"type": "26",
+				"str": ",".join(map(str, levels_to_export)),
+			}
+		}
+  
+		print("Saving JSON")
+		f = open(f"{data_path}/Exports/LevelTaskPriority2.json", "w")
 		json.dump(task_json, f)
 		f.close()
 
