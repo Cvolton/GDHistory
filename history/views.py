@@ -52,8 +52,9 @@ def view_level(request, online_id=None, record_id=None):
 			return render(request, 'error.html', {'error': 'Level record does not belong to this level'}, status=403)
 	else:
 		first_record = level.get_best_record()
-		if not first_record or not first_record.is_valid:
-			return render(request, 'error.html', {'error': 'Level not found in our database'}, status=404)
+		
+	if not first_record or not first_record.is_valid:
+		return render(request, 'error.html', {'error': 'Level not found in our database'}, status=404)
 
 	if level.cache_needs_revalidation:
 		tasks.revalidate_cache_level.delay(level.online_id)
