@@ -72,7 +72,8 @@ Rating denominator: {{ record.rating }}">{% difficulty record.rating_sum record.
 						{% if record.real_user_record and record.real_user_record.account_id %} <a data-toggle="tooltip" title="Registered">✔️</a>{% endif %}
 					{% endif %}</td>
 					<td>{% game_version record.game_version %}</td>
-					<td>{% if record.level_string %}✅{%if record.level.is_public %} <a href="{% url 'download_record' record.level.online_id record.pk %}">(.gmd)</a>{% endif %} - {% print_file_size record.level_string.get_file_size %}{% else %}❌{% endif %}</td>
+					<td>{% if record.level_string %}✅{%if record.level.is_public %} <a href="{% url 'download_record' record.level.online_id record.pk %}">(.gmd)</a>{% endif %} - {% print_file_size record.level_string.get_file_size %}{% else %}
+						{% if record.level.cache_level_string_available %}➖{% else %}❌{% endif %}{% endif %}</td>
 					<td>{% if not record.level.is_deleted %}✅{% else %}❌{% endif %}</td>
 					<!-- pk: {{ record.pk }}, levelstring: {{ record.level_string }} -->
 				</tr>
