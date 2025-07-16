@@ -86,6 +86,9 @@ def level_info(request, online_id=None, view_mode="normal"):
 				response['level_string_count'] += 1
 				level_strings[record.level_string.pk] = True
 
+		if len(response['records']) == 0:
+			return JsonResponse({'success': False}, status=404)
+
 
 	return JsonResponse(response)
 
@@ -96,7 +99,7 @@ def level_record(request, online_id=None, record_id=None):
 		if not level.is_public and not (request.user.is_authenticated and request.user.is_superuser): raise Exception
 
 		record = level.levelrecord_set.get(pk=record_id) if record_id is not None else level.get_best_record()
-		if record is None: raise Exception
+		if record is None or not record.is_valid: raise Exception
 		return JsonResponse(record.get_serialized_full())
 	except:
 		return JsonResponse({'success': False}, status=404)
