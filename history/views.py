@@ -53,7 +53,7 @@ def view_level(request, online_id=None, record_id=None):
 	else:
 		first_record = level.get_best_record()
 		
-	if not first_record or not first_record.is_valid:
+	if not first_record or first_record.is_invalid:
 		return render(request, 'error.html', {'error': 'Level not found in our database'}, status=404)
 
 	if level.cache_needs_revalidation:
