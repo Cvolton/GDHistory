@@ -52,6 +52,8 @@ def view_level(request, online_id=None, record_id=None):
 			return render(request, 'error.html', {'error': 'Level record does not belong to this level'}, status=403)
 	else:
 		first_record = level.get_best_record()
+		if first_record is None:
+			level.make_blank()
 		
 	if not first_record or first_record.is_invalid:
 		return render(request, 'error.html', {'error': 'Level not found in our database'}, status=404)

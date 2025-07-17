@@ -561,6 +561,18 @@ class Level(models.Model):
 	def is_blank(self):
 		return self.cache_level_name is None and self.cache_game_version == 0 and self.cache_downloads == 0
 
+	def make_blank(self):
+		self.cache_level_name = None
+		self.cache_game_version = 0
+		self.cache_downloads = 0
+		self.cache_likes = 0
+		self.cache_submitted = None
+		self.cache_username = None
+		self.cache_user_id = None
+		self.cache_account_id = None
+		self.cache_search_available = False
+		self.save()
+
 	def set_public(self, public):
 		self.is_public = public
 		#self.save()
@@ -834,10 +846,7 @@ class Level(models.Model):
 		else: best_record = best_record[:1]
 
 		if len(best_record) < 1:
-			self.cache_level_name = None
-			self.cache_downloads = 0
-			self.cache_game_version = 0
-			self.save()
+			self.make_blank()
 			return
 
 		best_record = best_record[0]
