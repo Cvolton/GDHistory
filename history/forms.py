@@ -51,3 +51,6 @@ class AdvancedSearchForm(forms.Form):
 	offset = forms.IntegerField(label='Offset', required=False)
 	sort = forms.CharField(label='Sort', required=False)
 	filter = forms.CharField(label='Filter', required=False)
+ 
+class ForceUsernameForm(forms.Form):
+	level_id = forms.IntegerField(label='Level Record ID', required=True, help_text='Enter the ID of the level record to force the username for.')

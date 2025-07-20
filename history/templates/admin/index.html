@@ -56,9 +56,17 @@
 	<div class="col mb-3">
 		<div class="card">
 			<div class="card-header lead">
-				.
+				Force Username From Level Record
 			</div>
 			<div class="card-body">
+				<form method="post" action="{% url 'admin_force_username' %}">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="level_id">Level Record ID:</label>
+						<input type="text" class="form-control" id="level_id" name="level_id" required>
+					</div>
+					<br><button type="submit" class="btn btn-primary">Force Username</button>
+				</form>
 			</div>
 		</div>
 	</div>
