@@ -74,7 +74,7 @@ def update_settings(force = False):
 def index_levels():
 	from .models import Level
 
-	cache.set('indexing_levels', True, 1800)
+	cache.set('indexing_levels', True, 14400)
 
 	index = get_level_index()
 	update_settings()
