@@ -6,12 +6,23 @@
 	<div class="col mb-3">
 		<div class="card mt-1">
 			<div class="card-header lead">
-				Level ID to date
+				ID to date
 			</div>
 			<div class="card-body">
 				<form id="estimator">
-					<div class="mb-3">
-						<label for="online_id" class="form-label">Level ID</label>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="idType" id="levelIDCheck" checked value="level">
+						<label class="form-check-label" for="levelIDCheck">
+							Level ID
+						</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="idType" id="userIDCheck" value="user">
+						<label class="form-check-label" for="userIDCheck">
+							User ID
+						</label>
+					</div>
+					<div class="mb-3 mt-2">
 						<input class="form-control" type="number" id="online_id" name="online_id">
 					</div>
 					<button type="submit" class="btn btn-primary">Estimate</button>
@@ -91,6 +102,20 @@
 			</span>`);
 	}
 
+	function onUserIDLoadComplete(result) {
+		$('#result-pane').remove();
+		$('#result-card').append(`
+			<span id="user-id-result-pane">
+				<p><b><span style="color: red;">Warning:</span></b> User ID estimator may be off by 2+ weeks.<br>
+				<b>Estimated potential first level ID:</b> ${result["approx"]}</p>
+				<hr>
+			</span>
+			<span id="result-pane">
+				Loading, stage 2...
+			</span>`);
+		estimateLevelID(result["approx"]);
+	}
+
 	function onLoadFailed() {
 		$('#result-pane').remove();
     	$('#result-card').append(`
@@ -102,17 +127,36 @@
 	//add listener for first form
 	const form  = document.getElementById('estimator');
 
-	form.addEventListener('submit', (event) => {
-	    event.preventDefault();
-	    $('#result-pane').remove();
-	    $('#result-card').append(`
+	function estimateLevelID(id) {
+		$.getJSON(`/api/v1/date/level/${id}/`, (result) => onLoadComplete(result))
+			.fail(() => this.onLoadFailed());
+	}
+
+	function estimateUserID(id) {
+		$.getJSON(`/api/v1/date/user/${id}/`, (result) => onUserIDLoadComplete(result))
+			.fail(() => this.onLoadFailed());
+	}
+
+	function showLoading() {
+		$('#user-id-result-pane').remove();
+		$('#result-pane').remove();
+		$('#result-card').append(`
 			<span id="result-pane">
 				<p>Loading...</p>
 			</span>`);
+	}
 
-	    online_id = form.elements['online_id'];
-	    $.getJSON(`/api/v1/date/level/${online_id.value}/`, (result) => onLoadComplete(result))
-		.fail(() => this.onLoadFailed());
+	form.addEventListener('submit', (event) => {
+	    event.preventDefault();
+	    showLoading();
+
+	    online_id = form.elements['online_id'].value;
+		if (form.elements['idType'].value == "user") {
+			estimateUserID(online_id);
+		} else {
+			estimateLevelID(online_id);
+		}
+
 	});
 
 	//add listener to second form
@@ -120,11 +164,7 @@
 
 	dateToId.addEventListener('submit', (event) => {
 	    event.preventDefault();
-	    $('#result-pane').remove();
-	    $('#result-card').append(`
-			<span id="result-pane">
-				<p>Loading...</p>
-			</span>`);
+	    showLoading();
 
 	    online_date = dateToId.elements['online_date'];
 	    $.getJSON(`/api/v1/date/date/${online_date.value}/`, (result) => onLoadComplete(result))
@@ -135,11 +175,7 @@
 
     timestampToId.addEventListener('submit', (event) => {
         event.preventDefault();
-        $('#result-pane').remove();
-        $('#result-card').append(`
-			<span id="result-pane">
-				<p>Loading...</p>
-			</span>`);
+	    showLoading();
 
         online_timestamp = timestampToId.elements['online_timestamp'];
         $.getJSON(`/api/v1/date/timestamp/${online_timestamp.value}/`, (result) => onLoadComplete(result))
