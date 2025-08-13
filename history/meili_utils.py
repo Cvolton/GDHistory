@@ -149,6 +149,7 @@ def index_queue_negative():
 			return
 
 def index_queue():
+	cache.set('indexing_levels', True, 14400)
 	index_queue_positive()
 	index_queue_negative()
 
