@@ -31,6 +31,11 @@ tr:hover, tr:focus-within {
 	</div>
 </div>
 {% endif %}
+<div class="row" id="search-count-discrepancy" style="display: none;">
+	<div class="alert alert-warning" role="alert">
+		Search revalidation is in progress, search results may be incomplete.
+	</div>
+</div>
 <div class="row">
 	{% if needs_revalidation >= 1000 %}
 	  <div class="alert alert-info" role="alert">
@@ -196,5 +201,25 @@ document.getElementById('length').addEventListener('change', function() {
 		<a href="?p={{ page|add:1 }}{% print_filters filters %}" class="btn btn-danger {% if page == maximum_page_button %}disabled{% endif %}" role="button">&gt;</a>
 	</p>
 </div>
+
+<script>
+	function hideSearchDiscrepancy() {
+		document.getElementById('search-count-discrepancy').style.display = 'none';
+	}
+	function showSearchDiscrepancy() {
+		document.getElementById('search-count-discrepancy').style.display = 'block';
+	}
+	$.getJSON(`/api/v1/search/level/counts/`, function (result) {
+		let levelCount = result.level_count;
+		let searchLevelCount = result.search_level_count;
+		if (searchLevelCount < levelCount * 0.99) {
+			showSearchDiscrepancy();
+		} else {
+			hideSearchDiscrepancy();
+		}
+	}).fail(function () {
+		hideSearchDiscrepancy();
+	});
+</script>
 <!-- {{ level.pk }} -->
 {% endblock %}

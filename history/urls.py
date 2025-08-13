@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/v1/date/date/<online_date>/', api_views.level_date_to_id_estimation, name='api_estimate_date'),
     path('api/v1/date/timestamp/<online_timestamp>/', api_views.level_timestamp_to_id_estimation, name='api_estimate_timestamp'),
     path('api/v1/search/level/advanced/', api_views.level_search, name='api_level_search'),
+    path('api/v1/search/level/counts/', api_views.level_search_counts, name='api_level_search_counts'),
     path('api/v1/daily/', api_views.daily, name='api_daily'),
     path('api/v1/daily/current_year/', api_views.daily_current_year, name='api_daily_current_year'),
 

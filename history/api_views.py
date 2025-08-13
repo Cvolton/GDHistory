@@ -274,3 +274,14 @@ def daily(request):
 @csrf_exempt
 def daily_current_year(request):
 	return JsonResponse(utils.get_daily_records_current_year())
+
+@csrf_exempt
+def level_search_counts(request):
+	counts = cache.get('counts')
+	if counts is None:
+		counts = utils.recalculate_counts()
+	meili_utils.level_count_in_index()
+	return JsonResponse({
+		'level_count': counts['level_count'],
+		'search_level_count': meili_utils.level_count_in_index(),
+	})

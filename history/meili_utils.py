@@ -165,9 +165,12 @@ def try_index_levels():
 	index_queue()
 
 def admin_stats():
-    processing_meili = client.get_tasks({'statuses': 'processing'})
-    enqueued_meili = client.get_tasks({'statuses': 'enqueued'})
-    return {
+	processing_meili = client.get_tasks({'statuses': 'processing'})
+	enqueued_meili = client.get_tasks({'statuses': 'enqueued'})
+	return {
 		'processing_meili': processing_meili.total,
 		'enqueued_meili': enqueued_meili.total,
 	}
+
+def level_count_in_index():
+	return client.get_all_stats()['indexes']['levels']['numberOfDocuments']
