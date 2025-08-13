@@ -33,7 +33,7 @@ tr:hover, tr:focus-within {
 {% endif %}
 <div class="row" id="search-count-discrepancy" style="display: none;">
 	<div class="alert alert-warning" role="alert">
-		Search revalidation is in progress, search results may be incomplete.
+		Search update is in progress, search results may be incomplete. <small>(<span id="search-update-amount">0%</span> complete)</small>
 	</div>
 </div>
 <div class="row">
@@ -206,14 +206,15 @@ document.getElementById('length').addEventListener('change', function() {
 	function hideSearchDiscrepancy() {
 		document.getElementById('search-count-discrepancy').style.display = 'none';
 	}
-	function showSearchDiscrepancy() {
+	function showSearchDiscrepancy(percentage) {
 		document.getElementById('search-count-discrepancy').style.display = 'block';
+		document.getElementById('search-update-amount').textContent = (percentage * 100).toFixed(0) + '%';
 	}
 	$.getJSON(`/api/v1/search/level/counts/`, function (result) {
 		let levelCount = result.level_count;
 		let searchLevelCount = result.search_level_count;
 		if (searchLevelCount < levelCount * 0.99) {
-			showSearchDiscrepancy();
+			showSearchDiscrepancy(searchLevelCount / levelCount);
 		} else {
 			hideSearchDiscrepancy();
 		}
