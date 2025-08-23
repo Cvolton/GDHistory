@@ -210,7 +210,7 @@ document.getElementById('length').addEventListener('change', function() {
 		document.getElementById('search-count-discrepancy').style.display = 'block';
 		document.getElementById('search-update-amount').textContent = (percentage * 100).toFixed(0) + '%';
 	}
-	$.getJSON(`/api/v1/search/level/counts/`, function (result) {
+	$.getJSON(`/api/v1/search/level/counts/{% if user.is_authenticated %}?{% now "U" %}{% endif %}`, function (result) {
 		let levelCount = result.level_count;
 		let searchLevelCount = result.search_level_count;
 		if (searchLevelCount < levelCount * 0.99) {
