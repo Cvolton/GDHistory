@@ -64,12 +64,14 @@ def update_settings(force = False):
 		'cache_level_name',
 		'cache_username'
 	]
+
+	MAX_TOTAL_HITS = 999999
  
 	if force or index.get_settings().get('filterableAttributes') != sorted(attribute_list):
 		print("Updating Meili settings")
 		index.update_filterable_attributes(attribute_list)
 		index.update_sortable_attributes(attribute_list)
-		index.update_pagination_settings({'maxTotalHits': 50000})
+		index.update_pagination_settings({'maxTotalHits': MAX_TOTAL_HITS})
 	else:
 		print("Settings already up to date")
   
@@ -77,9 +79,9 @@ def update_settings(force = False):
 		print("Updating searchable attributes")
 		index.update_searchable_attributes(searchable_attributes)
 
-	if force or index.get_settings().get('pagination') != {'maxTotalHits': 50000}:
+	if force or index.get_settings().get('pagination') != {'maxTotalHits': MAX_TOTAL_HITS}:
 		print("Updating pagination settings")
-		index.update_pagination_settings({'maxTotalHits': 50000})
+		index.update_pagination_settings({'maxTotalHits': MAX_TOTAL_HITS})
 
 def index_levels():
 	from .models import Level
