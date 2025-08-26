@@ -342,10 +342,10 @@ def import_json(file):
 
 	if "endpoint" not in response_json: return None
 
-	#Avoid importing invalid data from CloudFlare
 	if response_json["endpoint"] == "GDHistory-Special":
 		return process_special(response_json)
 
+	#Avoid importing invalid data from CloudFlare
 	if response_json["raw_output"][:5] == '<html' or response_json["raw_output"][:5] == '<body' or response_json["raw_output"][:5] == '<!DOC' or response_json["raw_output"][:5] == 'error':
 		return None
 
