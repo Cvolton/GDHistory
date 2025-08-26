@@ -39,7 +39,7 @@ class Command(BaseCommand):
                     all_records[song_record_string].append(record)
                 for record_string, records in all_records.items():
                     if len(records) > 1:
-                        print(f"Duplicate found: {record_string}")
+                        print(f"Duplicate found ({len(records)} entries): {record_string}")
                         dupes_to_delete = records[1:]
                         main_record = records[0]
                         all_saves = []
