@@ -6,7 +6,7 @@ import time
 
 from django.core.cache import cache
 
-client = meilisearch.Client('http://127.0.0.1:7700', os.getenv('MEILI_KEY','ABCabc123'))
+client = meilisearch.Client(os.getenv('MEILI_HOST','http://127.0.0.1:7700'), os.getenv('MEILI_KEY','ABCabc123'))
 
 def get_level_index():
 	index = client.index('levels')
