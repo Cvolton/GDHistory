@@ -250,7 +250,7 @@ def process_get(response_json):
 
 	user_dict = create_user_dict(request_info[1])
 
-	song_array = [] if not no_song else create_song_array(request_info[2])
+	song_array = [] if no_song else create_song_array(request_info[2])
 
 	time_created = parse_datetime(response_json["created"])
 	if is_naive(time_created):
