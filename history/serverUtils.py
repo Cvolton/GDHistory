@@ -17,10 +17,8 @@ def create_request(response_json):
 	data_path = get_data_path()
 
 	response_objects = ServerResponse.objects.filter(created=response_json["created"])
-	response_count = response_objects[:1].count()
-	if response_count > 0:
-		response_count = response_objects.filter(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"])[:1].count()
-		if response_count > 0:
+	if response_objects.exists():
+		if response_objects.filter(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"]).exists():
 			return False
 
 	response_object = ServerResponse(unprocessed_post_parameters=response_json["unprocessed_post_parameters"], endpoint=response_json["endpoint"], created=response_json["created"])
@@ -187,7 +185,7 @@ def process_download(response_json):
 		print(f"::: {datetime.now().time()} : Unable to create response")
 		return None
 
-	if response[:2] == '-1': #level doesn't exist or other error
+	if response.startswith('-1'): #level doesn't exist or other error
 		print(f"::: {datetime.now().time()} : Level deleted")
 		level_object.is_deleted = True
 		if level_object.deleted_date is None or level_object.deleted_date > time_created:
@@ -243,7 +241,7 @@ def process_get(response_json):
 	no_song = response_json.get('no_song', False)
 	if response_object is False:
 		return None
-	if response == "-1" or response == "":
+	if response in ("-1", ""):
 		return False
 
 	request_info = response.split('#')
@@ -252,9 +250,8 @@ def process_get(response_json):
 
 	user_dict = create_user_dict(request_info[1])
 
-	if not no_song: song_array = create_song_array(request_info[2])
-	else: song_array = []
- 
+	song_array = [] if not no_song else create_song_array(request_info[2])
+
 	time_created = parse_datetime(response_json["created"])
 	if is_naive(time_created):
 		time_created = make_aware(time_created)
@@ -279,9 +276,11 @@ def process_get(response_json):
 		user_id = int(record.user_id or 0)
 		if user_id in user_dict:
 			user_record = user_dict[user_id]
-			record.username = record.username if len(user_record) < 2 else user_record[1]
-			record.account_id = record.account_id if len(user_record) < 3 else user_record[2]
-			
+			if len(user_record) > 1:
+				record.username = user_record[1]
+			if len(user_record) > 2:
+				record.account_id = user_record[2]
+
 		#print(f":::: {datetime.now().time()} : Saving record")
 		record.save()
 		#print(f":::: {datetime.now().time()} : Creating user")
@@ -340,17 +339,18 @@ def import_json(file):
 		print(e)
 		return None
 
-	if "endpoint" not in response_json: return None
+	endpoint = response_json.get('endpoint')
+	if not endpoint: return None
 
-	if response_json["endpoint"] == "GDHistory-Special":
+	if endpoint == "GDHistory-Special":
 		return process_special(response_json)
 
 	#Avoid importing invalid data from CloudFlare
-	if response_json["raw_output"][:5] == '<html' or response_json["raw_output"][:5] == '<body' or response_json["raw_output"][:5] == '<!DOC' or response_json["raw_output"][:5] == 'error':
+	if response_json["raw_output"][:5].lower() in ('<html', '<body', '<!doc', 'error'):
 		return None
 
-	if response_json["endpoint"].startswith("getGJLevels"):
+	if endpoint.startswith("getGJLevels"):
 		return process_get(response_json)
-	if response_json["endpoint"].startswith("downloadGJLevel"):
+	if endpoint.startswith("downloadGJLevel"):
 		return process_download(response_json)
 
