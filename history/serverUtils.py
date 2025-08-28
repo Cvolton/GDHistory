@@ -1,5 +1,5 @@
 from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text, get_level_object
-from .models import ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType, LevelDateEstimation
+from .models import ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType, LevelDateEstimation, CommentDateEstimation
 
 from .constants import XORKeys, MiscConstants
 
@@ -327,9 +327,23 @@ def process_cutoffs(response_json):
 
 	return True
 
+def process_new_comments(response_json):
+    # {'level_id': 13519, 'comment_id': 9922707, 'timestamp': '5 minutes'}
+    for comment in response_json["dates"]:
+        CommentDateEstimation(
+			created = timezone.datetime.fromisoformat(comment["estimation_created"]),
+			relative_upload_date = comment["timestamp"],
+			level_id = comment["level_id"],
+			comment_id = comment["comment_id"]
+		).calculate()
+        
+    return True
+
 def process_special(response_json):
 	if response_json["task"] == 'find_cutoffs':
 		return process_cutoffs(response_json)
+	elif response_json["task"] == 'find_new_comments':
+		return process_new_comments(response_json)
 
 def import_json(file):
 	response_json = None

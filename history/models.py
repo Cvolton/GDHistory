@@ -1,3 +1,4 @@
+import bisect
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext as _
@@ -697,7 +698,7 @@ class Level(models.Model):
 				self.cache_username = record.real_user_record.username
 				self.cache_user_id = record.real_user_record.user.online_id
 				self.cache_account_id = record.real_user_record.account_id
-    
+	
 			if self.cache_user_id == None or self.cache_user_id == 0:
 				user = GDUser.user_for_account_id(record.account_id)
 				if user:
@@ -753,7 +754,7 @@ class Level(models.Model):
 	def recalculate_maximums(self):
 		#print("ensuring first record id is set")
 		#self.get_first_record_id()
-     
+	 
 		print("recalculating maximums")
 		maximums = self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'), Max('game_version'), Min('game_version'))
 		self.cache_max_stars = maximums['stars__max'] or 0
@@ -962,6 +963,42 @@ class Level(models.Model):
 		self.cache_needs_search_update = True
 
 		super(Level, self).save(*args, **kwargs)
+  
+class CommentDateEstimation(models.Model):
+	range_id = models.IntegerField(db_index=True)
+	level_id = models.IntegerField(db_index=True) # only for correction if range_id gets set wrong incorrectly
+	comment_id = models.IntegerField(db_index=True)
+
+	submitted = models.DateTimeField(default=timezone.now, db_index=True)
+
+	created = models.DateTimeField(db_index=True)
+	relative_upload_date = models.CharField(blank=True, null=True, max_length=255)
+ 
+	estimation = models.DateTimeField(blank=True, null=True, db_index=True)
+
+	def calculate(self):
+		if self.relative_upload_date is not None and "seconds" in self.relative_upload_date:
+			seconds = int(self.relative_upload_date.split(' ')[0])
+			self.estimation = self.created - timedelta(seconds=seconds)
+		elif self.relative_upload_date is not None and "minutes" in self.relative_upload_date:
+			minutes = int(self.relative_upload_date.split(' ')[0])
+			self.estimation = self.created - timedelta(minutes=minutes)
+		else:
+			return
+
+		self.range_id = utils.comment_range_for_level(self.level_id)
+
+		self.save()
+
+	def get_serialized_base(self):
+		response = {
+			'created': self.created,
+			'relative_upload_date': self.relative_upload_date,
+			'estimation': self.estimation,
+			'online_id': self.comment_id,
+			'level_id': self.level_id
+		}
+		return response
 
 class LevelDateEstimation(models.Model):
 	level = models.ForeignKey(

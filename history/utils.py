@@ -1,3 +1,4 @@
+import bisect
 import os
 import html
 import hashlib
@@ -322,3 +323,11 @@ def get_blacklisted_userids(force_reload = False):
 			values = [int(value.strip()) for value in values if value.isdigit]
 		cache.set('blacklisted_userids', values, None)
 	return values
+
+def comment_range_for_level(level_id):
+	i = bisect.bisect_right(MiscConstants.COMMENT_RANGES, level_id) - 1
+	if i < 0 or i >= len(MiscConstants.COMMENT_RANGES):
+		print("Invalid Level ID")
+		return -1
+	else:
+		return i

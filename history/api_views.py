@@ -6,7 +6,7 @@ from django.db.models import Min, Max, Q
 
 from datetime import datetime, UTC
 
-from .models import LevelRecord, LevelDateEstimation, GDUserRecord, GDUser, ManualSubmission, Level
+from .models import LevelRecord, LevelDateEstimation, GDUserRecord, GDUser, ManualSubmission, Level, CommentDateEstimation
 from . import utils, constants, meili_utils
 from .forms import AdvancedSearchForm, ApiLevelForm
 
@@ -138,6 +138,39 @@ def manual_info(request, pk=None):
 		return JsonResponse({'success': False}, status=404)
 
 	return JsonResponse(manual.get_serialized_base())
+
+@csrf_exempt
+def comment_date_estimation(request, level_id, comment_id):
+	level_id = int(level_id)
+	range_id = utils.comment_range_for_level(level_id)
+	comment_id = int(comment_id)
+
+	low = CommentDateEstimation.objects.filter(range_id=range_id, comment_id__lte=comment_id).order_by('-estimation')[:1]
+	high = CommentDateEstimation.objects.filter(range_id=range_id, comment_id__gte=comment_id).order_by('estimation')[:1]
+
+	#if low: low = CommentDateEstimation.objects.filter(range_id=range_id, estimation=low[0].estimation).order_by('estimation')
+	#if high: high = CommentDateEstimation.objects.filter(range_id=range_id, estimation=high[0].estimation).order_by('estimation')
+
+	approx = None
+	if low and high:
+
+		date_difference = high[0].estimation - low[0].estimation
+		id_difference = high[0].comment_id - low[0].comment_id
+		requested_id_difference = comment_id - low[0].comment_id
+		percentage = 0 if id_difference == 0 else requested_id_difference / id_difference
+		new_date_difference = date_difference * percentage
+		approx = {
+			"estimation": low[0].estimation + new_date_difference,
+			"comment_id": comment_id
+		}
+
+	response = {
+		'low': low[0].get_serialized_base() if len(low) > 0 else None,
+		'high': high[0].get_serialized_base()  if len(high) > 0 else None,
+		'approx': approx
+	}
+	
+	return JsonResponse(response)
 
 @csrf_exempt
 def level_date_estimation(request, online_id):
