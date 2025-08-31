@@ -11,7 +11,7 @@ class MiscConstants:
 	FIRST_2_1_LEVEL = 28294638 #This constant is not entirely accurate - This level ID points to the original collab part for "Master of the World" by Viprin and Terron, which is the first rated 2.1 level.
 	UNLISTED_EXPLOIT_FIX_TIME = make_aware(datetime.fromtimestamp(1637719800)) #2021-11-24 02:10:00+00:00
 	ELEMENT_111_RG = 498620
-	LAST_FULL_SCRAPE_ID = 80250000
+	LAST_FULL_SCRAPE_ID = 90250000
 	SONG_ID_ZERO = 3115 #internal song id for online song id 0, MUST BE ADJUSTED FOR LOCAL INSTANCES
 	COMMENT_RANGES = [0,170001,3200001,29550001,35000001,53000001,63214001,81395001,90000001,100000001,110000001,124421501]
 
