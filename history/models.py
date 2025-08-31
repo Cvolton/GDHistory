@@ -977,12 +977,17 @@ class CommentDateEstimation(models.Model):
 	estimation = models.DateTimeField(blank=True, null=True, db_index=True)
 
 	def calculate(self):
-		if self.relative_upload_date is not None and "seconds" in self.relative_upload_date:
+		if not self.relative_upload_date: return
+  
+		if "seconds" in self.relative_upload_date:
 			seconds = int(self.relative_upload_date.split(' ')[0])
 			self.estimation = self.created - timedelta(seconds=seconds)
-		elif self.relative_upload_date is not None and "minutes" in self.relative_upload_date:
+		elif "minutes" in self.relative_upload_date:
 			minutes = int(self.relative_upload_date.split(' ')[0])
 			self.estimation = self.created - timedelta(minutes=minutes)
+		elif "year" in self.relative_upload_date:
+			years = int(self.relative_upload_date.split(' ')[0])
+			self.estimation = self.created - timedelta(days=365*years)
 		else:
 			return
 
