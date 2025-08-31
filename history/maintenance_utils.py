@@ -34,7 +34,7 @@ def do_is_public_updating(records):
     LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
 
 def do_search_cache_updating(records, status):
-    records = records[:200000]
+    records = records[:500000]
     record_count = len(records)
     i = 1
     for record in records:
