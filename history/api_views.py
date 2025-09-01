@@ -161,7 +161,7 @@ def comment_date_estimation(request, level_id, comment_id):
 		new_date_difference = date_difference * percentage
 		approx = {
 			"estimation": low[0].estimation + new_date_difference,
-			"comment_id": comment_id
+			"online_id": comment_id
 		}
 
 	response = {

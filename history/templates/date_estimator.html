@@ -2,6 +2,12 @@
 {% block title %}Date Estimator{% endblock title %}
 {% block content %}
 
+<style>
+	.only-show-with-comments {
+		display: none;
+	}
+</style>
+
 <div class="row">
 	<div class="col mb-3">
 		<div class="card mt-1">
@@ -22,8 +28,21 @@
 							User ID
 						</label>
 					</div>
+					{%if user.is_authenticated %}
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="idType" id="commentIDCheck" value="comment">
+						<label class="form-check-label" for="commentIDCheck">
+							Comment ID
+						</label>
+					</div>
+					{% endif %}
 					<div class="mb-3 mt-2">
+						<label for="online_id" class="form-label only-show-with-comments">Level ID</label>
 						<input class="form-control" type="number" id="online_id" name="online_id">
+					</div>
+					<div class="mb-3 mt-2 only-show-with-comments">
+						<label for="comment_id" class="form-label">Comment ID</label>
+						<input class="form-control" type="number" id="comment_id" name="comment_id">
 					</div>
 					<button type="submit" class="btn btn-primary">Estimate</button>
 				</form>
@@ -71,22 +90,22 @@
 </div>
 
 <script type="text/javascript">
-	function onLoadComplete(result) {
+	function onLoadComplete(result, type) {
     	$('#result-pane').remove();
     	result_string = "";
     	if(result["low"])
-    			result_string += `<p><b>Level ID: ${result["low"]["online_id"]}</b>
+    			result_string += `<p><b>${type} ID: ${result["low"]["online_id"]}</b>
 				<br>Estimated date: ${result["low"]["estimation"]}</p>`;
 
 		if(result["high"])
-    			result_string += `<p><b>Level ID: ${result["high"]["online_id"]}</b>
+    			result_string += `<p><b>${type} ID: ${result["high"]["online_id"]}</b>
 				<br>Estimated date: ${result["high"]["estimation"]}</p>`;
 
 		if(result_string == "") result_string = "<p>An error has occured while loading estimates.</p>";
 
 		if(result["approx"])
 				result_string = `<p>Interpolated exact estimate:</p>
-				<p><b>Level ID: ${result["approx"]["online_id"]}</b>
+				<p><b>${type} ID: ${result["approx"]["online_id"]}</b>
 				<br>Estimated date: ${result["approx"]["estimation"]}</p>
 				<details>
 					<summary>Closest available estimates:</summary>
@@ -128,7 +147,12 @@
 	const form  = document.getElementById('estimator');
 
 	function estimateLevelID(id) {
-		$.getJSON(`/api/v1/date/level/${id}/`, (result) => onLoadComplete(result))
+		$.getJSON(`/api/v1/date/level/${id}/`, (result) => onLoadComplete(result, "Level"))
+			.fail(() => this.onLoadFailed());
+	}
+
+	function estimateCommentID(levelID, commentID) {
+		$.getJSON(`/api/v1/date/comment/${levelID}/${commentID}/`, (result) => onLoadComplete(result, "Comment"))
 			.fail(() => this.onLoadFailed());
 	}
 
@@ -151,8 +175,11 @@
 	    showLoading();
 
 	    online_id = form.elements['online_id'].value;
+		comment_id = form.elements['comment_id'].value;
 		if (form.elements['idType'].value == "user") {
 			estimateUserID(online_id);
+		} else if (form.elements['idType'].value == "comment") {
+			estimateCommentID(online_id, comment_id);
 		} else {
 			estimateLevelID(online_id);
 		}
@@ -182,7 +209,14 @@
             .fail(() => this.onLoadFailed());
     });
 
-
+	//show only-show-with-comments when set to comment id
+	$('input[name="idType"]').change(function() {
+		if ($(this).val() == "comment") {
+			$('.only-show-with-comments').show();
+		} else {
+			$('.only-show-with-comments').hide();
+		}
+	});
 
 </script>
 {% endblock %}
