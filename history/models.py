@@ -756,7 +756,8 @@ class Level(models.Model):
 		#self.get_first_record_id()
 	 
 		print("recalculating maximums")
-		maximums = self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False).aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'), Max('game_version'), Min('game_version'))
+		base_set = self.levelrecord_set.filter(cache_is_dupe=False, is_invalid=False)
+		maximums = base_set.aggregate(Max('stars'), Max('feature_score'), Max('epic'), Max('two_player'), Max('original'), Max('daily_id'), Max('game_version'), Min('game_version'))
 		self.cache_max_stars = maximums['stars__max'] or 0
 		#self.cache_max_filter_difficulty = models.IntegerField(default=0, db_index=True)
 		self.cache_max_featured = maximums['feature_score__max'] or 0
@@ -770,7 +771,7 @@ class Level(models.Model):
 
 		if self.cache_max_stars > 0:
 			print("recalculating minimums")
-			minimums = self.levelrecord_set.filter(cache_is_dupe=False, stars__gt=0).aggregate(Min('stars'))
+			minimums = base_set.filter(stars__gt=0).aggregate(Min('stars'))
 			self.cache_min_stars = minimums['stars__min'] or 0
 			print("set minimums, not saved")
 		else:
@@ -778,19 +779,19 @@ class Level(models.Model):
 
 		if self.cache_user_id is None or self.cache_user_id == 0:
 			print("recalculating user id")
-			user_id_set = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('user_id'))
+			user_id_set = base_set.aggregate(Max('user_id'))
 			self.cache_user_id = user_id_set['user_id__max']
 			print("set user id, not saved")
    
 		if self.cache_account_id is None or self.cache_account_id == 0:
 			print("recalculating account id")
-			account_id_set = self.levelrecord_set.filter(cache_is_dupe=False).aggregate(Max('account_id'))
+			account_id_set = base_set.aggregate(Max('account_id'))
 			self.cache_account_id = account_id_set['account_id__max']
 			print("set account id, not saved")
 
 		if self.cache_daily_id is not None and self.cache_daily_date is None:
 			print("setting daily date")
-			best_daily_record = self.levelrecord_set.filter(cache_is_dupe=False, daily_id=self.cache_daily_id, record_type=LevelRecordType.DOWNLOAD).order_by('downloads')[:1]
+			best_daily_record = base_set.filter(daily_id=self.cache_daily_id, record_type=LevelRecordType.DOWNLOAD).order_by('downloads')[:1]
 			if len(best_daily_record) > 0:
 				self.cache_daily_date = best_daily_record[0].get_real_date()
 				print("set daily date, not saved")
