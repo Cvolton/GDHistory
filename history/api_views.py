@@ -142,7 +142,7 @@ def manual_info(request, pk=None):
 @csrf_exempt
 def comment_date_estimation(request, level_id, comment_id, estimation_type="level"):
 	level_id = int(level_id)
-	range_id = utils.comment_range_for_level(level_id)
+	range_id = utils.comment_range_for_account(level_id) if estimation_type == "account" else utils.comment_range_for_level(level_id)
 	comment_id = int(comment_id)
 	estimation_type = CommentEstimationType.ACCOUNT if estimation_type == "account" else CommentEstimationType.LEVEL
 

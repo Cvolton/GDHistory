@@ -35,9 +35,15 @@
 							Comment ID
 						</label>
 					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="idType" id="accountCommentIDCheck" value="account_comment">
+						<label class="form-check-label" for="accountCommentIDCheck">
+							Profile Post ID
+						</label>
+					</div>
 					{% endif %}
 					<div class="mb-3 mt-2">
-						<label for="online_id" class="form-label only-show-with-comments">Level ID</label>
+						<label for="online_id" class="form-label only-show-with-comments" id="levelIDLabel">Level ID</label>
 						<input class="form-control" type="number" id="online_id" name="online_id">
 					</div>
 					<div class="mb-3 mt-2 only-show-with-comments">
@@ -151,8 +157,8 @@
 			.fail(() => this.onLoadFailed());
 	}
 
-	function estimateCommentID(levelID, commentID) {
-		$.getJSON(`/api/v1/date/comment/${levelID}/${commentID}/`, (result) => onLoadComplete(result, "Comment"))
+	function estimateCommentID(levelID, commentID, type="level") {
+		$.getJSON(`/api/v1/date/comment/${levelID}/${commentID}/${type}/`, (result) => onLoadComplete(result, "Comment"))
 			.fail(() => this.onLoadFailed());
 	}
 
@@ -179,7 +185,9 @@
 		if (form.elements['idType'].value == "user") {
 			estimateUserID(online_id);
 		} else if (form.elements['idType'].value == "comment") {
-			estimateCommentID(online_id, comment_id);
+			estimateCommentID(online_id, comment_id, "level");
+		} else if (form.elements['idType'].value == "account_comment") {
+			estimateCommentID(online_id, comment_id, "account");
 		} else {
 			estimateLevelID(online_id);
 		}
@@ -211,8 +219,9 @@
 
 	//show only-show-with-comments when set to comment id
 	$('input[name="idType"]').change(function() {
-		if ($(this).val() == "comment") {
+		if ($(this).val() == "comment" || $(this).val() == "account_comment") {
 			$('.only-show-with-comments').show();
+			$('#levelIDLabel').text($(this).val() == "account_comment" ? 'Account ID' : 'Level ID');
 		} else {
 			$('.only-show-with-comments').hide();
 		}
