@@ -335,7 +335,7 @@ def process_new_comments(response_json):
 			relative_upload_date = comment["timestamp"],
 			level_id = comment["level_id"],
 			comment_id = comment["comment_id"],
-			type = CommentEstimationType.LEVEL
+			type = CommentEstimationType.ACCOUNT if comment.get("type", "level") == "account" else CommentEstimationType.LEVEL
 		).calculate()
         
     return True

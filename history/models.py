@@ -1000,6 +1000,8 @@ class CommentDateEstimation(models.Model):
 
 		if self.type == CommentEstimationType.LEVEL:
 			self.range_id = utils.comment_range_for_level(self.level_id)
+		elif self.type == CommentEstimationType.ACCOUNT:
+			self.range_id = utils.comment_range_for_account(int(self.level_id))
 
 		self.save()
 
