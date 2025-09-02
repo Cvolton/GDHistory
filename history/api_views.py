@@ -6,7 +6,7 @@ from django.db.models import Min, Max, Q
 
 from datetime import datetime, UTC
 
-from .models import LevelRecord, LevelDateEstimation, GDUserRecord, GDUser, ManualSubmission, Level, CommentDateEstimation
+from .models import LevelRecord, LevelDateEstimation, GDUserRecord, GDUser, ManualSubmission, Level, CommentDateEstimation, CommentEstimationType
 from . import utils, constants, meili_utils
 from .forms import AdvancedSearchForm, ApiLevelForm
 
@@ -140,16 +140,17 @@ def manual_info(request, pk=None):
 	return JsonResponse(manual.get_serialized_base())
 
 @csrf_exempt
-def comment_date_estimation(request, level_id, comment_id):
+def comment_date_estimation(request, level_id, comment_id, estimation_type="level"):
 	level_id = int(level_id)
 	range_id = utils.comment_range_for_level(level_id)
 	comment_id = int(comment_id)
+	estimation_type = CommentEstimationType.ACCOUNT if estimation_type == "account" else CommentEstimationType.LEVEL
 
-	low = CommentDateEstimation.objects.filter(range_id=range_id, comment_id__lte=comment_id).order_by('-estimation')[:1]
-	high = CommentDateEstimation.objects.filter(range_id=range_id, comment_id__gte=comment_id).order_by('estimation')[:1]
+	low = CommentDateEstimation.objects.filter(type=estimation_type, range_id=range_id, comment_id__lte=comment_id).order_by('-estimation')[:1]
+	high = CommentDateEstimation.objects.filter(type=estimation_type, range_id=range_id, comment_id__gte=comment_id).order_by('estimation')[:1]
 
-	#if low: low = CommentDateEstimation.objects.filter(range_id=range_id, estimation=low[0].estimation).order_by('estimation')
-	#if high: high = CommentDateEstimation.objects.filter(range_id=range_id, estimation=high[0].estimation).order_by('estimation')
+	#if low: low = CommentDateEstimation.objects.filter(type=estimation_type, range_id=range_id, estimation=low[0].estimation).order_by('estimation')
+	#if high: high = CommentDateEstimation.objects.filter(type=estimation_type, range_id=range_id, estimation=high[0].estimation).order_by('estimation')
 
 	approx = None
 	if low and high:

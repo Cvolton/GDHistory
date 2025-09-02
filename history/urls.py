@@ -39,6 +39,7 @@ urlpatterns = [
     path('api/v1/date/user/<online_id>/', api_views.user_to_level_estimation, name='api_estimate_user'),
     path('api/v1/date/level/<online_id>/', api_views.level_date_estimation, name='api_estimate_level'),
     path('api/v1/date/comment/<level_id>/<comment_id>/', api_views.comment_date_estimation, name='api_estimate_comment'),
+    path('api/v1/date/comment/<level_id>/<comment_id>/<estimation_type>/', api_views.comment_date_estimation, name='api_estimate_comment'),
     path('api/v1/date/date/<online_date>/', api_views.level_date_to_id_estimation, name='api_estimate_date'),
     path('api/v1/date/timestamp/<online_timestamp>/', api_views.level_timestamp_to_id_estimation, name='api_estimate_timestamp'),
     path('api/v1/search/level/advanced/', api_views.level_search, name='api_level_search'),

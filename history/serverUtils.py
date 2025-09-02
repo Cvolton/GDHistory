@@ -1,5 +1,5 @@
 from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text, get_level_object
-from .models import ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType, LevelDateEstimation, CommentDateEstimation
+from .models import ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType, LevelDateEstimation, CommentDateEstimation, CommentEstimationType
 
 from .constants import XORKeys, MiscConstants
 
@@ -334,7 +334,8 @@ def process_new_comments(response_json):
 			created = timezone.datetime.fromisoformat(comment["estimation_created"]),
 			relative_upload_date = comment["timestamp"],
 			level_id = comment["level_id"],
-			comment_id = comment["comment_id"]
+			comment_id = comment["comment_id"],
+			type = CommentEstimationType.LEVEL
 		).calculate()
         
     return True

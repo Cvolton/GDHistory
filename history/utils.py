@@ -331,3 +331,11 @@ def comment_range_for_level(level_id):
 		return -1
 	else:
 		return i
+
+def comment_range_for_account(account_id):
+    i = bisect.bisect_right(MiscConstants.ACCOUNT_COMMENT_RANGES, account_id) - 1
+    if i < 0 or i >= len(MiscConstants.ACCOUNT_COMMENT_RANGES):
+        print("Invalid Account ID")
+        return -1
+    else:
+        return i

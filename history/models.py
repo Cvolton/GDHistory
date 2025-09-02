@@ -22,6 +22,10 @@ class LevelRecordType(models.TextChoices):
 		DOWNLOAD = 'download', _('downloadGJLevel')
 		GET = 'get', _('getGJLevels')
 		MANUAL = 'manual', _('manual')
+  
+class CommentEstimationType(models.IntegerChoices):
+    LEVEL = 0
+    ACCOUNT = 1
 
 class HistoryUser(models.Model):
 	user = models.OneToOneField(
@@ -970,6 +974,8 @@ class CommentDateEstimation(models.Model):
 	level_id = models.IntegerField(db_index=True) # only for correction if range_id gets set wrong incorrectly
 	comment_id = models.IntegerField(db_index=True)
 
+	type = models.IntegerField(choices=CommentEstimationType.choices, default=CommentEstimationType.LEVEL, db_index=True)
+
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 
 	created = models.DateTimeField(db_index=True)
@@ -992,7 +998,8 @@ class CommentDateEstimation(models.Model):
 		else:
 			return
 
-		self.range_id = utils.comment_range_for_level(self.level_id)
+		if self.type == CommentEstimationType.LEVEL:
+			self.range_id = utils.comment_range_for_level(self.level_id)
 
 		self.save()
 
