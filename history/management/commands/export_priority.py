@@ -36,13 +36,14 @@ class Command(BaseCommand):
 		json.dump(task_json, f)
 		f.close()
   
-		task_json = {
-			"endpoint": "getGJLevels21",
-			"parameters": {
-				"type": "26",
-				"str": ",".join(map(str, levels_to_export)),
+		if len(levels_to_export) > 0:
+			task_json = {
+				"endpoint": "getGJLevels21",
+				"parameters": {
+					"type": "26",
+					"str": ",".join(map(str, levels_to_export)),
+				}
 			}
-		}
   
 		print("Saving JSON")
 		f = open(f"{data_path}/Exports/LevelTaskPriority2.json", "w")
