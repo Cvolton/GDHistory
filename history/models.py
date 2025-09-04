@@ -992,6 +992,12 @@ class CommentDateEstimation(models.Model):
 		elif "minutes" in self.relative_upload_date:
 			minutes = int(self.relative_upload_date.split(' ')[0])
 			self.estimation = self.created - timedelta(minutes=minutes)
+		elif "week" in self.relative_upload_date:
+			weeks = int(self.relative_upload_date.split(' ')[0])
+			self.estimation = self.created - timedelta(days=7*weeks)
+		elif "month" in self.relative_upload_date:
+			months = int(self.relative_upload_date.split(' ')[0])
+			self.estimation = self.created - timedelta(days=30*months)
 		elif "year" in self.relative_upload_date:
 			years = int(self.relative_upload_date.split(' ')[0])
 			self.estimation = self.created - timedelta(days=365*years)
