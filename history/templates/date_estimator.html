@@ -28,7 +28,6 @@
 							User ID
 						</label>
 					</div>
-					{%if user.is_authenticated %}
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" type="radio" name="idType" id="commentIDCheck" value="comment">
 						<label class="form-check-label" for="commentIDCheck">
@@ -41,7 +40,6 @@
 							Profile Post ID
 						</label>
 					</div>
-					{% endif %}
 					<div class="mb-3 mt-2">
 						<label for="online_id" class="form-label only-show-with-comments" id="levelIDLabel">Level ID</label>
 						<input class="form-control" type="number" id="online_id" name="online_id">
@@ -96,30 +94,63 @@
 </div>
 
 <script type="text/javascript">
+	function toDateString(date) {
+		if (typeof date === 'string' || date instanceof String) {
+			date = new Date(date);
+		}
+		return date.toISOString().split("T")[0] + " <small>" + date.toISOString().split("T")[1].split('.')[0].split('Z')[0] + " (UTC)</small>";
+	}
+
+	function sameDateNextYear(date) {
+		if (typeof date === 'string' || date instanceof String) {
+			date = new Date(date);
+		}
+
+		let time = date.getTime();
+		while (time < Date.now()) {
+			time += 31536000000;
+		}
+		return new Date(time).toISOString().split("T")[0];
+	}
+
 	function onLoadComplete(result, type="Level") {
     	$('#result-pane').remove();
     	result_string = "";
-    	if(result["low"])
-    			result_string += `<p><b>${type} ID: ${result["low"]["online_id"]}</b>
-				<br>Estimated date: ${result["low"]["estimation"]}</p>`;
+    	if(result["low"]) {
+			result_string += `<p><b>${type} ID: ${result["low"]["online_id"]}</b>
+			<br>Estimated date: ${toDateString(result["low"]["estimation"])}</p>`;
+
+		}
 
 		if(result["high"])
     			result_string += `<p><b>${type} ID: ${result["high"]["online_id"]}</b>
-				<br>Estimated date: ${result["high"]["estimation"]}</p>`;
+				<br>Estimated date: ${toDateString(result["high"]["estimation"])}</p>`;
 
 		if(result_string == "") result_string = "<p>An error has occured while loading estimates.</p>";
 
-		if(result["approx"])
-				result_string = `<p>Interpolated exact estimate:</p>
-				<p><b>${type} ID: ${result["approx"]["online_id"]}</b>
-				<br>Estimated date: ${result["approx"]["estimation"]}</p>
-				<details>
-					<summary>Closest available estimates:</summary>
-					<p>${result_string}</p>
-				</details>`
-		else
-				result_string = `<p>Closest available estimates:</p>
-				<p>${result_string}</p>`
+		let inaccurate = false;
+		if(result["low"] && result["high"]) {
+			let difference = Math.abs(new Date(result["high"]["estimation"]) - new Date(result["low"]["estimation"]));
+			let days = Math.floor(difference / (1000 * 60 * 60 * 24));
+			inaccurate = days > 7;
+		}
+
+		if(result["approx"]) {
+			result_string = `${inaccurate ? `<p><b><span style="color: red;">Warning:</span></b>
+				Interpolated estimate for this ID may be <i>wildly</i> inaccurate,
+				please check back 
+				on ${sameDateNextYear(result["approx"]["estimation"])}.</p>` : ''}
+			<p>Interpolated exact estimate:</p>
+			<p><b>${type} ID: ${result["approx"]["online_id"]}</b>
+			<br>Estimated date: ${toDateString(result["approx"]["estimation"])}</p>
+			<details>
+				<summary>Closest available estimates:</summary>
+				<p>${result_string}</p>
+			</details>`
+		} else {
+			result_string = `<p>Closest available estimates:</p>
+			<p>${result_string}</p>`
+		}
 
 		$('#result-card').append(`
 			<span id="result-pane">
