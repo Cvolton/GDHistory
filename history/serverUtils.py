@@ -328,6 +328,11 @@ def process_cutoffs(response_json):
 	return True
 
 def process_new_comments(response_json):
+    type_map = {
+		"level": CommentEstimationType.LEVEL,
+		"account": CommentEstimationType.ACCOUNT,
+		"friend_request": CommentEstimationType.FRIEND_REQUEST
+	}
     # {'level_id': 13519, 'comment_id': 9922707, 'timestamp': '5 minutes'}
     for comment in response_json["dates"]:
         CommentDateEstimation(
@@ -335,7 +340,7 @@ def process_new_comments(response_json):
 			relative_upload_date = comment["timestamp"],
 			level_id = comment["level_id"],
 			comment_id = comment["comment_id"],
-			type = CommentEstimationType.ACCOUNT if comment.get("type", "level") == "account" else CommentEstimationType.LEVEL
+			type = type_map.get(comment.get("type", "level"), CommentEstimationType.LEVEL)
 		).calculate()
         
     return True

@@ -141,10 +141,25 @@ def manual_info(request, pk=None):
 
 @csrf_exempt
 def comment_date_estimation(request, level_id, comment_id, estimation_type="level"):
+	type_map = {
+		"level": CommentEstimationType.LEVEL,
+		"account": CommentEstimationType.ACCOUNT,
+		"friend_request": CommentEstimationType.FRIEND_REQUEST
+	}
+ 
+	range_funcs = {
+		CommentEstimationType.LEVEL: utils.comment_range_for_level,
+		CommentEstimationType.ACCOUNT: utils.comment_range_for_account,
+		CommentEstimationType.FRIEND_REQUEST: lambda level_id: 0
+	}
+ 
+	if estimation_type not in type_map:
+		return JsonResponse({'success': False}, status=400)
+
+	estimation_type = type_map[estimation_type]
 	level_id = int(level_id)
-	range_id = utils.comment_range_for_account(level_id) if estimation_type == "account" else utils.comment_range_for_level(level_id)
+	range_id = range_funcs.get(estimation_type, lambda level_id: 0)(level_id)
 	comment_id = int(comment_id)
-	estimation_type = CommentEstimationType.ACCOUNT if estimation_type == "account" else CommentEstimationType.LEVEL
 
 	low = CommentDateEstimation.objects.filter(type=estimation_type, range_id=range_id, comment_id__lte=comment_id).order_by('-estimation')[:1]
 	high = CommentDateEstimation.objects.filter(type=estimation_type, range_id=range_id, comment_id__gte=comment_id).order_by('estimation')[:1]

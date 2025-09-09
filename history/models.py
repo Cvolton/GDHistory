@@ -26,6 +26,7 @@ class LevelRecordType(models.TextChoices):
 class CommentEstimationType(models.IntegerChoices):
     LEVEL = 0
     ACCOUNT = 1
+    FRIEND_REQUEST = 2
 
 class HistoryUser(models.Model):
 	user = models.OneToOneField(
@@ -1008,6 +1009,8 @@ class CommentDateEstimation(models.Model):
 			self.range_id = utils.comment_range_for_level(self.level_id)
 		elif self.type == CommentEstimationType.ACCOUNT:
 			self.range_id = utils.comment_range_for_account(int(self.level_id))
+		else:
+			self.range_id = 0
 
 		self.save()
 
