@@ -331,7 +331,8 @@ def process_new_comments(response_json):
     type_map = {
 		"level": CommentEstimationType.LEVEL,
 		"account": CommentEstimationType.ACCOUNT,
-		"friend_request": CommentEstimationType.FRIEND_REQUEST
+		"friend_request": CommentEstimationType.FRIEND_REQUEST,
+		"message": CommentEstimationType.MESSAGE
 	}
     # {'level_id': 13519, 'comment_id': 9922707, 'timestamp': '5 minutes'}
     for comment in response_json["dates"]:

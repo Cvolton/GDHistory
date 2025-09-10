@@ -27,6 +27,7 @@ class CommentEstimationType(models.IntegerChoices):
     LEVEL = 0
     ACCOUNT = 1
     FRIEND_REQUEST = 2
+    MESSAGE = 3
 
 class HistoryUser(models.Model):
 	user = models.OneToOneField(

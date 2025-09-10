@@ -144,7 +144,8 @@ def comment_date_estimation(request, level_id, comment_id, estimation_type="leve
 	type_map = {
 		"level": CommentEstimationType.LEVEL,
 		"account": CommentEstimationType.ACCOUNT,
-		"friend_request": CommentEstimationType.FRIEND_REQUEST
+		"friend_request": CommentEstimationType.FRIEND_REQUEST,
+		"message": CommentEstimationType.MESSAGE
 	}
  
 	range_funcs = {
