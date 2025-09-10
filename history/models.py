@@ -987,12 +987,18 @@ class CommentDateEstimation(models.Model):
 	def calculate(self):
 		if not self.relative_upload_date: return
   
-		if "seconds" in self.relative_upload_date:
+		if "second" in self.relative_upload_date:
 			seconds = int(self.relative_upload_date.split(' ')[0])
 			self.estimation = self.created - timedelta(seconds=seconds)
-		elif "minutes" in self.relative_upload_date:
+		elif "minute" in self.relative_upload_date:
 			minutes = int(self.relative_upload_date.split(' ')[0])
 			self.estimation = self.created - timedelta(minutes=minutes)
+		elif "hour" in self.relative_upload_date:
+			hours = int(self.relative_upload_date.split(' ')[0])
+			self.estimation = self.created - timedelta(hours=hours)
+		elif "day" in self.relative_upload_date:
+			days = int(self.relative_upload_date.split(' ')[0])
+			self.estimation = self.created - timedelta(days=days)
 		elif "week" in self.relative_upload_date:
 			weeks = int(self.relative_upload_date.split(' ')[0])
 			self.estimation = self.created - timedelta(days=7*weeks)

@@ -40,6 +40,14 @@
 							Profile Post ID
 						</label>
 					</div>
+					{% if user.is_authenticated %}
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="idType" id="friendRequestIDCheck" value="friend_request">
+						<label class="form-check-label" for="friendRequestIDCheck">
+							Friend Req.
+						</label>
+					</div>
+					{% endif %}
 					<div class="mb-3 mt-2">
 						<label for="online_id" class="form-label only-show-with-comments" id="levelIDLabel">Level ID</label>
 						<input class="form-control" type="number" id="online_id" name="online_id">
@@ -113,7 +121,7 @@
 		return new Date(time).toISOString().split("T")[0];
 	}
 
-	function onLoadComplete(result, type="Level") {
+	function onLoadComplete(result, type="Level", subtype="level") {
     	$('#result-pane').remove();
     	result_string = "";
     	if(result["low"]) {
@@ -136,11 +144,21 @@
 		}
 
 		if(result["approx"]) {
-			result_string = `${inaccurate ? `<p><b><span style="color: red;">Warning:</span></b>
+
+			// Comment ID estimator innacuracy message
+			let warning = `${inaccurate ? `<p><b><span style="color: red;">Warning:</span></b>
 				The interpolated exact estimate for this ID is likely <span style="font-weight: 650;">not</span> accurate yet,
 				please check back 
-				on ${sameDateNextYear(result["approx"]["estimation"])}.</p>` : ''}
-			<p>Interpolated exact estimate:</p>
+				on ${sameDateNextYear(result["approx"]["estimation"])}.</p>` : ''}`
+			
+			// Friend Request estimator innacuracy message
+			if (subtype == "friend_request") {
+				warning = `<p><b><span style="color: red;">Warning:</span></b>
+				Friend request estimates may be inaccurate due to a lack of data points.</p>`;
+			}
+
+			// Main result
+			result_string = `${warning}<p>Interpolated exact estimate:</p>
 			<p><b>${type} ID: ${result["approx"]["online_id"]}</b>
 			<br>Estimated date: ${toDateString(result["approx"]["estimation"])}</p>
 			<details>
@@ -189,7 +207,7 @@
 	}
 
 	function estimateCommentID(levelID, commentID, type="level") {
-		$.getJSON(`/api/v1/date/comment/${levelID}/${commentID}/${type}/`, (result) => onLoadComplete(result, "Comment"))
+		$.getJSON(`/api/v1/date/comment/${levelID}/${commentID}/${type}/`, (result) => onLoadComplete(result, "Comment", type))
 			.fail(() => this.onLoadFailed());
 	}
 
@@ -219,6 +237,8 @@
 			estimateCommentID(online_id, comment_id, "level");
 		} else if (form.elements['idType'].value == "account_comment") {
 			estimateCommentID(online_id, comment_id, "account");
+		} else if (form.elements['idType'].value == "friend_request") {
+			estimateCommentID(0, online_id, "friend_request");
 		} else {
 			estimateLevelID(online_id);
 		}
