@@ -22,7 +22,7 @@ from os import sys
 def index(request):
 	def main_placeholder():
 		placeholders = []
-		for i in range(0,5):
+		for i in range(0,6):
 			placeholders.append({
 				"online_id": "█" * 9,
 				"level_name": "█" * random.randint(5, 10)
