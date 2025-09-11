@@ -320,7 +320,7 @@ def get_blacklisted_userids(force_reload = False):
 		else:
 			with open(f"{data_path}/blacklisted_userids.txt", "r") as f:
 				values = f.read().splitlines()
-			values = [int(value.strip()) for value in values if value.isdigit]
+			values = [int(value.strip()) for value in values if value.isdigit()]
 		cache.set('blacklisted_userids', values, None)
 	return values
 
