@@ -40,15 +40,16 @@ def do_search_cache_updating(records, status):
     for record in records:
         print(f"{i} / {record_count} - Updating {record.online_id}")
         if record.is_blank():
-            record.cache_needs_search_update = record.cache_needs_search_update or (record.cache_search_available == False)
+            record.cache_needs_search_update = record.cache_needs_search_update or (record.cache_search_available == True)
             record.cache_search_available = False
+            record.cache_is_blank = True
         else:
             record.cache_search_available = status
             record.cache_needs_search_update = True
         #record.save()
         i += 1
 
-    Level.objects.bulk_update(records, ['cache_search_available', 'cache_needs_search_update'], batch_size=1000)
+    Level.objects.bulk_update(records, ['cache_search_available', 'cache_needs_search_update', 'cache_is_blank'], batch_size=1000)
 
 def start_is_public_updating(state):
     records_max = 50000
@@ -65,5 +66,6 @@ def update_cached_fields():
 
     estimated_id = get_level_id_within_window()
 
-    do_search_cache_updating(Level.objects.filter( Q(is_public=True) | Q(online_id__lt=estimated_id) , hide_from_search=False).exclude(cache_search_available=True), True)
+    do_search_cache_updating(Level.objects.filter( Q(is_public=True) | Q(online_id__lt=estimated_id) , hide_from_search=False, cache_is_blank = False).exclude(cache_search_available=True), True)
     do_search_cache_updating(Level.objects.filter( Q(is_public=False, online_id__gte=estimated_id) | Q( hide_from_search=True) ).exclude(cache_search_available=False), False)
+    do_search_cache_updating(Level.objects.filter( cache_is_blank=True ).exclude(cache_search_available=False), False)

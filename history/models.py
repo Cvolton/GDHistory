@@ -491,6 +491,7 @@ class Level(models.Model):
 	is_deleted = models.BooleanField(default=False, db_index=True)
 	deleted_date = models.DateTimeField(blank=True, null=True)
 	hide_from_search = models.BooleanField(db_index=True, default=False)
+	cache_is_blank = models.BooleanField(db_index=True, blank=True, null=True)
 
 	cache_level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
@@ -578,6 +579,7 @@ class Level(models.Model):
 		self.cache_user_id = None
 		self.cache_account_id = None
 		self.cache_search_available = False
+		self.cache_is_blank = True
 		self.save()
 
 	def set_public(self, public):
@@ -730,6 +732,7 @@ class Level(models.Model):
 		if changed:
 			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.is_blank() == False)
 		
+		self.cache_is_blank = self.is_blank()
 		if changed and not force:
 			self.save()
 
