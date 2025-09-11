@@ -131,7 +131,6 @@ def user_info(request, online_id=None, view_mode="normal"):
 
 @csrf_exempt
 def manual_info(request, pk=None):
-	manual = ManualSubmission.objects.get(pk=pk)
 	try:
 		manual = ManualSubmission.objects.get(pk=pk)
 	except:
