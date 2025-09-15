@@ -287,12 +287,14 @@ def level_search(request):
 		offset = form.cleaned_data['offset'] or 0
 		sort = list(filter(sort_filter, (form.cleaned_data['sort']).split(",")))
 		search_filter = form.cleaned_data['filter']
+		matching_strategy = form.cleaned_data['matching_strategy'] or "all"
 	else:
 		query = ""
 		offset = 0
 		limit = 10
 		sort = []
 		search_filter = None
+		matching_strategy = "all"
 
 	#data sanitization
 	if "cache_downloads:asc" not in sort and "cache_downloads:desc" not in sort:
@@ -306,7 +308,8 @@ def level_search(request):
 			'limit': limit,
 			'offset': offset,
 			'sort': sort,
-			'filter': search_filter
+			'filter': search_filter,
+			'matchingStrategy': matching_strategy
 		})
 
 		return JsonResponse(search_result)

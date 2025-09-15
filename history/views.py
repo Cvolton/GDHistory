@@ -286,7 +286,8 @@ def search(request):
 				'limit': results_per_page,
 				'offset': start_offset,
 				'sort': sort,
-				'filter': " AND ".join(filters)
+				'filter': " AND ".join(filters),
+				'matchingStrategy': 'all'
 				})
 			level_results = search_result['hits']
 			level_count = search_result['estimatedTotalHits']
