@@ -66,8 +66,8 @@ def update_settings(force = False):
 	]
 
 	MAX_TOTAL_HITS = 999999
- 
-	if force or index.get_settings().get('filterableAttributes') != sorted(attribute_list):
+
+	if force or sorted(index.get_settings().get('filterableAttributes')) != sorted(attribute_list):
 		print("Updating Meili settings")
 		index.update_filterable_attributes(attribute_list)
 		index.update_sortable_attributes(attribute_list)
@@ -82,6 +82,22 @@ def update_settings(force = False):
 	if force or index.get_settings().get('pagination') != {'maxTotalHits': MAX_TOTAL_HITS}:
 		print("Updating pagination settings")
 		index.update_pagination_settings({'maxTotalHits': MAX_TOTAL_HITS})
+  
+	ranking_rules = [
+		"proximity",
+		"words",
+		"sort",
+		"exactness",
+		"attribute"
+	]
+ 
+	if force or index.get_settings().get('rankingRules') != ranking_rules:
+		print("Updating ranking rules")
+		index.update_ranking_rules(ranking_rules)
+  
+	if force or index.get_settings().get('typoTolerance')['enabled']:
+		print("Disabling typo tolerance")
+		index.update_typo_tolerance({'enabled': False})
 
 def index_levels():
 	from .models import Level
