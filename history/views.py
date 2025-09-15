@@ -61,7 +61,7 @@ def view_level(request, online_id=None, record_id=None):
 	if level.cache_needs_revalidation:
 		tasks.revalidate_cache_level.delay(level.online_id)
 
-	context = {'online_id': online_id, 'record_id': record_id, 'first_record': first_record, 'comment': level.comment, 'pk': level.pk, 'records_count': level.levelrecord_set.count(), 'level_string_count': level.cache_available_versions}
+	context = {'online_id': online_id, 'record_id': record_id, 'first_record': first_record, 'comment': level.comment, 'pk': level.pk, 'records_count': level.levelrecord_set.count(), 'level_string_count': level.cache_available_versions, 'is_public': level.is_public}
 
 	return render(request, 'level.html', context)
 
