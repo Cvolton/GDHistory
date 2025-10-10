@@ -325,6 +325,8 @@ def get_blacklisted_userids(force_reload = False):
 	return values
 
 def comment_range_for_level(level_id):
+	if level_id == 57436521: return -2 #youve been trolled has its own range
+    
 	i = bisect.bisect_right(MiscConstants.COMMENT_RANGES, level_id) - 1
 	if i < 0 or i >= len(MiscConstants.COMMENT_RANGES):
 		print("Invalid Level ID")
