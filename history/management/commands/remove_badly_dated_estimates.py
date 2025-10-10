@@ -31,4 +31,7 @@ class Command(BaseCommand):
                             f"for range {rid} with estimation {invalid.estimation} "
                             f"and comment_id {invalid.comment_id}"
                         )
+                    
+                    ids = [inv.id for inv in invalids]
+                    deleted, _ = CommentDateEstimation.objects.filter(id__in=ids).delete()
 
