@@ -12,10 +12,14 @@ def update_is_public():
     #record_count = records.count()
     while True:
         records_limited = records[0:1000]
+        handled_online_ids = Set()
         if len(records_limited) < 1:
             return
         for record in records_limited:
+            if record.level.online_id in handled_online_ids:
+                continue
             print(f"is_public - Updating {record.level.online_id}")
+            handled_online_ids.add(record.level.online_id)
             record.level.set_public(True)
             record.level.save()
 
