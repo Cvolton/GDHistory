@@ -4,10 +4,10 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 
 class Command(BaseCommand):
-	help = 'Publishes levels with get records'
+    help = 'Publishes levels with get records'
 
-	def handle(self, *args, **options):
-		target_ids = list(
+    def handle(self, *args, **options):
+        target_ids = list(
             LevelRecord.objects.filter(
                 record_type="get",
                 level__is_public=False
