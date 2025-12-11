@@ -1,4 +1,4 @@
-from history.models import Level, Song
+from history.models import Level, LevelRecord
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
