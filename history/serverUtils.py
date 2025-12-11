@@ -203,9 +203,9 @@ def process_download(response_json):
 
 	record = create_level_record_from_data(level_info, level_object, LevelRecordType.DOWNLOAD, response_object, legacy_description=response_json.get('legacy_description', False))
 
-	if time_created >= MiscConstants.UNLISTED_EXPLOIT_FIX_TIME:
-		level_object.set_public(True)
-		record.cache_is_public = True
+	#if time_created >= MiscConstants.UNLISTED_EXPLOIT_FIX_TIME:
+	#	level_object.set_public(True)
+	#	record.cache_is_public = True
   
 	if level_object.is_deleted and (level_object.deleted_date is None or time_created >= level_object.deleted_date):
 		level_object.is_deleted = False
