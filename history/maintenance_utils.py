@@ -12,7 +12,7 @@ def update_is_public():
     #record_count = records.count()
     while True:
         records_limited = records[0:1000]
-        handled_online_ids = Set()
+        handled_online_ids = set()
         if len(records_limited) < 1:
             return
         for record in records_limited:
