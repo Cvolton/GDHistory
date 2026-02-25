@@ -1034,6 +1034,11 @@ class CommentDateEstimation(models.Model):
 		}
 		return response
 
+	class Meta:
+		indexes = [
+			models.Index(fields=['type', 'range_id', 'comment_id'], name='type_range_comment')
+		]
+
 class LevelDateEstimation(models.Model):
 	level = models.ForeignKey(
 		Level,
