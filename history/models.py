@@ -1036,8 +1036,8 @@ class CommentDateEstimation(models.Model):
 
 	class Meta:
 		indexes = [
-			models.Index(fields=['type', 'range_id', '-estimation', 'comment_id'], name='type_range_est_desc_idx'),
-			models.Index(fields=['type', 'range_id', 'estimation', 'comment_id'], name='type_range_est_comment_idx'),
+			models.Index(fields=['range_id', 'type', '-estimation', 'comment_id'], name='type_range_est_desc_idx'),
+			models.Index(fields=['range_id', 'type', 'estimation', 'comment_id'], name='type_range_est_comment_idx'),
 		]
 
 class LevelDateEstimation(models.Model):
