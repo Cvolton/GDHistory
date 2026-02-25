@@ -171,7 +171,15 @@ def comment_date_estimation(request, level_id, comment_id, estimation_type="leve
 		""",
 		[estimation_type, range_id, comment_id]
 	)
-	high = CommentDateEstimation.objects.filter(type=estimation_type, range_id=range_id, comment_id__gte=comment_id).order_by('estimation')[:1]
+	high = CommentDateEstimation.objects.raw(
+		"""
+		SELECT * FROM history_commentdateestimation
+		FORCE INDEX (type_range_est_comment_idx)
+		WHERE type = %s AND range_id = %s AND comment_id >= %s
+		ORDER BY estimation ASC LIMIT 1;
+		""",
+		[estimation_type, range_id, comment_id]
+	)
 
 	#if low: low = CommentDateEstimation.objects.filter(type=estimation_type, range_id=range_id, estimation=low[0].estimation).order_by('estimation')
 	#if high: high = CommentDateEstimation.objects.filter(type=estimation_type, range_id=range_id, estimation=high[0].estimation).order_by('estimation')
