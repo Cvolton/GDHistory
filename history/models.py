@@ -975,11 +975,11 @@ class Level(models.Model):
 		super(Level, self).save(*args, **kwargs)
   
 class CommentDateEstimation(models.Model):
-	range_id = models.IntegerField(db_index=True)
+	range_id = models.IntegerField()
 	level_id = models.IntegerField(db_index=True) # only for correction if range_id gets set wrong incorrectly
 	comment_id = models.IntegerField(db_index=True)
 
-	type = models.IntegerField(choices=CommentEstimationType.choices, default=CommentEstimationType.LEVEL, db_index=True)
+	type = models.IntegerField(choices=CommentEstimationType.choices, default=CommentEstimationType.LEVEL)
 
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 
