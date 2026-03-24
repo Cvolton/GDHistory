@@ -183,7 +183,7 @@ def upload_submission_data(data, user, parent=None, save_file=False):
 	submission = ManualSubmission(
 		author = user,
 		created = data['created'],
-		comment = data['comment'],
+		comment = data['comment'] if comment in data else "",
 		parent = parent,
 	)
 
