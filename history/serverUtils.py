@@ -328,14 +328,14 @@ def process_cutoffs(response_json):
 	return True
 
 def process_new_comments(response_json):
-    type_map = {
+	type_map = {
 		"level": CommentEstimationType.LEVEL,
 		"account": CommentEstimationType.ACCOUNT,
 		"friend_request": CommentEstimationType.FRIEND_REQUEST,
 		"message": CommentEstimationType.MESSAGE
 	}
-    # {'level_id': 13519, 'comment_id': 9922707, 'timestamp': '5 minutes'}
-    for comment in response_json["dates"]:
+	# {'level_id': 13519, 'comment_id': 9922707, 'timestamp': '5 minutes'}
+	for comment in response_json["dates"]:
 		if not comment["comment_id"].startswith("temp"):
 			CommentDateEstimation(
 				created = timezone.datetime.fromisoformat(comment["estimation_created"]),
@@ -344,8 +344,8 @@ def process_new_comments(response_json):
 				comment_id = comment["comment_id"],
 				type = type_map.get(comment.get("type", "level"), CommentEstimationType.LEVEL)
 			).calculate()
-        
-    return True
+		
+	return True
 
 def process_special(response_json):
 	if response_json["task"] == 'find_cutoffs':
