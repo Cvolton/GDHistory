@@ -186,15 +186,19 @@ def comment_date_estimation(request, level_id, comment_id, estimation_type="leve
 
 	approx = None
 	if low and high:
+		low_id = low[0].comment_id
+		if level_id >= 10000000 and low_id <= 170258:
+			low_id = 10000000 - (170258 - low_id)
 
 		date_difference = high[0].estimation - low[0].estimation
 		id_difference = high[0].comment_id - low[0].comment_id
-		requested_id_difference = comment_id - low[0].comment_id
+		requested_id_difference = comment_id - low_id
 		percentage = 0 if id_difference == 0 else requested_id_difference / id_difference
 		new_date_difference = date_difference * percentage
 		approx = {
 			"estimation": low[0].estimation + new_date_difference,
-			"online_id": comment_id
+			"online_id": comment_id,
+			"adjusted_low_id": low_id
 		}
 
 	response = {
