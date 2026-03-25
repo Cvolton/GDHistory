@@ -187,7 +187,7 @@ def comment_date_estimation(request, level_id, comment_id, estimation_type="leve
 	approx = None
 	if low and high:
 		low_id = low[0].comment_id
-		if level_id >= 10000000 and low_id <= 170258:
+		if comment_id >= 10000000 and low_id <= 170258:
 			low_id = 10000000 - (170258 - low_id)
 
 		date_difference = high[0].estimation - low[0].estimation
