@@ -336,13 +336,14 @@ def process_new_comments(response_json):
 	}
     # {'level_id': 13519, 'comment_id': 9922707, 'timestamp': '5 minutes'}
     for comment in response_json["dates"]:
-        CommentDateEstimation(
-			created = timezone.datetime.fromisoformat(comment["estimation_created"]),
-			relative_upload_date = comment["timestamp"],
-			level_id = comment["level_id"],
-			comment_id = comment["comment_id"],
-			type = type_map.get(comment.get("type", "level"), CommentEstimationType.LEVEL)
-		).calculate()
+		if not comment["comment_id"].startswith("temp"):
+			CommentDateEstimation(
+				created = timezone.datetime.fromisoformat(comment["estimation_created"]),
+				relative_upload_date = comment["timestamp"],
+				level_id = comment["level_id"],
+				comment_id = comment["comment_id"],
+				type = type_map.get(comment.get("type", "level"), CommentEstimationType.LEVEL)
+			).calculate()
         
     return True
 
