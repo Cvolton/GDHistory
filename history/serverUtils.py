@@ -336,7 +336,7 @@ def process_new_comments(response_json):
 	}
 	# {'level_id': 13519, 'comment_id': 9922707, 'timestamp': '5 minutes'}
 	for comment in response_json["dates"]:
-		if not comment["comment_id"].startswith("temp"):
+		if not str(comment["comment_id"]).startswith("temp"):
 			CommentDateEstimation(
 				created = timezone.datetime.fromisoformat(comment["estimation_created"]),
 				relative_upload_date = comment["timestamp"],
