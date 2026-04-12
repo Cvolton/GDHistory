@@ -191,7 +191,7 @@ def comment_date_estimation(request, level_id, comment_id, estimation_type="leve
 			low_id = 10000000 - (170258 - low_id)
 
 		date_difference = high[0].estimation - low[0].estimation
-		id_difference = high[0].comment_id - low[0].comment_id
+		id_difference = high[0].comment_id - low_id
 		requested_id_difference = comment_id - low_id
 		percentage = 0 if id_difference == 0 else requested_id_difference / id_difference
 		new_date_difference = date_difference * percentage
