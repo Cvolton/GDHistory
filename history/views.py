@@ -337,8 +337,12 @@ def login_page_placeholder(request):
 def download_record(request, record_id=None, online_id=None):
 	if record_id == None:
 		return render(request, 'error.html', {'error': 'Invalid record ID'})
-	try: record = LevelRecord.objects.get(pk=record_id)
-	except: return render(request, 'error.html', {'error': 'Record not found in our database'})
+	try:
+		record = LevelRecord.objects.get(pk=record_id)
+		if record.is_invalid:
+			raise Exception("Record is invalid")
+	except:
+		return render(request, 'error.html', {'error': 'Record not found in our database'})
 	if record.level.is_public is not True:
 		return render(request, 'error.html', {'error': 'You do not have the rights to download this record'})
 	data = ccUtils.create_data_from_level_record(record, True, False) #gdshare b64s the b64d desc already, so this is required
