@@ -379,7 +379,7 @@
 		let descriptionHtml = `<p>${bestRecord.description_encoded && bestRecord.description ? "<b>Warning:</b> Description decoding failed<br>" : ""}
 			<b>Description:</b> ${bestRecord.description ? escapeHtml(bestRecord.description) : "(No description provided.)"}<br>
 			<b>Song:</b> ${bestRecord.song && bestRecord.song.online_id != 0 ? 
-				`<a href="{% url 'search' %}?songID=${bestRecord.song.online_id}">${escapeHtml(bestRecord.song.song_name)} by <a href="{% url 'search' %}?songArtistID=${bestRecord.song.cache_artist_id}">${bestRecord.song.artist_name}</a> (ID: ${bestRecord.song.online_id})` : 
+				`<a href="{% url 'search' %}?songID=${bestRecord.song.online_id}">${escapeHtml(bestRecord.song.song_name)}</a> by <a href="{% url 'search' %}?songArtistID=${bestRecord.song.artist_id}">${bestRecord.song.artist_name}</a> (ID: ${bestRecord.song.online_id})` : 
 				`${official_song_name(bestRecord.official_song, bestRecord.game_version)} (ID: ${bestRecord.official_song})`}</p>`
 
 		let objects = bestRecord.objects_count ? `${bestRecord.objects_count?.toLocaleString('en-US')} <small>(reported)</small>` : ""
