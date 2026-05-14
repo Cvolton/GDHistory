@@ -288,7 +288,7 @@ def process_songs_in_mdlm(mdlm, save_file):
 		record.save_file.add(save_file)
 		song_object.update_with_record(record)
 
-def upload_save_file(file, date, user, *args, **kwargs):
+def upload_save_file(file, date, comment, user, *args, **kwargs):
 	data_path = get_data_path()
 
 	game_manager = load_game_manager_plist(file)
@@ -304,6 +304,7 @@ def upload_save_file(file, date, user, *args, **kwargs):
 		player_user_id=assign_key_no_pop(game_manager, 'playerUserID'),
 		player_account_id=assign_key_no_pop(game_manager, 'GJA_003'),
 		binary_version=assign_key_no_pop(game_manager, 'binaryVersion'),
+		comment=comment,
 		created=date
 	)
 	save_file.save()
