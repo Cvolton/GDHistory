@@ -145,8 +145,7 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			song_ids = assign_key_no_pop(data, 'k104'),
 			sfx_ids = assign_key_no_pop(data, 'k105'),
 			level_size = assign_key_no_pop(data, 'k39'),
-			record_type = record_type,
-			editor_tainted = editor_tainted
+			record_type = record_type
 		)
 	except:
 		assign_key(data, 'k3')
