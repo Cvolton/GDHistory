@@ -1,6 +1,6 @@
-function demon_type(demon_type_number) {
-    if (!demon_type_number) return ""
-    if (demon_type_number < 3) return "Hard"
+function demon_type(demon_type_number, rating_sum) {
+    if (!demon_type_number && rating_sum != 30) return ""
+    if (demon_type_number < 3 || rating_sum == 30) return "Hard"
     if (demon_type_number < 7) {
         type_list = ["Easy", "Medium", "Insane", "Extreme"]
         return type_list[demon_type_number - 3]
@@ -10,7 +10,7 @@ function demon_type(demon_type_number) {
 
 function difficulty(rating_sum, ratings, demon, auto, demon_type_number, game_version) {
     if (auto) return "Auto"
-    if (demon) return `${demon_type(demon_type_number)} Demon`
+    if (demon) return `${demon_type(demon_type_number, rating_sum)} Demon`
     if (!ratings || !rating_sum || ratings < 5) return "N/A"
 
     const diffs = ["N/A", "Easy", "Normal", "Hard", "Harder", "Insane"]
