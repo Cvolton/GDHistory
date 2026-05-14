@@ -31,7 +31,7 @@
 		{{ comment }}
 	</div>
 	{% endif %}
-	{% if not is_public %}
+	{% if not is_public and cache_level_string_available %}
 	<div class="alert alert-warning" role="alert">
 		<strong>Warning:</strong> Downloads are disabled for this level because GDHistory couldn't verify that it was public.
 	</div>
