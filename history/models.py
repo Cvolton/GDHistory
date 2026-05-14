@@ -16,9 +16,11 @@ from datetime import datetime
 import os, math
 
 class LevelRecordType(models.TextChoices):
+		GLM_02 = 'glm_02', _('GLM_02')
 		GLM_03 = 'glm_03', _('GLM_03')
 		GLM_10 = 'glm_10', _('GLM_10')
 		GLM_16 = 'glm_16', _('GLM_16')
+		LLM_01 = 'llm_01', _('LLM_01')
 		DOWNLOAD = 'download', _('downloadGJLevel')
 		GET = 'get', _('getGJLevels')
 		MANUAL = 'manual', _('manual')
@@ -1312,6 +1314,7 @@ class LevelRecord(models.Model):
 	song_ids = models.TextField(blank=True, null=True) #52 #k104
 	sfx_ids = models.TextField(blank=True, null=True) #53 #k105
 	level_size = models.IntegerField(blank=True, null=True) #k39
+	editor_tainted = models.BooleanField(blank=True, null=True, db_index=True) #k15 + k21 combined
 
 	song = models.ForeignKey(
 		Song,

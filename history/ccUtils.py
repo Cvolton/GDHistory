@@ -104,6 +104,8 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 		description = description_result.text
 		description_encoded = description_result.encoded
 
+	editor_tainted = data.get('k21', 0) == 2 and data.get('k15', 0) == 0
+
 	try:
 		return LevelRecord.objects.get(level=level_object,
 			level_name = assign_key_no_pop(data, 'k2'),
@@ -143,7 +145,8 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			song_ids = assign_key_no_pop(data, 'k104'),
 			sfx_ids = assign_key_no_pop(data, 'k105'),
 			level_size = assign_key_no_pop(data, 'k39'),
-			record_type = record_type
+			record_type = record_type,
+			editor_tainted = editor_tainted
 		)
 	except:
 		assign_key(data, 'k3')
@@ -186,6 +189,7 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			sfx_ids = assign_key(data, 'k105'),
 			level_size = assign_key(data, 'k39'),
 			record_type = record_type,
+			editor_tainted = editor_tainted,
 			unprocessed_data = data
 		)
 		record.save()
@@ -250,6 +254,23 @@ def create_data_from_level_record(record, double_base64 = False, is_saved = Fals
 			data2[key] = data[key]
 
 	return data2
+
+def process_levels_in_llm(llm, record_type, save_file):
+	glm = {}
+	for level, data in llm.items():
+		if not isinstance(data, dict):
+			continue
+		# this resets data set by Editor Level ID API mod
+		if data.get('k27', 0) == data.get('k11', 0):
+			data['k27'] = None
+			data['k11'] = None
+
+		# k1 is the level id - skip if not uploaded
+		# k79 is unlisted - skip if true
+		# k21 is game version - not set for editor levels
+		if 'k1' in data and data['k1'] not in [None, 0] and data.get('k79', False) != True and data.get('k17', 0) == 0:
+			glm[level] = data
+	process_levels_in_glm(glm, record_type, save_file)
 
 def process_levels_in_glm(glm, record_type, save_file):
 	#records = []
@@ -338,6 +359,10 @@ def process_save_file(save_id):
 		process_levels_in_glm(game_manager['GLM_16'], LevelRecordType.GLM_16, save_file)
 	if 'MDLM_001' in game_manager:
 		process_songs_in_mdlm(game_manager['MDLM_001'], save_file)
+	if 'GLM_02' in game_manager:
+		process_levels_in_llm(game_manager['GLM_02'], LevelRecordType.GLM_02, save_file)
+	if 'LLM_01' in game_manager:
+		process_levels_in_llm(game_manager['LLM_01'], LevelRecordType.LLM_01, save_file)
 
 	save_file.is_processed = True
 	save_file.save()
