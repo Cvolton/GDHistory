@@ -209,7 +209,7 @@ def create_data_from_level_record(record, double_base64 = False, is_saved = Fals
 		'k9': record.rating,
 		'k10': record.rating_sum,
 		'k16': record.level_version,
-		'k17': record.game_version,
+		'k17': record.game_version or -1,
 		'k21': 3 if is_saved else 2,
 		'k23': record.length,
 		'k41': record.password,
