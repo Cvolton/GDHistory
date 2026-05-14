@@ -264,11 +264,15 @@ def process_levels_in_llm(llm, record_type, save_file):
 		if data.get('k27', 0) == data.get('k11', 0):
 			data['k27'] = None
 			data['k11'] = None
+		# otherwise invalid record
+		elif data.get('k27', 0) > 0 or data.get('k11', 0) > 0:
+			continue
 
 		# k1 is the level id - skip if not uploaded
 		# k79 is unlisted - skip if true
 		# k21 is game version - not set for editor levels
-		if 'k1' in data and data['k1'] not in [None, 0] and data.get('k79', False) != True and data.get('k17', 0) == 0:
+		# k10 is rating sum - not set for editor levels
+		if 'k1' in data and data['k1'] not in [None, 0] and data.get('k79', False) != True and data.get('k17', 0) == 0 and data.get('k10', 0) == 0:
 			glm[level] = data
 	process_levels_in_glm(glm, record_type, save_file)
 
