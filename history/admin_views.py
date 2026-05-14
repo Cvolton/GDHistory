@@ -41,6 +41,23 @@ def search_update_all(request):
     
     return render(request, 'error_success.html', {'error': "good"})
 
+
+@user_passes_test(lambda u: u.is_superuser)
+def set_record_invalid(request):
+    if request.method == 'POST':
+        form = ForceUsernameForm(request.POST)
+        if form.is_valid():
+            record_id = form.cleaned_data['level_id']
+            try:
+                level_record = LevelRecord.objects.get(id=record_id)
+                level_record.is_invalid = True
+                level_record.save()
+                return render(request, 'error_success.html', {'error': "Record set to invalid successfully."})
+            except LevelRecord.DoesNotExist:
+                return render(request, 'error.html', {'error': "Level record not found."})
+    else:
+        return render(request, 'error.html', {'error': "Invalid request method."})
+
 @user_passes_test(lambda u: u.is_superuser)
 def force_username(request):
     if request.method == 'POST':
