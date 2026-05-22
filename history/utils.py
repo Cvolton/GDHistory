@@ -242,7 +242,7 @@ def recalculate_daily_records():
 	records["Weekly"] = []
 	records["Event"] = []
 	#TODO: do not hardcode years
-	for i in range(2016, 2026):
+	for i in range(2016, 2027):
 		records[i] = []
 		#records[f"Weekly {i}"] = []
 
@@ -259,7 +259,8 @@ def recalculate_daily_records():
 			elif record.cache_daily_id < 2223: records[2022].append(record.get_serialized_base())
 			elif record.cache_daily_id < 2590: records[2023].append(record.get_serialized_base())
 			elif record.cache_daily_id < 2958: records[2024].append(record.get_serialized_base())
-			else: records[2025].append(record.get_serialized_base())
+			elif record.cache_daily_id < 3324: records[2025].append(record.get_serialized_base())
+			else: records[2026].append(record.get_serialized_base())
 		else:
 			if record.cache_daily_id < 200000: records["Weekly"].append(record.get_serialized_base())
 			else: records["Event"].append(record.get_serialized_base())
