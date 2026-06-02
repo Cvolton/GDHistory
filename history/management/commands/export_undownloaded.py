@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		data_path = history.utils.get_data_path()
-		levels = Level.objects.exclude(is_deleted=True).filter(cache_needs_updating=True).prefetch_related('levelrecord_set')
+		levels = Level.objects.filter(cache_needs_updating=True).prefetch_related('levelrecord_set')
 		level_count = levels.count()
 		levels_to_export = []
 		batch_size = 2500
@@ -22,6 +22,8 @@ class Command(BaseCommand):
 		for i in range(0,batch_count):
 			levels_small = levels[i*batch_size:(i+1)*batch_size]
 			for level in levels_small:
+				if level.is_deleted:
+					continue
 				print(f"{i} / {batch_count} - {level.online_id}")
 				levels_to_export.append(level.online_id)
 
