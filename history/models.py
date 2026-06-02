@@ -567,6 +567,7 @@ class Level(models.Model):
 	submitted = models.DateTimeField(default=timezone.now, db_index=True)
 	class Meta:
 		indexes = [
+			models.Index(fields=['cache_user_id', 'online_id']), # for user_to_level_estimation
 		]
   
 	def is_blank(self):
