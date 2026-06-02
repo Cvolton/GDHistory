@@ -6,22 +6,22 @@ from django.db.models import Q
 from django.db import connection
 from django.utils import timezone
 
-def update_is_public():
-    user_whitelist = [21297937, 16, 20417551]
-    records = LevelRecord.objects.filter( Q(level__cache_user_id__in=user_whitelist) | Q(level__cache_stars__gt=0) | Q(level__cache_downloads__gte=1000) | Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecordType.GET) | ( Q(record_type=LevelRecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") & Q(server_response__created__lte="2023-12-20 01:27:21+00:00") ) ).filter(level__is_public=False).prefetch_related('level')
-    #record_count = records.count()
-    while True:
-        records_limited = records[0:1000]
-        handled_online_ids = set()
-        if len(records_limited) < 1:
-            return
-        for record in records_limited:
-            if record.level.online_id in handled_online_ids:
-                continue
-            print(f"is_public - Updating {record.level.online_id}")
-            handled_online_ids.add(record.level.online_id)
-            record.level.set_public(True)
-            record.level.save()
+# def update_is_public():
+#     user_whitelist = [21297937, 16, 20417551]
+#     records = LevelRecord.objects.filter( Q(level__cache_user_id__in=user_whitelist) | Q(level__cache_stars__gt=0) | Q(level__cache_downloads__gte=1000) | Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) | Q(record_type=LevelRecordType.GET) | ( Q(record_type=LevelRecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") & Q(server_response__created__lte="2023-12-20 01:27:21+00:00") ) ).filter(level__is_public=False).prefetch_related('level')
+#     #record_count = records.count()
+#     while True:
+#         records_limited = records[0:1000]
+#         handled_online_ids = set()
+#         if len(records_limited) < 1:
+#             return
+#         for record in records_limited:
+#             if record.level.online_id in handled_online_ids:
+#                 continue
+#             print(f"is_public - Updating {record.level.online_id}")
+#             handled_online_ids.add(record.level.online_id)
+#             record.level.set_public(True)
+#             record.level.save()
 
 def do_is_public_updating(records):
     records_max = 50000

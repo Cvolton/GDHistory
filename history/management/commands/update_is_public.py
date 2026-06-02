@@ -7,6 +7,6 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 
-		history.maintenance_utils.update_is_public()
+		#history.maintenance_utils.update_is_public()
 
-		print("Done")
+		print("Command is obsolete")

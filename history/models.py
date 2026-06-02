@@ -869,8 +869,29 @@ class Level(models.Model):
 		self.update_with_record(best_record, True)
 
 		self.verify_needs_updating()
+		self.update_is_public()
 
 		self.save()
+
+	def update_is_public(self):
+		if self.is_public:
+			return
+		# records = LevelRecord.objects.filter( Q(level__cache_user_id__in=user_whitelist) 
+		# | Q(level__cache_stars__gt=0) | Q(level__cache_downloads__gte=1000) | Q(level__online_id__lt=MiscConstants.FIRST_2_1_LEVEL) 
+		# | Q(record_type=LevelRecordType.GET) 
+		# | ( Q(record_type=LevelRecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") & Q(server_response__created__lte="2023-12-20 01:27:21+00:00") ) )
+		if self.cache_stars > 0 or self.cache_downloads >= 1000 or self.online_id < MiscConstants.FIRST_2_1_LEVEL:
+			self.is_public = True
+			return
+
+		if self.levelrecord_set.filter(record_type=LevelRecordType.GET).exists():
+			self.is_public = True
+			return
+		
+		if self.levelrecord_set.filter(record_type=LevelRecordType.DOWNLOAD, server_response__created__gte="2021-11-24 02:10:00+00:00", server_response__created__lte="2023-12-20 01:27:21+00:00").exists():
+			self.is_public = True
+			return
+
 
 	def get_serialized_base(self):
 		if isinstance(self.cache_submitted, str): submitted_date = timezone.datetime.fromisoformat(self.cache_submitted)
