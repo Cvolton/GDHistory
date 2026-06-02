@@ -23,6 +23,9 @@ class Command(BaseCommand):
 			levels_small = levels[i*batch_size:(i+1)*batch_size]
 			for level in levels_small:
 				if level.is_deleted:
+					level.cache_needs_updating2 = True
+					level.cache_needs_updating = False
+					level.save()
 					continue
 				print(f"{i} / {batch_count} - {level.online_id}")
 				levels_to_export.append(level.online_id)

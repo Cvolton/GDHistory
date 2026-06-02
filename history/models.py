@@ -515,6 +515,7 @@ class Level(models.Model):
 	cache_daily_date = models.DateTimeField(blank=True, null=True)
 
 	cache_needs_updating = models.BooleanField(default=True, db_index=True)
+	cache_needs_updating2 = models.BooleanField(default=False)
 	cache_available_versions = models.IntegerField(default=0, db_index=True)
 	cache_search_available = models.BooleanField(default=False, db_index=True)
 	#cache_main_difficulty = models.IntegerField(default=0, db_index=True)
@@ -898,7 +899,7 @@ class Level(models.Model):
 			'cache_daily_id': int(self.cache_daily_id),
 			'is_test_daily': bool(self.is_test_daily),
 			'cache_daily_date': self.cache_daily_date,
-			'cache_needs_updating': bool(self.cache_needs_updating),
+			'cache_needs_updating': bool(self.cache_needs_updating) or bool(self.cache_needs_updating2),
 			'cache_available_versions': int(self.cache_available_versions),
 			'cache_search_available': bool(self.cache_search_available),
 			#'cache_main_difficulty': int(self.cache_main_difficulty),
