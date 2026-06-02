@@ -1459,3 +1459,34 @@ class LevelRecord(models.Model):
 			models.Index(fields=['level', 'cache_is_dupe'], name='level_dupe'),
 			models.Index(fields=['level', 'cache_is_dupe', 'is_invalid'], name='level_dupe_invalid')
 		]
+
+class LevelList(models.Model):
+	online_id = models.IntegerField(db_index=True)
+
+class LevelListRecord(models.Model):
+	level_list = models.ForeignKey(
+		LevelList,
+		on_delete=models.CASCADE,
+		db_index=True,
+	)
+	levels = models.ManyToManyField(
+		Level,
+	)
+	server_response = models.ForeignKey(
+		ServerResponse,
+		on_delete=models.CASCADE,
+		blank=True, null=True,
+		db_index=True,
+	)
+	unprocessed_data = models.JSONField()
+
+	def assign_levels(self, level_string):
+		from .utils import get_level_object
+
+		if self.pk is None:
+			self.save()
+
+		level_ids = level_string.split(',')
+		for level_id in level_ids:
+			self.levels.add(get_level_object(level_id))
+		self.save()

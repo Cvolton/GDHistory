@@ -1,5 +1,5 @@
-from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text, get_level_object
-from .models import ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType, LevelDateEstimation, CommentDateEstimation, CommentEstimationType
+from .utils import assign_key, assign_key_no_pop, get_data_path, create_level_string, robtop_unxor, create_song_record_from_data, get_song_object, decode_base64_text, get_level_object, get_list_object
+from .models import LevelListRecord, ServerResponse, Level, LevelRecord, SongRecord, LevelRecordType, LevelDateEstimation, CommentDateEstimation, CommentEstimationType
 
 from .constants import XORKeys, MiscConstants
 
@@ -65,6 +65,18 @@ def create_song_array(response):
 		if response_dict is not False:
 			song_array.append(response_dict)
 	return song_array
+
+def create_list_record_from_data(level_data, level_object, server_response, *args, **kwargs):
+	try: #TODO: merge the 2 cases
+		raise Exception("force fallback")
+	except:
+		record = LevelListRecord(
+			level_list=level_object,
+			unprocessed_data = level_data,
+			server_response = server_response
+		)
+		record.assign_levels(assign_key(level_data, 51))
+		return record
 
 def create_level_record_from_data(level_data, level_object, record_type, server_response, *args, **kwargs):
 	level_password = assign_key(level_data, 27)
@@ -311,6 +323,32 @@ def process_get(response_json):
 	response_object.generate_date_estimation()
 	return True
 
+def process_get_level_lists(response_json):
+	print(f":: {datetime.now().time()} : Starting process_get_level_lists")
+
+	response_object = create_request(response_json)
+	response = response_json["raw_output"]
+	if response_object is False:
+		return None
+	if response in ("-1", ""):
+		return False
+
+	request_info = response.split('#')
+	if len(request_info) < 3:
+		return False
+
+	user_dict = create_user_dict(request_info[1])
+
+	print(f":: {datetime.now().time()} : Iterating through levels")
+
+	for item in request_info[0].split('|'):
+		level_info = response_to_dict(item, ':')
+		level_object = get_list_object(level_info[1])
+
+		create_list_record_from_data(level_info, level_object, response_object)
+
+	return True
+
 def process_cutoffs(response_json):
 	for level in response_json["dates"]:
 		level_object = get_level_object(level)
@@ -375,4 +413,6 @@ def import_json(file):
 		return process_get(response_json)
 	if endpoint.startswith("downloadGJLevel"):
 		return process_download(response_json)
+	if endpoint.startswith("getGJLevelLists"):
+		return process_get_level_lists(response_json)
 

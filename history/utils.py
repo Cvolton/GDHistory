@@ -216,6 +216,22 @@ def get_level_object(level_id, validate_id_range=False):
 		return None
 	return level_object
 
+def get_list_object(list_id):
+	try:
+		list_id = int(list_id)
+	except:
+		return None
+
+	from .models import LevelList
+	try:
+		list_object = LevelList.objects.get(online_id=list_id)
+	except LevelList.DoesNotExist:
+		list_object = LevelList(online_id=list_id)
+		list_object.save()
+	except:
+		return None
+	return list_object
+
 def recalculate_counts():
 	from .models import Level, Song, SaveFile, ServerResponse, LevelString, LevelRecord, GDUser
 
