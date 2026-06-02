@@ -14,6 +14,7 @@ class Command(BaseCommand):
 		data_path = history.utils.get_data_path()
 		levels = Level.objects.filter(cache_needs_updating=True).prefetch_related('levelrecord_set')
 		level_count = levels.count()
+		print(f"{level_count} levels to export")
 		levels_to_export = []
 		batch_size = 2500
 		batch_count = math.ceil(level_count/2500)
