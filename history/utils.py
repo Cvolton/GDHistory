@@ -288,7 +288,7 @@ def recalculate_daily_records():
 def recalculate_daily_records_current_year():
 	records = get_daily_records()
 	for record in records:
-		if record == 2025: continue
+		if record == timezone.now().year: continue
 		records[record] = []
 	cache.set('daily_current_year', records, None)
 
