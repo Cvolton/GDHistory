@@ -353,8 +353,8 @@ def level_search_counts(request):
 	counts = cache.get('counts')
 	if counts is None:
 		counts = utils.recalculate_counts()
-	meili_utils.level_count_in_index()
+	search_level_count = meili_utils.level_count_in_index()
 	return JsonResponse({
 		'level_count': counts['level_count'],
-		'search_level_count': meili_utils.level_count_in_index(),
+		'search_level_count': search_level_count,
 	})
