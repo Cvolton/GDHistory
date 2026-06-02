@@ -17,6 +17,8 @@ class Command(BaseCommand):
 		levels_to_export = []
 		batch_size = 2500
 		batch_count = math.ceil(level_count/2500)
+		if batch_count > 100:
+			batch_count = 100
 		for i in range(0,batch_count):
 			levels_small = levels[i*batch_size:(i+1)*batch_size]
 			for level in levels_small:
