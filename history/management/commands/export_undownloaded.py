@@ -22,14 +22,16 @@ class Command(BaseCommand):
 			batch_count = 100
 		for i in range(0,batch_count):
 			levels_small = levels[i*batch_size:(i+1)*batch_size]
+			levels_to_debatch = []
 			for level in levels_small:
 				if level.is_deleted:
 					level.cache_needs_updating2 = True
 					level.cache_needs_updating = False
-					level.save()
+					levels_to_debatch.append(level)
 					continue
 				print(f"{i} / {batch_count} - {level.online_id}")
 				levels_to_export.append(level.online_id)
+			Level.objects.bulk_update(levels_to_debatch, ['cache_needs_updating', 'cache_needs_updating2'], batch_size=1000)
 
 		print("Creating JSON")
 		task_json = {
