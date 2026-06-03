@@ -75,7 +75,7 @@ def create_list_record_from_data(level_data, level_object, server_response, *arg
 			unprocessed_data = level_data,
 			server_response = server_response
 		)
-		record.assign_levels(assign_key(level_data, 51))
+		record.assign_levels(assign_key_no_pop(level_data, 51))
 		return record
 
 def create_level_record_from_data(level_data, level_object, record_type, server_response, *args, **kwargs):
