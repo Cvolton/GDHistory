@@ -189,7 +189,8 @@ def create_level_record_from_data(data, level_object, record_type, binary_versio
 			level_size = assign_key(data, 'k39'),
 			record_type = record_type,
 			editor_tainted = editor_tainted,
-			unprocessed_data = data
+			unprocessed_data = data,
+			cache_is_public = level_object.is_public
 		)
 		record.save()
 		record.create_user()

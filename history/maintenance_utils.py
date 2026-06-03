@@ -23,19 +23,19 @@ from django.utils import timezone
 #             record.level.set_public(True)
 #             record.level.save()
 
-def do_is_public_updating(records):
-    records_max = 50000
+# def do_is_public_updating(records):
+#     records_max = 50000
 
-    records = records[:records_max]
-    record_count = len(records)
-    i = 1
-    for record in records:
-        print(f"{i} / {record_count} - Updating {record.level.online_id}")
-        record.cache_is_public = record.level.is_public
-        #record.save()
-        i += 1
+#     records = records[:records_max]
+#     record_count = len(records)
+#     i = 1
+#     for record in records:
+#         print(f"{i} / {record_count} - Updating {record.level.online_id}")
+#         record.cache_is_public = record.level.is_public
+#         #record.save()
+#         i += 1
 
-    LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
+#     LevelRecord.objects.bulk_update(records, ['cache_is_public'], batch_size=1000)
 
 def do_search_cache_updating(records, status):
     records = records[:500000]
@@ -55,18 +55,18 @@ def do_search_cache_updating(records, status):
 
     Level.objects.bulk_update(records, ['cache_search_available', 'cache_needs_search_update', 'cache_is_blank'], batch_size=1000)
 
-def start_is_public_updating(state):
-    records_max = 50000
+# def start_is_public_updating(state):
+#     records_max = 50000
 
-    while True:
-        result = LevelRecord.objects.prefetch_related('level').filter(cache_is_public=state).exclude(level__is_public=state)[:records_max]
-        do_is_public_updating(result)
-        if len(result) < records_max:
-            break
+#     while True:
+#         result = LevelRecord.objects.prefetch_related('level').filter(cache_is_public=state).exclude(level__is_public=state)[:records_max]
+#         do_is_public_updating(result)
+#         if len(result) < records_max:
+#             break
 
 def update_cached_fields():
-    start_is_public_updating(False)
-    start_is_public_updating(True)
+    # start_is_public_updating(False)
+    # start_is_public_updating(True)
 
     estimated_id = get_level_id_within_window()
 

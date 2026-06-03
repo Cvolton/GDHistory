@@ -93,7 +93,8 @@ def create_level_record_from_data(data, level_object, record_type, submission):
 			record_type = record_type,
 			manual_submission = submission,
 			unprocessed_data = {},
-			song = get_song_object(assign_key(data, 'custom_song'))
+			song = get_song_object(assign_key(data, 'custom_song')),
+			cache_is_public = level_object.is_public
 		)
 		record.save()
 		record.create_user()

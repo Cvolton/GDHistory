@@ -734,11 +734,14 @@ class Level(models.Model):
 			changed = True
 
 		if changed:
-			self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.is_blank() == False)
+			self.update_search_available()
 		
 		self.cache_is_blank = self.is_blank()
 		if changed and not force:
 			self.save()
+
+	def update_search_available(self):
+		self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.is_blank() == False)
 
 	def assign_difficulty_from_record(self, record):
 		rating = record.rating or 0
@@ -882,16 +885,23 @@ class Level(models.Model):
 		# | Q(record_type=LevelRecordType.GET) 
 		# | ( Q(record_type=LevelRecordType.DOWNLOAD) & Q(server_response__created__gte="2021-11-24 02:10:00+00:00") & Q(server_response__created__lte="2023-12-20 01:27:21+00:00") ) )
 		if self.cache_stars > 0 or self.cache_downloads >= 1000 or self.online_id < MiscConstants.FIRST_2_1_LEVEL:
-			self.is_public = True
+			self.change_is_public(True)
 			return
 
 		if self.levelrecord_set.filter(record_type=LevelRecordType.GET).exists():
-			self.is_public = True
+			self.change_is_public(True)
 			return
 		
 		if self.levelrecord_set.filter(record_type=LevelRecordType.DOWNLOAD, server_response__created__gte="2021-11-24 02:10:00+00:00", server_response__created__lte="2023-12-20 01:27:21+00:00").exists():
-			self.is_public = True
+			self.change_is_public(True)
 			return
+
+	def change_is_public(self, is_public):
+		old_is_public = self.is_public
+		self.is_public = is_public
+		if old_is_public != self.is_public:
+			self.update_search_available()
+			self.levelrecord_set.update(cache_is_public=is_public)
 
 
 	def get_serialized_base(self):

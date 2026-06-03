@@ -133,6 +133,7 @@ def create_level_record_from_data(level_data, level_object, record_type, server_
 			#username = not included,
 			password = level_password,
 			#account_id = not included,
+			cache_is_public = level_object.is_public,
 		)
 	except:
 		record = LevelRecord(level=level_object,
