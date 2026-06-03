@@ -568,6 +568,11 @@ class Level(models.Model):
 	class Meta:
 		indexes = [
 			models.Index(fields=['cache_user_id', 'online_id']), # for user_to_level_estimation
+
+			models.Index(
+                fields=['cache_needs_revalidation', 'cache_needs_search_update', 'cache_search_available'], 
+                name='search_sync_idx'
+            ),
 		]
   
 	def is_blank(self):
