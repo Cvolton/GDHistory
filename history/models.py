@@ -1064,7 +1064,7 @@ class CommentDateEstimation(models.Model):
 			models.Index(fields=['range_id', 'type', '-estimation', 'comment_id'], name='type_range_est_desc_idx'),
 			models.Index(fields=['range_id', 'type', 'estimation', 'comment_id'], name='type_range_est_comment_idx'),
 
-			models.Index(fields=['range_id', 'type', '-comment_id'], name='type_range_comment_desc_idx'),
+			#models.Index(fields=['range_id', 'type', '-comment_id'], name='type_range_comment_desc_idx'),
 			models.Index(fields=['range_id', 'type', 'comment_id'], name='type_range_comment_asc_idx'),
 		]
 
