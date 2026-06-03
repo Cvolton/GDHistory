@@ -83,22 +83,50 @@ tr:hover, tr:focus-within {
 					</thead>
 					<tbody>`
 
+			let lastIdx = 0
 			for(let level of content) {
-				tabContent += `<tr ${level.is_test_daily ? 'style="background-color: khaki;" aria-label="This is a test daily level"' : ''}>
-							<td><a href="/level/${level.online_id}/">${level.cache_daily_id}</a></td>
-							<td><a href="/level/${level.online_id}/">${!level.cache_daily_date ? "" : new Date(level.cache_daily_date)?.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'CET' })}</a></td>
-							<td><a href="/level/${level.online_id}/">${level.online_id}</a></td>
-							<td><a href="/level/${level.online_id}/" tabindex="-1">${escapeHtml(level.cache_level_name)}</a></td>
-							<td><a href="/level/${level.online_id}/" tabindex="-1">${print_filter_difficulty(level.cache_filter_difficulty)} (${display_number(level.cache_stars)}${star_character(level.cache_length)})</a></td>
-							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_username ? escapeHtml(level.cache_username) : "-"}</a></td>
-							<td><a href="/level/${level.online_id}/" tabindex="-1">${level.cache_level_string_available ? "✅" : "❌"}</a></td>
-						</tr>`
+				if(lastIdx != 0 && level.cache_daily_id != lastIdx + 1) {
+					while(lastIdx != 0 && level.cache_daily_id != lastIdx + 1 && lastIdx < level.cache_daily_id) {
+						lastIdx++
+						fakeLevel = {
+							cache_daily_id: lastIdx,
+							cache_daily_date: null,
+							online_id: null,
+							cache_level_name: null,
+							cache_filter_difficulty: null,
+							cache_stars: null,
+							cache_length: null,
+							cache_username: null,
+							cache_level_string_available: false,
+							is_test_daily: false,
+							is_placeholder: true
+						}
+						tabContent += renderTab(fakeLevel)
+					}
+				}
+				tabContent += renderTab(level)
+				lastIdx = level.cache_daily_id
 			}
 				tabContent += `</tbody>
 				</table>
 			</div>`
 		}
 		$('#tabContent').html(tabContent)
+	}
+
+	function renderTab(level) {
+		let linkStart = level.online_id ? `<a href="/level/${level.online_id}/">` : "<a>"
+		let linkEnd = level.online_id ? `</a>` : "</a>"
+
+		return `<tr ${level.is_test_daily ? 'style="background-color: khaki;" aria-label="This is a test daily level"' : ''} ${level.is_placeholder ? 'style="background-color: pink;" aria-label="This daily level is unknown"' : ''}>
+					<td>${linkStart}${level.cache_daily_id}${linkEnd}</td>
+					<td>${linkStart}${!level.cache_daily_date ? "" : new Date(level.cache_daily_date)?.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'CET' })}${linkEnd}</td>
+					<td>${linkStart}${level.online_id ? level.online_id : "Unknown"}${linkEnd}</td>
+					<td>${linkStart}${escapeHtml(level.cache_level_name ? level.cache_level_name : "")}${linkEnd}</td>
+					<td>${linkStart}${level.online_id ? `${print_filter_difficulty(level.cache_filter_difficulty)} (${display_number(level.cache_stars)}${star_character(level.cache_length)})` : ""}${linkEnd}</td>
+					<td>${linkStart}${level.cache_username ? escapeHtml(level.cache_username) : "-"}${linkEnd}</td>
+					<td>${linkStart}${level.cache_level_string_available ? "✅" : "❌"}${linkEnd}</td>
+				</tr>`
 	}
 
 	$.getJSON('/api/v1/daily/current_year/', (result) => {
