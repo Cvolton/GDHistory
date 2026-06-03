@@ -1,6 +1,7 @@
 from history.models import ServerResponse
 import history.utils
 import history.serverUtils
+from concurrent.futures import ThreadPoolExecutor
 import json
 import os
 
@@ -30,15 +31,21 @@ class Command(BaseCommand):
 		directory = options['directory']
 		files = os.listdir(directory)
 		file_count = len(files)
-		for i, filename in enumerate(files):
+
+		def process_file(item):
+			i, filename = item
 			export_path = f"{directory}/{filename}"
 			if not os.path.exists(export_path):
 				print(f"File {export_path} not found")
-				continue
+				return
 			print(f"{i} / {file_count} - Processing {filename}")
-			f = open(export_path, "rb")
-			if history.serverUtils.import_json(f) is not None:
-				os.rename(export_path, f"{imports_root}/ServerResponse-Processed/{filename}")
+			with open(export_path, "rb") as file_handle:
+				if history.serverUtils.import_json(file_handle) is not None:
+					os.rename(export_path, f"{imports_root}/ServerResponse-Processed/{filename}")
+
+		worker_count = (os.cpu_count() or 1) * 2
+		with ThreadPoolExecutor(max_workers=worker_count) as executor:
+			list(executor.map(process_file, enumerate(files)))
 
 		if not options['skip_recalc']:
 			print("Recalculating")
