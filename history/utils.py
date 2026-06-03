@@ -309,9 +309,15 @@ def recalculate_everything():
 	recalculate_daily_records()
 
 def get_level_id_within_window():
+	cached_id = cache.get('level_id_window')
+	if cached_id is not None:
+		return cached_id
+	
 	two_years_ago = timezone.now() - timezone.timedelta(days=365*2)
-	print(two_years_ago)
-	return get_level_id_before(two_years_ago)
+	estimated_id = get_level_id_before(two_years_ago)
+	
+	cache.set('level_id_window', estimated_id, 3600)
+	return estimated_id
 
 def get_level_id_before(last_date):
 	from history.models import LevelDateEstimation
@@ -343,7 +349,7 @@ def get_blacklisted_userids(force_reload = False):
 
 def comment_range_for_level(level_id):
 	if level_id == 57436521: return -2 #youve been trolled has its own range
-    
+	
 	i = bisect.bisect_right(MiscConstants.COMMENT_RANGES, level_id) - 1
 	if i < 0 or i >= len(MiscConstants.COMMENT_RANGES):
 		print("Invalid Level ID")
@@ -352,9 +358,9 @@ def comment_range_for_level(level_id):
 		return i
 
 def comment_range_for_account(account_id):
-    i = bisect.bisect_right(MiscConstants.ACCOUNT_COMMENT_RANGES, account_id) - 1
-    if i < 0 or i >= len(MiscConstants.ACCOUNT_COMMENT_RANGES):
-        print("Invalid Account ID")
-        return -1
-    else:
-        return i
+	i = bisect.bisect_right(MiscConstants.ACCOUNT_COMMENT_RANGES, account_id) - 1
+	if i < 0 or i >= len(MiscConstants.ACCOUNT_COMMENT_RANGES):
+		print("Invalid Account ID")
+		return -1
+	else:
+		return i
