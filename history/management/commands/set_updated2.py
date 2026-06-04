@@ -17,7 +17,12 @@ class Command(BaseCommand):
 
 		while True:
 			print('getting levels')
-			objects = Level.objects.filter(is_deleted=True, cache_needs_updating=True, id__gt=last_id)[:10000]
+			objects = Level.objects.filter(is_deleted=True, cache_needs_updating=True)
+
+			if id > 0:
+				objects = objects.filter(id__gt=last_id)
+
+			objects = objects[:10000]
 
 			for object in objects:
 				object.cache_needs_updating = False
