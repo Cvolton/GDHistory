@@ -19,7 +19,7 @@ class Command(BaseCommand):
 			print('getting levels')
 			objects = Level.objects.filter(is_deleted=True, cache_needs_updating=True)
 
-			if id > 0:
+			if last_id > 0:
 				objects = objects.filter(id__gt=last_id)
 
 			objects = objects[:10000]
