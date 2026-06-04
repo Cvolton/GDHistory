@@ -13,9 +13,11 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 
+		last_id = 0
+
 		while True:
 			print('getting levels')
-			objects = Level.objects.filter(is_deleted=True, cache_needs_updating=True)[:10000]
+			objects = Level.objects.filter(is_deleted=True, cache_needs_updating=True, id__gt=last_id)[:10000]
 
 			for object in objects:
 				object.cache_needs_updating = False
@@ -23,6 +25,9 @@ class Command(BaseCommand):
 
 			print('updating levels')
 			Level.objects.bulk_update(objects, ['cache_needs_updating', 'cache_needs_updating2'], batch_size=1000)
+
+			if len(objects) > 0:
+				last_id = objects[len(objects) - 1].id
 
 			if len(objects) < 10000:
 				print('done')
