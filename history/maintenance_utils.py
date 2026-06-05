@@ -75,4 +75,4 @@ def update_cached_fields():
     print("- Setting cache_search_available = False")
     do_search_cache_updating(Level.objects.filter( Q(is_public=False, online_id__gte=estimated_id) | Q( hide_from_search=True) ).exclude(cache_search_available=False), False)
     print("- Removing blanks from search")
-    do_search_cache_updating(Level.objects.filter( cache_is_blank=True ).exclude(cache_search_available=False), False)
+    do_search_cache_updating(Level.objects.filter( cache_is_blank=True, cache_search_available=True), False)
