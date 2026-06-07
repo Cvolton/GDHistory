@@ -17,6 +17,6 @@ class Command(BaseCommand):
 			print(f'[{100 * current_id / max_level_id:.2f}%] Checking levels with id between {current_id} and {next_id}...')
 			levels = Level.objects.filter(is_deleted=False, is_public=False, id__gte=current_id, id__lte=next_id)
 			current_id = next_id
-			ids.extend([level.id for level in levels])
+			ids.extend([level.online_id for level in levels])
 		with open(f"{utils.get_data_path()}/levels_to_research.txt", 'w') as f:
 			f.write('\n'.join(str(id) for id in ids))
