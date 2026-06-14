@@ -124,7 +124,8 @@ def create_song_record_from_data(data, song_object, record_type, date, *args, **
 			is_verified = assign_key_no_pop(data, 8),
 			link = link,
 			record_type = record_type
-		).first()
+		).order_by()[:1]
+		record = list(record)[0] if record else None
 		if record is None:
 			raise Exception("Record not found")
 		real_date = record.get_real_date()
