@@ -108,9 +108,14 @@ def create_song_record_from_data(data, song_object, record_type, date, *args, **
 	if kwargs.get('decode_link', True) and link is not None:
 		link = urllib.parse.unquote(link)
 
+	song_name = assign_key(data, 2)
+	if song_name is not None and len(song_name) > 255:
+		data['song_name_untrimmed'] = song_name
+		song_name = song_name[:255]
+
 	try:
-		record = SongRecord.objects.get(song=song_object,
-			song_name = assign_key_no_pop(data, 2),
+		record = SongRecord.objects.filter(song=song_object,
+			song_name = song_name,
 			artist_id = assign_key_no_pop(data, 3),
 			artist_name = assign_key_no_pop(data, 4),
 			size = assign_key_no_pop(data, 5),
@@ -119,18 +124,15 @@ def create_song_record_from_data(data, song_object, record_type, date, *args, **
 			is_verified = assign_key_no_pop(data, 8),
 			link = link,
 			record_type = record_type
-		)
+		).first()
+		if record is None:
+			raise Exception("Record not found")
 		real_date = record.get_real_date()
 		if real_date is None or date < real_date:
 			record.cache_real_date = date
 			record.save()
 		return record
 	except:
-		song_name = assign_key(data, 2)
-		if song_name is not None and len(song_name) > 255:
-			data['song_name_untrimmed'] = song_name
-			song_name = song_name[:255]
-	
 		record = SongRecord(song=song_object,
 			song_name = song_name,
 			artist_id = assign_key(data, 3),
@@ -210,8 +212,11 @@ def get_level_object(level_id, validate_id_range=False):
 	except Level.DoesNotExist:
 		if validate_id_range and level_id < MiscConstants.LAST_FULL_SCRAPE_ID: return None
 
-		level_object = Level(online_id=level_id)
-		level_object.save()
+		try:
+			level_object = Level(online_id=level_id)
+			level_object.save()
+		except:
+			level_object = get_level_object(level_id, validate_id_range)
 	except:
 		return None
 	return level_object
