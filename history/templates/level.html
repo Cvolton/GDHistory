@@ -582,7 +582,7 @@ Average: ${(record.rating_sum / record.rating).toFixed(2)}`)
 				tdDataAvailable.appendChild(make_link("(.gmd)", `/level/${levelData.online_id}/${record.id}/download/`))
 			}
 			let obj = record.level_string_info?.object_count
-			tdDataAvailable.appendChild(make_tooltip(obj ? `${obj} objects` : null, ` - ${print_file_size(record.level_string_info?.file_size)}`))
+			tdDataAvailable.appendChild(make_tooltip(obj ? `${obj} objects` : null, ` - ${print_file_size((record.game_version < 19 && record.level_string_info?.decompressed_file_size) ? record.level_string_info?.decompressed_file_size : record.level_string_info?.file_size)}`))
 		} else {
 			tdDataAvailable.textContent = "❌"
 			if (record.level_size) {
