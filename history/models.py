@@ -457,9 +457,9 @@ class SongRecord(models.Model):
 		ServerResponse,
 	)
 
-	song_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
+	song_name = models.CharField(blank=True, null=True, max_length=255)
 	artist_id = models.IntegerField(null=True)
-	artist_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
+	artist_name = models.CharField(blank=True, null=True, max_length=255)
 	size = models.FloatField(null=True)
 	youtube_id = models.TextField(blank=True, null=True)
 	youtube_channel = models.TextField(blank=True, null=True)
