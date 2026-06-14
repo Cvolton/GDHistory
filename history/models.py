@@ -489,8 +489,8 @@ class SongRecord(models.Model):
 	class Meta:
 		indexes = [
 			models.Index(
-				fields=['song', 'artist_id', 'record_type'], 
-				name='idx_song_artist_type'
+				fields=['artist_id', 'song', 'record_type'], 
+				name='idx_artist_song_type'
 			),
 		]
 
