@@ -485,6 +485,14 @@ class SongRecord(models.Model):
 		self.cache_real_date = self.calculate_real_date()
 		self.save()
 		return self.cache_real_date
+	
+	class Meta:
+		indexes = [
+			models.Index(
+				fields=['song', 'artist_id', 'record_type'], 
+				name='idx_song_artist_type'
+			),
+		]
 
 class Level(models.Model):
 	online_id = models.IntegerField(db_index=True, unique=True)
