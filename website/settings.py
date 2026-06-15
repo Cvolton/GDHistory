@@ -175,3 +175,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Account settings
 LOGIN_REDIRECT_URL = '/'
+
+GTAG = os.getenv('GTAG','')

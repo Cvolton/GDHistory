@@ -3,6 +3,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.utils.http import urlencode
 from django.utils.timezone import make_aware
+from django.conf import settings
 
 from history.constants import MiscConstants, SongNames
 
@@ -218,3 +219,7 @@ def filter_difficulty(number):
 	if number > len(values) or number < -1: return "Unknown"
 	if number <= 0: return "N/A"
 	return values[number - 1]
+
+@register.simple_tag
+def get_gtag():
+	return settings.GTAG
