@@ -43,8 +43,7 @@ class Command(BaseCommand):
 				if history.serverUtils.import_json(file_handle) is not None:
 					os.rename(export_path, f"{imports_root}/ServerResponse-Processed/{filename}")
 
-		#worker_count = (os.cpu_count() or 1) * 2
-		worker_count = 50
+		worker_count = (os.cpu_count() or 1) * 2
 		with ThreadPoolExecutor(max_workers=worker_count) as executor:
 			list(executor.map(process_file, enumerate(files)))
 
