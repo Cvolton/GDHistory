@@ -501,7 +501,7 @@ class Level(models.Model):
 	is_deleted = models.BooleanField(default=False, db_index=True)
 	deleted_date = models.DateTimeField(blank=True, null=True)
 	hide_from_search = models.BooleanField(db_index=True, default=False)
-	cache_is_blank = models.BooleanField(db_index=True, blank=True, null=True)
+	cache_is_blank = models.BooleanField(db_index=True, default=False)
 
 	cache_level_name = models.CharField(blank=True, null=True, max_length=255, db_index=True)
 	cache_submitted = models.DateTimeField(blank=True, null=True, db_index=True)
@@ -926,6 +926,7 @@ class Level(models.Model):
 			'comment': self.comment,
 			'is_public': bool(self.is_public),
 			'is_deleted': bool(self.is_deleted),
+			'deleted_date': self.deleted_date,
 			'cache_level_name': self.cache_level_name,
 			'cache_submitted': self.cache_submitted,
 			'cache_submitted_timestamp': int(submitted_date.timestamp()) if submitted_date else None,
