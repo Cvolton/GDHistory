@@ -926,7 +926,7 @@ class Level(models.Model):
 			'comment': self.comment,
 			'is_public': bool(self.is_public),
 			'is_deleted': bool(self.is_deleted),
-			'deleted_date': self.deleted_date,
+			'deleted_date': str(self.deleted_date),
 			'cache_level_name': self.cache_level_name,
 			'cache_submitted': self.cache_submitted,
 			'cache_submitted_timestamp': int(submitted_date.timestamp()) if submitted_date else None,
