@@ -26,10 +26,10 @@ class LevelRecordType(models.TextChoices):
 		MANUAL = 'manual', _('manual')
   
 class CommentEstimationType(models.IntegerChoices):
-    LEVEL = 0
-    ACCOUNT = 1
-    FRIEND_REQUEST = 2
-    MESSAGE = 3
+	LEVEL = 0
+	ACCOUNT = 1
+	FRIEND_REQUEST = 2
+	MESSAGE = 3
 
 class HistoryUser(models.Model):
 	user = models.OneToOneField(
@@ -578,9 +578,14 @@ class Level(models.Model):
 			models.Index(fields=['cache_user_id', 'online_id']), # for user_to_level_estimation
 
 			models.Index(
-                fields=['cache_needs_revalidation', 'cache_needs_search_update', 'cache_search_available'], 
-                name='search_sync_idx'
-            ),
+				fields=['cache_needs_revalidation', 'cache_needs_search_update', 'cache_search_available'], 
+				name='search_sync_idx'
+			),
+
+			models.Index(
+				fields=['hide_from_search', 'cache_search_available', 'cache_is_blank'],
+				name='hide_from_search_sync_idx'
+			),
 		]
   
 	def is_blank(self):
