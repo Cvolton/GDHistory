@@ -71,8 +71,8 @@ def update_cached_fields():
     estimated_id = get_level_id_within_window()
 
     print("- Setting cache_search_available = True")
-    do_search_cache_updating(Level.objects.filter( Q(is_public=True) | Q(online_id__lt=estimated_id) , hide_from_search=False).exclude( Q(cache_search_available=True) | Q(cache_is_blank=True)), True)
+    do_search_cache_updating(Level.objects.filter( Q(is_public=True) | Q(online_id__lt=estimated_id) , hide_from_search=False, cache_search_available=False, cache_is_blank=False), True)
     print("- Setting cache_search_available = False")
-    do_search_cache_updating(Level.objects.filter( Q(is_public=False, online_id__gte=estimated_id) | Q( hide_from_search=True) ).exclude(cache_search_available=False), False)
+    do_search_cache_updating(Level.objects.filter( Q(is_public=False, online_id__gte=estimated_id) | Q( hide_from_search=True) , cache_search_available=True), False)
     # print("- Removing blanks from search")
     # do_search_cache_updating(Level.objects.filter( cache_is_blank=True, cache_search_available=True), False)
