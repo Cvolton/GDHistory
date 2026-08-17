@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy{% endblock title %}
+{% block description %}Privacy Policy for GDHistory{% endblock description %}
+{% block content %}
+
+<style>
+  .policy-doc {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .policy-doc h2 {
+    font-size: 1.35rem;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    padding-top: 0.5rem;
+    scroll-margin-top: 80px;
+  }
+
+  .policy-doc h2:first-of-type {
+    margin-top: 1.5rem;
+  }
+
+  .policy-doc h6 {
+    font-weight: 600;
+    margin-top: 1.5rem;
+  }
+
+  .policy-doc p, .policy-doc li {
+    line-height: 1.65;
+  }
+
+  .policy-toc {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  .policy-toc summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .policy-toc ol {
+    columns: 2;
+    column-gap: 2rem;
+    margin: 0.75rem 0 0;
+    padding-left: 1.25rem;
+  }
+
+  .policy-toc li {
+    break-inside: avoid;
+  }
+
+  .policy-toc a {
+    text-decoration: none;
+  }
+
+  .policy-toc a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 576px) {
+    .policy-toc ol {
+      columns: 1;
+    }
+  }
+
+  .back-to-top {
+    display: inline-block;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+  }
+</style>
+
+<div class="policy-doc">
+
+  <p class="lead mb-1">Privacy Policy</p>
+  <p class="text-muted"><strong>Last updated:</strong> August 17, 2026</p>
+  <hr>
+  <p>
+    This Privacy Policy explains what personal data GDHistory ("the Service", available at history.geometrydash.eu)
+    collects, why, and how it is handled. GDHistory is an archival/preservation project for Geometry Dash level
+    publishing history. GDHistory is an independent, unofficial fan project and is not affiliated with, endorsed by,
+    or operated on behalf of RobTop Games AB, the developer of Geometry Dash.
+  </p>
+  <p>
+    The Service is operated by Cvolton, based in the Czech Republic. As the operator is established in the EU,
+    this policy is written to comply with the General Data Protection Regulation (GDPR) and the Czech Act on the
+    Processing of Personal Data (Act No. 110/2019 Coll.).
+  </p>
+  <p>
+    If you have questions about this policy or want to exercise your rights below, contact:
+    <strong><a href="mailto:cvolton@cvolton.eu">cvolton@cvolton.eu</a></strong>
+  </p>
+
+  <details class="policy-toc" open>
+    <summary>Contents</summary>
+    <ol>
+      <li><a href="#s1">Data Controller</a></li>
+      <li><a href="#s2">What Data We Collect</a></li>
+      <li><a href="#s3">Why We Process This Data (Legal Basis)</a></li>
+      <li><a href="#s4">Data Sharing</a></li>
+      <li><a href="#s5">Data Retention</a></li>
+      <li><a href="#s6">Your Rights</a></li>
+      <li><a href="#s7">Data of Third Parties</a></li>
+      <li><a href="#s8">Cookies</a></li>
+      <li><a href="#s9">Security</a></li>
+      <li><a href="#s10">Children</a></li>
+      <li><a href="#s11">International Transfers</a></li>
+      <li><a href="#s12">Changes to This Policy</a></li>
+      <li><a href="#s13">Contact</a></li>
+    </ol>
+  </details>
+
+  <section id="s1">
+    <h2>1. Data Controller</h2>
+    <p>Cvolton, based in the Czech Republic, is the data controller for personal data processed through GDHistory.</p>
+  </section>
+
+  <section id="s2">
+    <h2>2. What Data We Collect</h2>
+
+    <h6>2.1 Geometry Dash level and player data (archived, not "about you" as a site visitor)</h6>
+    <p>
+      GDHistory's core purpose is archiving historical data from Geometry Dash's public game servers &mdash;
+      level metadata (IDs, names, star ratings, download counts, timestamps), and creator information such as
+      Geometry Dash usernames and account/user IDs. We obtain this data by querying the same public Geometry
+      Dash server API endpoints (e.g. <code>getGJLevels</code>, <code>downloadGJLevel</code>) that the
+      official Geometry Dash game client itself uses to browse and download levels &mdash; the same responses
+      any player's game client receives. GDHistory is an independent, unofficial project and has no
+      data-sharing arrangement, partnership, or affiliation with RobTop Games AB (the developer of Geometry
+      Dash); we do not receive data directly from RobTop, and RobTop's own privacy policy does not extend to
+      or govern GDHistory's archive. This data may include personal data (e.g. a Geometry Dash username) about
+      level creators and players who are not users of GDHistory itself and did not interact with our site
+      directly.
+    </p>
+    <p>
+      Because GDHistory is independent from RobTop Games AB, deleting or changing your Geometry Dash account
+      directly with RobTop does not automatically remove or update historical records already archived by
+      GDHistory &mdash; please contact us separately (see Section 7) if you want us to review or remove
+      archived data relating to you.
+    </p>
+
+    <h6>2.2 Account data (registered users)</h6>
+    <p>
+      Uploading a save file or submission currently requires a login. Accounts are created by the site
+      administrator rather than through public self-registration. If you have an account, we store your
+      username, a hashed password, and any other fields associated with your Django user account (e.g. email
+      address, if one was set).
+    </p>
+    <p>
+      To have an account or upload save files/submissions, you must be at least 15 years old (the age of
+      digital consent in the Czech Republic under Section 7 of Act No. 110/2019 Coll.) or have the permission
+      of a parent or legal guardian.
+    </p>
+
+    <h6>2.3 Save file / submission uploads</h6>
+    <p><strong>Save files:</strong> If you upload a Geometry Dash save file, we parse it and extract and store:</p>
+    <ul>
+      <li>Your in-game player name, player user ID, and player account ID</li>
+      <li>The level history data contained in the save (level records, versions, timestamps, etc.)</li>
+      <li>A copy of the raw save file itself, with the account password field stripped out before storage</li>
+      <li>Any comment you attach to the upload, and the submission timestamp</li>
+    </ul>
+    <p>
+      <strong>Manual submissions:</strong> GDHistory also accepts manually-submitted JSON files listing
+      specific levels and timestamps (e.g. for levels not captured by a save file). These are validated for
+      structure (level IDs, dates) and linked to your account and any comment you provide, but &mdash; unlike
+      save file uploads &mdash; do not involve extracting a player name or account/user ID from the file
+      itself.
+    </p>
+    <p>
+      Because a GD save file can contain data relating to your Geometry Dash account, by uploading a save
+      file you confirm that it is your own, or that you have explicit permission from the account owner to
+      share it.
+    </p>
+    <p>
+      Please also note that level descriptions, comments, or other free-text fields inside your save file are
+      archived as-is if included in your upload. If you've put real names, contact details, social media
+      handles, or other personal information into a level description or comment, it may end up stored and
+      displayed publicly as part of the historical archive &mdash; please review your save file's content
+      before uploading if you'd rather that information not be preserved.
+    </p>
+
+    <h6>2.4 Technical / server log data</h6>
+    <p>
+      The Service's web application (nginx, application server, database) is hosted on Contabo infrastructure
+      within the EU. Our nginx web server automatically logs standard technical data for security and
+      troubleshooting purposes &mdash; typically IP address, browser/user-agent, requested URL, and
+      timestamp. These logs are rotated on a 15-day cycle (the current day's log plus 14 archived days),
+      after which they are automatically deleted. We do not use this data for profiling. (A separate netcup
+      VPS hosts only our Meilisearch search index and does not receive or log web traffic &mdash; see Section 4.)
+    </p>
+
+    <h6>2.5 Analytics</h6>
+    <p>GDHistory uses two analytics services:</p>
+    <ul>
+      <li>
+        <strong>Google Analytics</strong> (via a Google "gtag" integration), which sets cookies and
+        processes your IP address (subject to Google's own data handling practices) to generate usage
+        reports such as page views and visitor statistics. Google Analytics only activates after you accept
+        analytics via the cookie/consent banner shown on the site; you can change your choice at any time
+        using the "Cookie / analytics settings" link in the site footer, or opt out further using a browser
+        extension such as Google Analytics Opt-out.
+      </li>
+      <li>
+        <strong>Cloudflare Web Analytics</strong>, a privacy-focused analytics service that does not use
+        cookies or any client-side state to track visitors, and does not track individual users across
+        sites. It reports only aggregate, anonymized usage statistics (page views, load times, referrers).
+      </li>
+    </ul>
+    <p>
+      Because Google Analytics uses cookies and processes personal data (IP address) for cross-session
+      tracking, it requires your consent under Czech/EU cookie rules; Cloudflare Web Analytics, being
+      cookieless, generally does not.
+    </p>
+
+    <h6>2.6 What we do <strong>not</strong> collect</h6>
+    <p>
+      We do not process payment information, and we do not knowingly collect data through a public
+      account-registration form, since registration is admin-managed. We do not use any personal data for
+      automated decision-making or profiling that produces legal or similarly significant effects on you.
+    </p>
+  </section>
+
+  <section id="s3">
+    <h2>3. Why We Process This Data (Legal Basis)</h2>
+    
+    <div class="table-responsive border rounded shadow-sm my-3">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="py-3 px-3 border-bottom-0">Data</th>
+            <th scope="col" class="py-3 px-3 border-bottom-0">Purpose</th>
+            <th scope="col" class="py-3 px-3 border-bottom-0">Legal basis (GDPR Art. 6)</th>
+          </tr>
+        </thead>
+        <tbody class="border-top-0">
+          <tr>
+            <td class="fw-medium px-3 py-3">Archived level/player data from GD servers</td>
+            <td class="px-3 py-3">Historical preservation and public research/reference tool for the GD community</td>
+            <td class="px-3 py-3 text-muted">Legitimate interest (archiving data made publicly accessible via Geometry Dash's public server API, obtained independently of RobTop Games AB)</td>
+          </tr>
+          <tr>
+            <td class="fw-medium px-3 py-3">Account data</td>
+            <td class="px-3 py-3">Allow trusted users to submit save files/manual submissions</td>
+            <td class="px-3 py-3 text-muted">Legitimate interest / performance of a service you requested</td>
+          </tr>
+          <tr>
+            <td class="fw-medium px-3 py-3">Save file / manual submission uploads</td>
+            <td class="px-3 py-3">Extract level history for the archive</td>
+            <td class="px-3 py-3 text-muted">Consent (you choose to upload) and legitimate interest (archival purpose)</td>
+          </tr>
+          <tr>
+            <td class="fw-medium px-3 py-3">Technical/server logs</td>
+            <td class="px-3 py-3">Security, abuse prevention, debugging</td>
+            <td class="px-3 py-3 text-muted">Legitimate interest</td>
+          </tr>
+          <tr>
+            <td class="fw-medium px-3 py-3">Analytics</td>
+            <td class="px-3 py-3">Understand site usage and improve the Service</td>
+            <td class="px-3 py-3 text-muted">Consent (Google Analytics); legitimate interest (Cloudflare Web Analytics, being cookieless/non-tracking)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s4">
+    <h2>4. Data Sharing</h2>
+    <p>We do not sell personal data. Data may be shared with:</p>
+    <ul>
+      <li>
+        <strong>netcup GmbH and Contabo GmbH</strong>, our hosting/infrastructure providers, both operating
+        infrastructure within the EU. Contabo hosts the application server, database, and static files;
+        netcup hosts a separate VPS running only our Meilisearch search index for archived Geometry Dash
+        level data (level names, IDs, and creator usernames) &mdash; this VPS does not process account
+        data, save file uploads, or server/technical logs.
+      </li>
+      <li><strong>Google</strong>, via Google Analytics, subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</li>
+      <li>
+        <strong>Cloudflare</strong>, via Cloudflare Web Analytics (and if Cloudflare is also used as a
+        CDN/proxy in front of the site, Cloudflare additionally processes connection metadata to serve that
+        role), subject to <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's Privacy Policy</a>.
+      </li>
+      <li>
+        Publicly, as part of the archive itself: level metadata, creator usernames, and &mdash; where a
+        submission is marked "browsable" &mdash; level history derived from an uploaded save file, are
+        displayed publicly on the site or via our public API, consistent with the Service's purpose as a
+        historical archive.
+      </li>
+    </ul>
+    <p>We do not otherwise share personal data with third parties, and do not use it for advertising or profiling.</p>
+  </section>
+
+  <section id="s5">
+    <h2>5. Data Retention</h2>
+    <ul>
+      <li>
+        <strong>Archived Geometry Dash level/server data</strong> is retained indefinitely. Historical
+        preservation is the core purpose of the project, and this retention relies on the
+        archiving-purposes exemption in <strong>Article 89(1) GDPR</strong> (archiving in the public
+        interest / historical purposes), which permits longer retention than would otherwise be
+        appropriate, subject to appropriate safeguards (e.g. only the data actually needed for the archive
+        is kept, and it is not repurposed for unrelated processing).
+      </li>
+      <li><strong>Account data</strong> is retained for as long as the account exists, plus 30 days after deletion is requested, to allow reversal of accidental deletion.</li>
+      <li>
+        <strong>Uploaded save files and submissions</strong> are retained indefinitely as part of the
+        archive, unless you request deletion (see Section 6) &mdash; note that data already incorporated
+        into public historical records (e.g. a level's recorded history) may be retained even if the
+        originating account is deleted, to preserve archive integrity.
+      </li>
+      <li><strong>Server/technical logs</strong> (nginx) are retained for 15 days (current day plus 14 rotated archives) before automatic deletion.</li>
+    </ul>
+  </section>
+
+  <section id="s6">
+    <h2>6. Your Rights</h2>
+    <p>If you are in the EU/EEA (including the Czech Republic), you have the right to:</p>
+    <ul>
+      <li><strong>Access</strong> the personal data we hold about you</li>
+      <li><strong>Rectify</strong> inaccurate data</li>
+      <li><strong>Erase</strong> your data ("right to be forgotten"), subject to our reliance on the Article 89(1) GDPR archiving exemption and legitimate interest in preserving historical archive integrity for already-published archive records</li>
+      <li><strong>Restrict or object</strong> to certain processing, including analytics</li>
+      <li><strong>Data portability</strong> for data you provided directly</li>
+      <li><strong>Withdraw consent</strong> at any time where processing is based on consent (e.g. analytics, save file uploads), without affecting the lawfulness of processing before withdrawal</li>
+      <li><strong>Lodge a complaint</strong> with the Czech Office for Personal Data Protection (Úřad pro ochranu osobních údajů, <a href="https://uoou.cz" target="_blank" rel="noopener">uoou.cz</a>), or your local supervisory authority</li>
+    </ul>
+    <p>To exercise any of these rights, contact <strong><a href="mailto:cvolton@cvolton.eu">cvolton@cvolton.eu</a></strong>.</p>
+  </section>
+
+  <section id="s7">
+    <h2>7. Data of Third Parties (Level Creators / GD Players)</h2>
+    <p>
+      Because GDHistory archives publicly-broadcast data from Geometry Dash's servers, it may contain
+      personal data (such as usernames) of Geometry Dash players who have never visited or interacted with
+      GDHistory directly, and this data is not collected from those players directly. Individually notifying
+      every such player is not practically possible given the scale and nature of the archive; we therefore
+      rely on the exemption in GDPR Article 14(5)(b) (disproportionate effort) for this category of data, and
+      provide this Privacy Policy plus the removal process below as our safeguard instead.
+    </p>
+    <p>
+      If you are a GD player and want to request removal or correction of data relating to you from the
+      archive, contact <strong><a href="mailto:cvolton@cvolton.eu">cvolton@cvolton.eu</a></strong> &mdash; we
+      will consider requests on a case-by-case basis, balancing your rights against the project's
+      historical/archival purpose. In particular, upon a verified request from the original Geometry Dash
+      account owner, we will anonymize identifying details (such as a username) associated with that account
+      in the archive where practical, even where we retain the underlying historical level record for
+      archive integrity.
+    </p>
+  </section>
+
+  <section id="s8">
+    <h2>8. Cookies</h2>
+    <p>The Service uses:</p>
+    <ul>
+      <li>Essential cookies (e.g. Django session/CSRF cookies) required for login and core functionality</li>
+      <li>Analytics cookies, set by Google Analytics &mdash; see Section 2.5</li>
+    </ul>
+    <p>Cloudflare Web Analytics does not set cookies, so it is not listed above.</p>
+  </section>
+
+  <section id="s9">
+    <h2>9. Security</h2>
+    <p>
+      We take reasonable technical measures to protect stored data (e.g. password hashing, stripping account
+      passwords from uploaded save files before storage). Data transmitted between your browser and our
+      servers is encrypted using HTTPS/TLS. No online service can guarantee absolute security.
+    </p>
+  </section>
+
+  <section id="s10">
+    <h2>10. Children</h2>
+    <p>
+      GDHistory is not specifically directed at children. Accounts and save file/submission uploads require
+      the account holder to meet the age of digital consent described in Section 2.2. Because Geometry Dash
+      has a young player base, archived usernames or account IDs of minors may incidentally appear in the
+      archived game data (Section 2.1) &mdash; this data is not collected via GDHistory accounts and is
+      addressed separately under Section 7; we do not knowingly collect additional personal data about
+      children beyond what is publicly broadcast by Geometry Dash's own servers.
+    </p>
+  </section>
+
+  <section id="s11">
+    <h2>11. International Transfers</h2>
+    <p>
+      All of the Service's infrastructure (application server, database, uploaded save files, account data,
+      server logs, and the Meilisearch search index) runs on Contabo and netcup servers located within the
+      EU, so no international transfer of personal data occurs for our own hosting.
+    </p>
+    <p>
+      If Google Analytics or Cloudflare process data outside the EU/EEA, such transfers rely on the
+      safeguards those providers publish (e.g. Standard Contractual Clauses under the EU-US Data Privacy
+      Framework where applicable).
+    </p>
+  </section>
+
+  <section id="s12">
+    <h2>12. Changes to This Policy</h2>
+    <p>We may update this policy from time to time. Material changes will be reflected by updating the "Last updated" date above.</p>
+  </section>
+
+  <section id="s13">
+    <h2>13. Contact</h2>
+    <p>Questions, requests, or complaints: <strong><a href="mailto:cvolton@cvolton.eu">cvolton@cvolton.eu</a></strong></p>
+  </section>
+
+  <a href="#top" class="back-to-top">&uarr; Back to top</a>
+</div>
+
+{% endblock content %}

@@ -474,3 +474,6 @@ def api_documentation(request):
 
 def date_estimator(request):
 	return render(request, 'date_estimator.html')
+
+def privacy_policy(request):
+	return render(request, 'privacy.html')
