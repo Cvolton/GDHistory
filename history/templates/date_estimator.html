@@ -10,7 +10,7 @@
 
 <div class="row">
 	<div class="alert alert-warning" role="alert">
-		Comment date estimators are temporarily DISABLED because RobTop BROKE THEM (He changed the ID of every single comment)
+		All Comment and Profile Post IDs changed on 2026-09-12. Comment date estimators are not updated for the new ID ranges at the moment - they only work with historical data. Please refer to the timestamp field provided by the original server for currently existing comments.
 	</div>
 </div>
 
@@ -37,13 +37,13 @@
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" type="radio" name="idType" id="commentIDCheck" value="comment">
 						<label class="form-check-label" for="commentIDCheck">
-							Comment ID
+							Old Comment ID
 						</label>
 					</div>
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" type="radio" name="idType" id="accountCommentIDCheck" value="account_comment">
 						<label class="form-check-label" for="accountCommentIDCheck">
-							Profile Post ID
+							Old Profile Post ID
 						</label>
 					</div>
 					{% if user.is_authenticated %}

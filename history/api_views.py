@@ -145,8 +145,6 @@ def manual_info(request, pk=None):
 
 @csrf_exempt
 def comment_date_estimation(request, level_id, comment_id, estimation_type="level"):
-	return JsonResponse({})
-
 	type_map = {
 		"level": CommentEstimationType.LEVEL,
 		"account": CommentEstimationType.ACCOUNT,
