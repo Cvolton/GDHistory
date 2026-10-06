@@ -99,6 +99,10 @@ def update_settings(force = False):
 		print("Disabling typo tolerance")
 		index.update_typo_tolerance({'enabled': False})
 
+	if force or index.get_settings().get('proximityPrecision') != 'byAttribute':
+		print("Updating proximity precision")
+		index.update_settings({'proximityPrecision': 'byAttribute'})
+
 def index_levels():
 	from .models import Level
 
