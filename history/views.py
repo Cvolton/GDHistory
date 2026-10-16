@@ -334,7 +334,10 @@ def daily(request):
 def login_page_placeholder(request):
 		return render(request, 'error.html', {'error': 'This feature is not available yet.'})
 
-def download_record(request, record_id=None, online_id=None):
+def download_record(request, record_id=None, online_id=None, format="gmd"):
+	if format not in ["gmd", "gdlvl"]:
+		return render(request, 'error.html', {'error': 'Invalid download format'})
+
 	if record_id == None:
 		return render(request, 'error.html', {'error': 'Invalid record ID'})
 	try:
@@ -345,7 +348,7 @@ def download_record(request, record_id=None, online_id=None):
 		return render(request, 'error.html', {'error': 'Record not found in our database'})
 	if record.level.is_public is not True:
 		return render(request, 'error.html', {'error': 'You do not have the rights to download this record'})
-	data = ccUtils.create_data_from_level_record(record, True, False) #gdshare b64s the b64d desc already, so this is required
+	data = ccUtils.create_data_from_level_record(record, format == "gmd", False) #gdshare b64s the b64d desc already, so this is required
 	if 'k4' not in data:
 		return render(request, 'error.html', {'error': 'This record does not contain any level data. If you have reached this page using a link claiming that the data is available, please report this bug immediately.'})
 
@@ -354,10 +357,20 @@ def download_record(request, record_id=None, online_id=None):
 	except ValueError:
 		return render(request, 'error.html', {'error': 'This record contains data not supported by the GDHistory .gmd exporter.'})
 
-	data = ccUtils.consolidate_plist(data)
+	if format == "gmd":
+		data = ccUtils.consolidate_plist(data)
 	data = ccUtils.plist_to_robtop_plist(data)
-	response = HttpResponse(data, content_type='application/x-gmd')
-	response['Content-Disposition'] = f'attachment; filename={online_id}.gmd'
+
+	if format == "gdlvl":
+		data = ccUtils.create_gjlvl(data)
+
+	#download
+	if format == "gdlvl":
+		response = HttpResponse(data, content_type='application/x-gdlvl')
+		response['Content-Disposition'] = f'attachment; filename={online_id}.gdlvl'
+	else:
+		response = HttpResponse(data, content_type='application/x-gmd')
+		response['Content-Disposition'] = f'attachment; filename={online_id}.gmd'
 	return response
 
 @login_required

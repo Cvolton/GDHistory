@@ -77,6 +77,8 @@ def plist_to_robtop_plist(game_manager_bytes):
 	game_manager_bytes = game_manager_bytes.replace(b'<true />',b'<t />')
 	game_manager_bytes = game_manager_bytes.replace(b'<real>',b'<r>')
 	game_manager_bytes = game_manager_bytes.replace(b'</real>',b'</r>')
+	game_manager_bytes = game_manager_bytes.replace(b'<true/>',b'<t />')
+	game_manager_bytes = game_manager_bytes.replace(b'<dict/>',b'<d />')
 	return game_manager_bytes
 
 def remove_invalid_characters(game_manager_bytes):
@@ -382,3 +384,12 @@ def consolidate_plist(plist_content):
 	test = plist_content.split(b'\n')[3:-2]
 	#test = test[:-2]
 	return b"".join(test)
+
+def create_gjlvl(data):
+	body = b"".join(line.strip() for line in data.split(b'\n')[3:-2])
+	if not (body.startswith(b'<d>') and body.endswith(b'</d>')):
+		return None
+	body = b'<dict>' + body[3:-4] + b'</dict>'
+	data = b'<?xml version="1.0"?><plist version="1.0" gjver="2.0">' + body + b'</plist>'
+	data = gzip.compress(data, compresslevel=9)
+	return base64.b64encode(data, altchars=b'-_')

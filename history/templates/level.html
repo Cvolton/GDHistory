@@ -579,10 +579,12 @@ Average: ${(record.rating_sum / record.rating).toFixed(2)}`)
 		if (record.level_string_available) {
 			tdDataAvailable.textContent = "✅ "
 			if (levelData.is_public) {
-				tdDataAvailable.appendChild(make_link("(.gmd)", `/level/${levelData.online_id}/${record.id}/download/`))
+				tdDataAvailable.appendChild(make_small_link("(.gmd)", `/level/${levelData.online_id}/${record.id}/download/gmd/`))
+				tdDataAvailable.appendChild(make_small(" | "))
+				tdDataAvailable.appendChild(make_small_link("(.gdlvl)", `/level/${levelData.online_id}/${record.id}/download/gdlvl/`))
 			}
 			let obj = record.level_string_info?.object_count
-			tdDataAvailable.appendChild(make_tooltip(obj ? `${obj} objects` : null, ` - ${print_file_size((record.game_version < 19 && record.level_string_info?.decompressed_file_size) ? record.level_string_info?.decompressed_file_size : record.level_string_info?.file_size)}`))
+			tdDataAvailable.appendChild(make_small(` - ${print_file_size((record.game_version < 19 && record.level_string_info?.decompressed_file_size) ? record.level_string_info?.decompressed_file_size : record.level_string_info?.file_size)}`, obj ? `${obj} objects` : null))
 		} else {
 			tdDataAvailable.textContent = "❌"
 			if (record.level_size) {

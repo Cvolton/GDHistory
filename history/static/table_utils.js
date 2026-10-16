@@ -30,6 +30,13 @@ function make_link(text, link, onclick = null) {
 	return a
 }
 
+function make_small_link(text, link, title = null) {
+	const small = document.createElement('small')
+	small.appendChild(make_link(text, link))
+	if(title) small.title = title
+	return small
+}
+
 function make_small(text, title = null) {
 	const small = document.createElement('small')
 	small.textContent = text
