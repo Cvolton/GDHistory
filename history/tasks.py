@@ -15,7 +15,7 @@ def batch_update_levels(params):
         start = i * batch_size
         end = (i + 1) * batch_size
 
-        levels_to_revalidate = Level.objects.filter(pk__gt=start, pk__lt=end)
+        levels_to_revalidate = Level.objects.filter(pk__gte=start, pk__lt=end)
         if not levels_to_revalidate.exists():
             continue
         levels_to_revalidate.update(**params)

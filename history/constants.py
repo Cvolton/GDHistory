@@ -3,6 +3,7 @@ from django.utils.timezone import make_aware
 
 class SaveFailReasons:
 	ALREADY_QUEUED = 1
+	INVALID_ID = 2
 
 class XORKeys:
 	PASSWORD_KEY = 26364

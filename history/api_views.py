@@ -35,6 +35,14 @@ def index_levels(request):
 
 @csrf_exempt
 def save_level(request, online_id=None):
+	try:
+		online_id = int(online_id.strip())
+	except:
+		online_id = None
+
+	if not online_id or online_id < -3:
+		return JsonResponse({'success': False, 'fail_reason': constants.SaveFailReasons.INVALID_ID})
+
 	level = utils.get_level_object(online_id)
 	if level.needs_priority_download: return JsonResponse({'success': False, 'fail_reason': constants.SaveFailReasons.ALREADY_QUEUED})
 

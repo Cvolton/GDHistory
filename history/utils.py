@@ -70,16 +70,16 @@ def create_level_string(level_string):
 
 	level_string = level_string.encode('windows-1252', errors='xmlcharrefreplace')
 	sha256 = hashlib.sha256(level_string).hexdigest()
-	try:
-		level_string_object = LevelString.objects.get(sha256=sha256)
+	level_string_object = LevelString.objects.filter(sha256=sha256).order_by('pk').first()
+	if level_string_object is not None:
 		file_size = level_string_object.get_file_size()
 		if file_size is None or file_size == 0:
-			record.write_string(level_string)
+			level_string_object.write_string(level_string)
 		return level_string_object
-	except Exception as error:
-		record = LevelString(sha256=sha256)
-		record.write_string(level_string)
-		return record
+	
+	record = LevelString(sha256=sha256)
+	record.write_string(level_string)
+	return record
 
 def robtop_unxor(string, key):
 	key = str(key)
@@ -207,6 +207,9 @@ def get_level_object(level_id, validate_id_range=False):
 	except:
 		return None
 
+	if level_id > 2**31 - 1 or level_id < 2**31 * -1:
+		return None
+
 	from .models import Level
 	try:
 		level_object = Level.objects.get(online_id=level_id)
@@ -226,6 +229,9 @@ def get_list_object(list_id):
 	try:
 		list_id = int(list_id)
 	except:
+		return None
+
+	if list_id > 2**31 - 1 or list_id < 2**31 * -1:
 		return None
 
 	from .models import LevelList

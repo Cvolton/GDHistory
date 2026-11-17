@@ -25,7 +25,7 @@ def try_decrypt_mac_save(game_manager_bytes):
 		)
 		CIPHER = AES.new(AES_KEY, AES.MODE_ECB)
 		game_manager_bytes_decrypted = bytearray(CIPHER.decrypt(game_manager_bytes))
-		while game_manager_bytes_decrypted[-1:] != b">":
+		while game_manager_bytes_decrypted[-1:] != b">" and len(game_manager_bytes_decrypted) > 0:
 			game_manager_bytes_decrypted = game_manager_bytes_decrypted[:-1]
 
 		return game_manager_bytes_decrypted
@@ -297,7 +297,7 @@ def process_levels_in_glm(glm, record_type, save_file):
 			should_save = True
 
 		if record.get_real_date() > save_file.created:
-			record.cache_real_date = record.get_real_date()
+			record.cache_real_date = save_file.created
 			should_save = True
 
 		if should_save:

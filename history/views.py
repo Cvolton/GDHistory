@@ -106,7 +106,7 @@ def search(request):
 
 		index = meili_utils.get_level_index()
   
-		meili_utils.try_index_levels.delay()
+		meili_utils.try_index_levels_queue()
 
 		if not form.is_valid():
 			form.cleaned_data = {'p': 1, 'q': ''}
@@ -226,7 +226,7 @@ def search(request):
 			visible_query += f" (songArtistID {form.cleaned_data['songArtistID']})"
 
 		if 'exactName' in form.cleaned_data and form.cleaned_data['exactName'] is not None and form.cleaned_data['exactName'] != "":
-			filters.append(f"cache_level_name = {form.cleaned_data['exactName']}")
+			filters.append(f"cache_level_name = \"{meili_utils.escape_string(form.cleaned_data['exactName'])}\"")
 			visible_query += f" (exactName {form.cleaned_data['exactName']})"
 
 		if 'length' in form.cleaned_data and form.cleaned_data['length'] is not None:

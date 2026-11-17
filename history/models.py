@@ -759,7 +759,9 @@ class Level(models.Model):
 			self.save()
 
 	def update_search_available(self):
-		self.cache_search_available = (self.is_public == True and self.hide_from_search == False and self.is_blank() == False)
+		minimum_id = utils.get_level_id_within_window()
+
+		self.cache_search_available = ((self.is_public == True or self.online_id < minimum_id) and self.hide_from_search == False and self.is_blank() == False)
 
 	def assign_difficulty_from_record(self, record):
 		rating = record.rating or 0
@@ -823,7 +825,7 @@ class Level(models.Model):
 			self.cache_account_id = account_id_set['account_id__max']
 			print("set account id, not saved")
 
-		if self.cache_daily_id is not None and self.cache_daily_date is None:
+		if (self.cache_daily_id is not None and self.cache_daily_id > 0) and self.cache_daily_date is None:
 			print("setting daily date")
 			best_daily_record = base_set.filter(daily_id=self.cache_daily_id, record_type=LevelRecordType.DOWNLOAD).order_by('downloads')[:1]
 			if len(best_daily_record) > 0:

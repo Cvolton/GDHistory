@@ -118,7 +118,7 @@ def index_levels():
 	batch_size = 50000
 
 	for i in range(0,math.ceil(max_id / batch_size)):
-		level_list = Level.objects.filter(pk__gt=i*batch_size, pk__lt=(i+1)*batch_size, cache_search_available=True)
+		level_list = Level.objects.filter(pk__gte=i*batch_size, pk__lt=(i+1)*batch_size, cache_search_available=True)
 		levels_to_update = []
 		lists_to_send = []
 		for j,level in enumerate(level_list):
@@ -185,6 +185,12 @@ def index_queue():
 	index_queue_positive()
 	index_queue_negative()
 
+def try_index_levels_queue():
+	if cache.get('indexing_levels'):
+		print("Indexing timeout not reached")
+		return
+	try_index_levels.delay()
+
 @shared_task
 def try_index_levels():
 	if cache.get('indexing_levels'):
@@ -206,3 +212,6 @@ def admin_stats():
 
 def level_count_in_index():
 	return client.get_all_stats()['indexes']['levels']['numberOfDocuments']
+
+def escape_string(value):
+	return '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"'
