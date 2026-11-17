@@ -1150,7 +1150,7 @@ class LevelDateEstimation(models.Model):
 		super(LevelDateEstimation, self).save(*args, **kwargs)
 
 class LevelString(models.Model):
-	sha256 = models.CharField(max_length=64, db_index=True)
+	sha256 = models.CharField(max_length=64, unique=True)
 	requires_base64 = models.BooleanField(default=False)
 
 	decompressed_sha256 = models.CharField(max_length=64, db_index=True, blank=True, null=True)
